@@ -1,0 +1,36 @@
+# === 백업 / 임시 파일 ===
+backup/
+backups/
+*.bak
+*.tmp
+*.temp
+*.old
+~$*
+*.swp
+*~
+
+# === OS 생성 파일 ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === 의존성 / 빌드 산출물 ===
+node_modules/
+dist/
+build/
+.cache/
+
+# === 로그 ===
+*.log
+
+# === 대용량 / 오피스 잠금 파일 ===
+~$*.docx
+~$*.xlsx
+~$*.pptx
+
+# === 환경 / 비밀 ===
+.env
+.env.*
+
+# === Claude Code 로컬 설정 ===
+.claude/settings.local.json
