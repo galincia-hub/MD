@@ -1,0 +1,3245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adora MD Charter v4 FINAL — 3사 미팅 대시보드</title>
+<link href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+<style>
+:root{--bg:#0e1117;--bg-card:#161b22;--bg-hover:#1c2333;--border:#21262d;--text:#e6edf3;--text-m:#8b949e;--text-d:#484f58;--accent:#58a6ff;--accent-bg:rgba(56,139,253,.1);--green:#3fb950;--green-bg:rgba(63,185,80,.1);--red:#f85149;--red-bg:rgba(248,81,73,.1);--amber:#d29922;--amber-bg:rgba(210,153,34,.1);--purple:#bc8cff;--purple-bg:rgba(188,140,255,.1);--cyan:#56d4dd;--cyan-bg:rgba(86,212,221,.1);--orange:#f0883e;--orange-bg:rgba(240,136,62,.1);--sw:260px;--hh:52px;--font:'Pretendard Variable',-apple-system,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13px;line-height:1.6}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+.hdr{position:fixed;top:0;left:0;right:0;height:var(--hh);background:var(--bg-card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;z-index:100}
+.hdr-logo{font-size:14px;font-weight:700;color:var(--accent);letter-spacing:-.5px}
+.hdr-logo span{color:var(--text-m);font-weight:400;margin-left:8px;font-size:11px}
+.hdr-r{margin-left:auto;display:flex;gap:10px;align-items:center}
+.hdr-b{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+.hdr-b.live{background:var(--green-bg);color:var(--green);border:1px solid rgba(63,185,80,.2)}
+.hdr-b.dt{background:var(--bg);color:var(--text-m);border:1px solid var(--border)}
+.hdr-b.v2{background:var(--purple-bg);color:var(--purple);border:1px solid rgba(188,140,255,.3)}
+
+.sb{position:fixed;top:var(--hh);left:0;bottom:0;width:var(--sw);background:var(--bg-card);border-right:1px solid var(--border);overflow-y:auto;padding:12px 0;z-index:90}
+.ns{padding:0 12px;margin-bottom:16px}
+.ns-t{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-d);margin-bottom:6px;padding:0 8px}
+.ni{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;cursor:pointer;transition:all .12s;font-size:12px;color:var(--text-m);margin-bottom:1px;border:1px solid transparent}
+.ni:hover{background:var(--bg-hover);color:var(--text)}
+.ni.on{background:var(--accent-bg);color:var(--accent);border-color:rgba(56,139,253,.15)}
+.ni-i{width:16px;text-align:center;font-size:12px;flex-shrink:0}
+.ni-l{flex:1}
+.ni-tag{font-size:8px;padding:1px 5px;border-radius:3px;font-weight:600}
+.t-4{background:var(--cyan-bg);color:var(--cyan)}.t-5{background:var(--orange-bg);color:var(--orange)}.t-ag{background:var(--purple-bg);color:var(--purple)}.t-now{background:var(--amber-bg);color:var(--amber)}.t-goal{background:var(--accent-bg);color:var(--accent)}.t-v1{background:rgba(255,255,255,.04);color:var(--text-d)}.t-v2{background:var(--cyan-bg);color:var(--cyan)}.t-v3{background:var(--green-bg);color:var(--green)}
+.ndiv{height:1px;background:var(--border);margin:10px 12px}
+.det{border-radius:8px;background:var(--bg-hover);border:1px solid var(--border);margin-top:10px}.det summary{cursor:pointer;padding:8px 14px;font-size:11px;color:var(--text-m);user-select:none;list-style:none}.det summary:hover{color:var(--text)}.det-body{padding:10px 14px 12px}
+.warn-box{background:rgba(248,81,73,.07);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:10px 14px;font-size:11px;color:var(--red);margin-bottom:8px}
+
+.mn{margin-left:var(--sw);margin-top:var(--hh);padding:24px 32px;min-height:calc(100vh - var(--hh))}
+.pg{display:none}.pg.on{display:block}
+.pt{font-size:22px;font-weight:700;margin-bottom:3px;letter-spacing:-.5px}
+.ps{font-size:12px;color:var(--text-m);margin-bottom:20px}
+
+.mr{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.mc{flex:1;min-width:140px;padding:12px 14px;border-radius:10px;background:var(--bg-card);border:1px solid var(--border)}
+.mc-l{font-size:10px;color:var(--text-d);margin-bottom:3px;font-weight:500}
+.mc-v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.mc-s{font-size:10px;color:var(--text-m);margin-top:1px}
+.v-b{color:var(--accent)}.v-g{color:var(--green)}.v-r{color:var(--red)}.v-a{color:var(--amber)}.v-p{color:var(--purple)}.v-c{color:var(--cyan)}.v-o{color:var(--orange)}
+
+.tp{width:100%;border-radius:10px;background:var(--bg-card);border:1px solid var(--border);overflow:hidden;margin-bottom:14px}
+.tp table{width:100%;border-collapse:collapse;font-size:11px}
+.tp th{padding:8px 12px;text-align:left;font-size:10px;color:var(--text-d);font-weight:600;background:rgba(0,0,0,.2);border-bottom:1px solid var(--border)}
+.tp td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.03)}
+.tp tr:last-child td{border-bottom:none}
+.tp .r{text-align:right;font-variant-numeric:tabular-nums}
+.tp .tot td{font-weight:600;border-top:2px solid var(--border);background:rgba(0,0,0,.15)}
+
+.ac{border-radius:10px;background:var(--bg-card);border:1px solid var(--border);padding:16px 20px;margin-bottom:14px}
+.ac-n{font-size:28px;font-weight:800;color:var(--accent);opacity:.25;line-height:1}
+.ac-t{font-size:16px;font-weight:700;margin:2px 0}
+.ac-d{font-size:11px;color:var(--text-m);margin-bottom:10px}
+.ai{padding:4px 0 4px 14px;font-size:11px;position:relative;border-bottom:1px solid rgba(255,255,255,.03);color:var(--text-m)}
+.ai:last-child{border-bottom:none}
+.ai::before{content:'';position:absolute;left:0;top:10px;width:4px;height:4px;border-radius:50%}
+.ai-r::before{background:var(--red)}.ai-b::before{background:var(--accent)}.ai-g::before{background:var(--green)}.ai-a::before{background:var(--amber)}.ai-c::before{background:var(--cyan)}.ai-o::before{background:var(--orange)}
+
+.fb{display:flex;align-items:center;gap:6px;margin-bottom:20px;padding:10px 14px;border-radius:8px;background:rgba(0,0,0,.3);border:1px solid var(--border);flex-wrap:wrap}
+.fs{padding:4px 12px;border-radius:5px;font-size:10px;font-weight:600;background:var(--bg-hover);color:var(--text-m);border:1px solid var(--border)}
+.fs.cur{background:var(--accent-bg);color:var(--accent);border-color:rgba(56,139,253,.3)}
+.fa{color:var(--text-d);font-size:11px}
+
+.pre{font-size:10px;color:var(--amber);padding:4px 8px;border-radius:5px;background:var(--amber-bg);border:1px solid rgba(210,153,34,.15);margin-bottom:10px;display:inline-block}
+.new-b{font-size:10px;color:var(--cyan);padding:3px 8px;border-radius:5px;background:var(--cyan-bg);border:1px solid rgba(86,212,221,.2);margin-left:6px;display:inline-block;font-weight:600}
+.v1-tag{font-size:10px;color:var(--text-d);padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.04);border:1px solid var(--border);display:inline-block;font-weight:600}
+.v2-tag{font-size:10px;color:var(--cyan);padding:2px 8px;border-radius:4px;background:var(--cyan-bg);border:1px solid rgba(86,212,221,.2);display:inline-block;font-weight:600}
+.opt4-tag{font-size:10px;color:var(--cyan);padding:2px 8px;border-radius:4px;background:var(--cyan-bg);border:1px solid rgba(86,212,221,.2);display:inline-block;font-weight:600}
+.opt5-tag{font-size:10px;color:var(--orange);padding:2px 8px;border-radius:4px;background:var(--orange-bg);border:1px solid rgba(240,136,62,.2);display:inline-block;font-weight:600}
+
+.pct{font-size:9px;padding:1px 4px;border-radius:3px;font-weight:600}
+.pct-h{background:var(--green-bg);color:var(--green)}.pct-l{background:var(--red-bg);color:var(--red)}.pct-e{background:rgba(255,255,255,.05);color:var(--text-m)}
+
+.slider-row{display:flex;align-items:center;gap:12px;margin:12px 0;padding:10px 14px;border-radius:8px;background:rgba(0,0,0,.2);border:1px solid var(--border)}
+.slider-row label{font-size:11px;color:var(--text-m);min-width:80px}
+.slider-row input[type=range]{flex:1;accent-color:var(--accent)}
+.slider-row .sv{font-size:14px;font-weight:700;color:var(--accent);min-width:50px;text-align:right;font-variant-numeric:tabular-nums}
+
+/* v4 가중치 시뮬 — 봄/가을 좌우 2단 컴팩트 */
+.sim2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:1100px){.sim2col{grid-template-columns:1fr}}
+.scol{border-radius:10px;background:var(--bg-card);border:1px solid var(--border);padding:10px 12px;min-width:0}
+.scol-h{font-size:11px;font-weight:700;margin-bottom:6px;padding:4px 8px;border-radius:6px;background:rgba(255,255,255,.04)}
+.vrow{display:flex;align-items:center;gap:7px;margin:5px 0;padding:5px 8px;border-radius:6px;background:rgba(0,0,0,.2);border:1px solid var(--border);flex-wrap:wrap}
+.vrow .vlab{font-size:10px;color:var(--text-m);flex:1 1 160px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.5}
+.vrow input[type=range]{flex:0 1 110px;min-width:64px;accent-color:var(--accent);margin:0}
+.vrow .wbar{font-size:9px;letter-spacing:1px;color:var(--accent);white-space:nowrap}
+.vrow .sv{font-size:11px;font-weight:700;color:var(--accent);min-width:32px;text-align:right;font-variant-numeric:tabular-nums}
+.vrow .vamt{font-size:11px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap;margin-left:auto;cursor:help}
+.stot{margin-top:8px;padding:7px 8px 2px;border-top:1px solid var(--border);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
+
+.toggle-row{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+.tog{padding:5px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--bg-hover);color:var(--text-m);transition:all .12s}
+.tog.on{background:var(--accent-bg);color:var(--accent);border-color:rgba(56,139,253,.3)}
+.tog.on.opt4{background:var(--cyan-bg);color:var(--cyan);border-color:rgba(86,212,221,.3)}
+.tog.on.opt5{background:var(--orange-bg);color:var(--orange);border-color:rgba(240,136,62,.3)}
+
+.star{color:var(--amber)}
+h3{font-size:14px;font-weight:600;margin:16px 0 8px;color:var(--text)}
+h4{font-size:12px;font-weight:600;margin:12px 0 6px;color:var(--text-m)}
+.note{font-size:10px;color:var(--text-d);margin-top:6px;line-height:1.5}
+
+.itin{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:8px 0;font-size:10px}
+.itin .ic{padding:6px 8px;background:rgba(0,0,0,.2);border-radius:5px;text-align:center;color:var(--text-m);border:1px solid var(--border)}
+.itin .ic.port{color:var(--accent);font-weight:600}
+.itin .ic.sea{color:var(--text-d)}
+.itin .ic.day{font-weight:600;color:var(--text);background:rgba(255,255,255,.03)}
+.itin .ic.hol{color:var(--red);background:var(--red-bg)}
+.itin .ic.wknd{color:var(--amber);background:var(--amber-bg)}
+
+.diff-up{color:var(--red);font-weight:600}
+.diff-dn{color:var(--green);font-weight:600}
+.diff-eq{color:var(--text-m)}
+
+.opt-compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.opt-card{padding:18px 22px;border-radius:12px;background:var(--bg-card);border:2px solid var(--border)}
+.opt-card.opt4{border-color:rgba(86,212,221,.3)}
+.opt-card.opt5{border-color:rgba(240,136,62,.3)}
+.opt-card .opt-h{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.opt-card .opt-t{font-size:16px;font-weight:700}
+.opt-card.opt4 .opt-t{color:var(--cyan)}
+.opt-card.opt5 .opt-t{color:var(--orange)}
+.opt-card .opt-desc{font-size:11px;color:var(--text-m);margin-bottom:14px}
+.opt-card .opt-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:12px}
+.opt-card .opt-row:last-child{border-bottom:none}
+.opt-card .opt-k{color:var(--text-m)}
+.opt-card .opt-v{font-weight:600;font-variant-numeric:tabular-nums}
+
+@media (max-width: 900px) {
+  .opt-compare{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+<div class="hdr-logo">ADORA MD CHARTER<span>3사 미팅 대시보드</span></div>
+<div class="hdr-r"><span class="hdr-b v2">v4 FINAL</span><span class="hdr-b dt">3차 협상 최종 · LB 2,094 확정 · 2026.06.26</span><span class="hdr-b live">8항차/40N 운영 채택</span></div>
+</div>
+
+<div class="sb">
+<div class="ns">
+<div class="ns-t">기초자료</div>
+<div class="ni on" onclick="go('ov')"><span class="ni-i">◎</span><span class="ni-l">Overview</span></div>
+</div>
+<div class="ns">
+<div class="ns-t">운영 일정 (봄/가을)</div>
+<div class="ni" onclick="go('it4')"><span class="ni-i">📅</span><span class="ni-l">봄 4항차 일정</span><span class="ni-tag t-4">봄</span></div>
+<div class="ni" onclick="go('it5')"><span class="ni-i">📅</span><span class="ni-l">가을 4항차 일정</span><span class="ni-tag t-5">가을</span></div>
+</div>
+<div class="ndiv"></div>
+<div class="ns">
+<div class="ns-t">제안서 자료</div>
+<div class="ni" onclick="go('qt1')"><span class="ni-i">📋</span><span class="ni-l">1차 제안서</span><span class="ni-tag t-v1">v1</span></div>
+<div class="ni" onclick="go('qt2')"><span class="ni-i">📋</span><span class="ni-l">2차 제안서</span><span class="ni-tag t-v2">기준</span></div>
+<div class="ni" onclick="go('qtc')"><span class="ni-i">⇄</span><span class="ni-l">1차 vs 2차 비교</span></div>
+<div class="ni" onclick="go('qt3')"><span class="ni-i">📋</span><span class="ni-l">3차 제안서</span><span class="ni-tag t-v3">v3 최종</span></div>
+<div class="ni" onclick="go('qtc3')"><span class="ni-i">⇄</span><span class="ni-l">2차 vs 3차 비교</span></div>
+<div class="ni" onclick="go('co')"><span class="ni-i">💰</span><span class="ni-l">비용 분석</span><span class="ni-tag t-v3">3차 정밀</span></div>
+</div>
+<div class="ndiv"></div>
+<div class="ns">
+<div class="ns-t">협상 현황</div>
+<div class="ni" onclick="go('a1')"><span class="ni-i">📋</span><span class="ni-l">협상 경과</span><span class="ni-tag t-ag">v3</span></div>
+<div class="ni" onclick="go('alt')"><span class="ni-i">⚖</span><span class="ni-l">27년 대안분석</span><span class="ni-tag t-v3">NEW</span></div>
+</div>
+<div class="ndiv"></div>
+<div class="ns">
+<div class="ns-t">시뮬레이션</div>
+<div class="ni" onclick="go('sl')"><span class="ni-i">⚖️</span><span class="ni-l">LB 시나리오</span></div>
+<div class="ni" onclick="go('sa')"><span class="ni-i">📊</span><span class="ni-l">가중치 시뮬레이션</span></div>
+<div class="ni" onclick="go('sr')"><span class="ni-i">🔀</span><span class="ni-l">레그 안분</span></div>
+<div class="ni" onclick="go('csh')"><span class="ni-i">🚪</span><span class="ni-l">캐빈 쉐어 시뮬</span><span class="ni-tag t-ag">신규</span></div>
+<div class="ni" onclick="go('rev')"><span class="ni-i">📈</span><span class="ni-l">수익 시뮬레이션</span><span class="ni-tag t-ag">v3</span></div>
+</div>
+</div>
+
+<div class="mn">
+
+<!-- ===== OVERVIEW ===== -->
+<div class="pg on" id="pg-ov">
+<div class="pt">2027 아도라 MD 차터 브리핑 <span class="new-b">v4 FINAL · 3차 협상 최종</span></div>
+<div class="ps">3사 컨소시엄 · 3차 협상 최종 기준 · 8항차/40N 운영 채택 · 환율 1 USD = 6.8745 CNY = ₩1,485 (¥1 = ₩216)</div>
+
+<!-- (a) MD호 선박 기초정보 -->
+<h3>(a) MD호 선박 기초정보</h3>
+<div class="mr">
+<div class="mc"><div class="mc-l">총 톤수</div><div class="mc-v v-c">85,619 GT</div><div class="mc-s">전장 292m · Space ratio 33.7</div></div>
+<div class="mc"><div class="mc-l">물리 총 캐빈</div><div class="mc-v">1,057실</div><div class="mc-s">표준정원 2,537 · 최대 2,680</div></div>
+<div class="mc"><div class="mc-l">계약 LB 캐빈</div><div class="mc-v v-a">1,047실</div><div class="mc-s">× 2 (DBL) = 2,094명 (LB 100%)</div></div>
+<div class="mc"><div class="mc-l">3차 적용 LB (90%)</div><div class="mc-v v-a" id="ov-lb90">—</div><div class="mc-s">2,094 × 90%</div></div>
+</div>
+
+<h4>물리 캐빈 구성 (총 1,057실)</h4>
+<div class="tp"><table>
+<tr><th>캐빈 유형</th><th class="r">캐빈 수</th><th class="r">비율</th></tr>
+<tr><td>스위트</td><td class="r">58</td><td class="r">5.5%</td></tr>
+<tr><td>발코니</td><td class="r" style="color:var(--accent)">620</td><td class="r" style="color:var(--accent)">58.7%</td></tr>
+<tr><td>오션뷰</td><td class="r">167</td><td class="r">15.8%</td></tr>
+<tr><td>인사이드</td><td class="r">212</td><td class="r">20.1%</td></tr>
+<tr class="tot"><td>합계 (물리)</td><td class="r">1,057</td><td class="r">100%</td></tr>
+</table></div>
+
+<div class="ac" style="border-color:rgba(210,153,34,.25);padding:12px 16px">
+<div class="ac-t" style="color:var(--amber);font-size:13px">★ 물리 총 캐빈 ≠ 계약 LB 캐빈 — 구분 필수</div>
+<div style="font-size:11px;color:var(--text-m);line-height:1.8;margin-top:4px">
+<strong style="color:var(--text)">물리 총 캐빈 1,057실</strong>(실제 선박 캐빈 수)과 <strong style="color:var(--text)">계약 LB 캐빈 1,047실</strong>(차터 LB 산정 기준)은 서로 다름.<br>
+· 계약 LB 100% = 1,047캐빈 × 2 (DBL) = <strong style="color:var(--text)">2,094명</strong><br>
+· 3차 계약 적용 LB 90% = 2,094 × 90% = <strong style="color:var(--amber)" id="ov-lb90-inline">—</strong>
+</div>
+</div>
+
+<!-- (b) 코스타 세레나 vs MD 비교 -->
+<h3>(b) 코스타 세레나 vs MD 비교 <span class="v1-tag" style="color:var(--amber);background:var(--amber-bg);border-color:rgba(210,153,34,.25)">협상 근거 · 2026 상반기 기준</span></h3>
+<div class="note" style="margin-bottom:8px">아래 수치는 <strong style="color:var(--text-m)">LB 90% 타결 이전</strong>의 협상 논거 기록입니다(현재 계약값 아님). 수치는 협상 성과의 근거로 원형 보존합니다.</div>
+
+<h4>기본 제원</h4>
+<div class="tp"><table>
+<tr><th>항목</th><th class="r">MD</th><th class="r">Serena</th><th class="r">MD/Serena</th></tr>
+<tr><td>총 톤수</td><td class="r">85,619 GT</td><td class="r">114,500 GT</td><td class="r"><span class="pct pct-l">74.8%</span></td></tr>
+<tr><td>전장</td><td class="r">292m</td><td class="r">290m</td><td class="r"><span class="pct pct-e">100.7%</span></td></tr>
+<tr><td>총 캐빈</td><td class="r">1,057</td><td class="r">1,507</td><td class="r"><span class="pct pct-l">70.1%</span></td></tr>
+<tr><td>표준 정원</td><td class="r">2,537</td><td class="r">3,014</td><td class="r"><span class="pct pct-l">84.2%</span></td></tr>
+<tr><td>최대 정원</td><td class="r">2,680</td><td class="r">3,780</td><td class="r"><span class="pct pct-l">70.9%</span></td></tr>
+<tr><td>승무원</td><td class="r">920</td><td class="r">1,100</td><td class="r"><span class="pct pct-l">83.6%</span></td></tr>
+<tr><td>Space ratio</td><td class="r">33.7</td><td class="r">38.0</td><td class="r"><span class="pct pct-l">88.8%</span></td></tr>
+<tr><td>건조</td><td class="r">2003 (핀란드)</td><td class="r">2007 (이탈리아)</td><td class="r"></td></tr>
+<tr><td>리퍼비시</td><td class="r">2024</td><td class="r">2017</td><td class="r"></td></tr>
+</table></div>
+
+<h4>캐빈 구성 비교</h4>
+<div class="tp"><table>
+<tr><th>유형</th><th class="r">MD</th><th class="r">비율</th><th class="r">Serena</th><th class="r">비율</th></tr>
+<tr><td>스위트</td><td class="r">58</td><td class="r">5.5%</td><td class="r">58</td><td class="r">3.8%</td></tr>
+<tr><td>발코니</td><td class="r">620</td><td class="r" style="color:var(--accent)">58.7%</td><td class="r">521</td><td class="r">34.6%</td></tr>
+<tr><td>오션뷰</td><td class="r">167</td><td class="r">15.8%</td><td class="r">317</td><td class="r">21.0%</td></tr>
+<tr><td>인사이드</td><td class="r">212</td><td class="r">20.1%</td><td class="r">579</td><td class="r" style="color:var(--red)">38.4%</td></tr>
+<tr class="tot"><td>합계</td><td class="r">1,057</td><td class="r">100%</td><td class="r">1,507</td><td class="r">100%</td></tr>
+</table></div>
+
+<h4>LB 구조 비교 — 핵심 쟁점</h4>
+<div class="tp"><table>
+<tr><th>항목</th><th class="r">MD (아도라)</th><th class="r">Serena (업계 관행)</th><th>차이</th></tr>
+<tr><td>LB</td><td class="r" style="color:var(--red)">2,094명 (DBL 100%)</td><td class="r" style="color:var(--green)">~2,411명 (DBL 80%)</td><td style="color:var(--red)">아도라만 100%</td></tr>
+<tr><td>LB ÷ 표준 정원</td><td class="r" style="color:var(--red)">83.4%</td><td class="r" style="color:var(--green)">80.0%</td><td style="color:var(--red)">+3.4%p 높음</td></tr>
+<tr><td>Pax guarantee ÷ LB</td><td class="r">85.1%</td><td class="r">-</td><td style="color:var(--text-d)">100% 불가 자인</td></tr>
+</table></div>
+
+<div class="ac" style="border-color:rgba(56,139,253,.2)">
+<div class="ac-t" style="color:var(--accent)">설득 논리</div>
+<div class="ai ai-b">LB 100%는 업계 비표준. Serena 등 주요 차터는 DBL 80% 관행.</div>
+<div class="ai ai-b">아도라 스스로 Pax guarantee 85%(1,800명) 설정 — 100% 탑승 비현실적.</div>
+<div class="ai ai-b">MD의 LB당 공간(40.5GT)이 Serena(47.7GT)보다 15% 좁음.</div>
+<div class="ai ai-g">→ LB 90% 타결 완료(달성) · NPD $109.97 수용. <span style="color:var(--text-d)">(당초 제안: LB 80% 적용)</span></div>
+</div>
+
+<!-- (c) 3차 계약 핵심 요약 -->
+<h3>(c) 3차 계약 핵심 요약 <span class="new-b">최종</span></h3>
+<div class="mr">
+<div class="mc"><div class="mc-l">NPD (인/박)</div><div class="mc-v v-b" id="ov-npd">—</div><div class="mc-s">¥756 = ₩163,296</div></div>
+<div class="mc"><div class="mc-l">적용 LB (90%)</div><div class="mc-v v-a" id="ov-lb90b">—</div><div class="mc-s">2,094 × 90%</div></div>
+<div class="mc"><div class="mc-l">운영 구조</div><div class="mc-v">8항차 · 40N</div><div class="mc-s">봄4 + 가을4 · Repo 3박</div></div>
+</div>
+<div class="tp"><table>
+<tr><th>구분</th><th class="r">CNY (¥)</th><th class="r">KRW (₩)</th></tr>
+<tr><td>Gross (명목 계약금액)</td><td class="r v-a" id="ov-gross-cny">—</td><td class="r v-a" id="ov-gross-krw">—</td></tr>
+<tr><td style="color:var(--green)">− 마케팅 협력비 (40N)</td><td class="r" style="color:var(--green)" id="ov-mkt-cny">—</td><td class="r" style="color:var(--green)" id="ov-mkt-krw">—</td></tr>
+<tr class="tot"><td>Net (실부담)</td><td class="r v-g" id="ov-net-cny">—</td><td class="r v-g" id="ov-net-krw">—</td></tr>
+</table></div>
+<div class="note" id="ov-c-note">계산식: Gross = NPD(¥756) × LB90(1,884.6) × 40N + Repo(¥2,016,000 × 3박) · Net = Gross − 마케팅 협력비(¥2,400,000) · 환율 ¥1 = ₩216</div>
+</div>
+
+<!-- ===== 봄 4항차 일정 ===== -->
+<div class="pg" id="pg-it4">
+<div class="pt">봄 4항차 일정 <span class="opt4-tag">5박×4 = 20박 · LB 90%</span></div>
+<div class="ps">2027년 5월 7일 ~ 5월 27일 · 봄 20박 (5박×4) · 부산 출발 · 가을 20박 · 3차 확정 · LB 90% 기준</div>
+
+<h3>2027년 5월 주요 휴일/기념일</h3>
+<div class="tp"><table>
+<tr><th>날짜</th><th>요일</th><th>구분</th><th>마케팅 활용</th></tr>
+<tr><td style="color:var(--red)">5/8</td><td style="color:var(--red)">토</td><td style="color:var(--red)">어버이날 + 주말</td><td style="color:var(--accent)">1항차 효도크루즈 핵심</td></tr>
+<tr><td style="color:var(--red)">5/13</td><td style="color:var(--red)">목</td><td style="color:var(--red)">부처님오신날 (공휴일)</td><td style="color:var(--green)">2항차 황금연휴 핵심 (5/14 하루 휴가)</td></tr>
+<tr><td style="color:var(--amber)">5/15</td><td style="color:var(--amber)">토</td><td>스승의날 + 주말</td><td style="color:var(--accent)">2항차 마지막 주말 활용</td></tr>
+</table></div>
+
+<h3>1항차 <span class="star">★★★½</span> · 5/7(금) ~ 5/12(수) · 5박 · 휴일 2일</h3>
+<div class="ac" style="border-left:3px solid var(--accent);padding:14px 18px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div style="font-weight:600;color:var(--accent)">부산 → 사세보 → 해상 → 상하이 → 해상 → 부산</div>
+<div style="font-size:11px;color:var(--text-m)">5박 · 비용 ₩15.4억 (정규운항 실비·LB90·마케팅/리포 별도)</div>
+</div>
+<div class="itin">
+<div class="ic day">5/7 금<br>출발</div>
+<div class="ic wknd">5/8 토<br>어버이날</div>
+<div class="ic wknd">5/9 일</div>
+<div class="ic">5/10 월</div>
+<div class="ic">5/11 화</div>
+<div class="ic day">5/12 수<br>도착</div>
+</div>
+<div style="font-size:11px;color:var(--text-m);margin-top:10px">
+<span style="color:var(--green)">강점:</span> 어버이날(토) + 토일 주말 포함 → 효도·가족 크루즈 핵심. 사세보·상하이 2개국 기항.<br>
+<span style="color:var(--amber)">유의:</span> 어버이날 당일(토) 승선 → 사전 프로모션 조기 마감 관리 필요.
+</div>
+</div>
+
+<h3>2항차 <span class="star">★★★★</span> · 5/12(수) ~ 5/17(월) · 5박 · 휴일 3일 <span style="background:var(--green-bg);color:var(--green);font-size:11px;padding:2px 8px;border-radius:4px;margin-left:6px">BEST</span></h3>
+<div class="ac" style="border-left:3px solid var(--green);padding:14px 18px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div style="font-weight:600;color:var(--green)">부산 → 나가사키 → 해상 → 상하이 → 해상 → 부산</div>
+<div style="font-size:11px;color:var(--text-m)">5박 · 비용 ₩15.4억 (정규운항 실비·LB90·마케팅/리포 별도)</div>
+</div>
+<div class="itin">
+<div class="ic day">5/12 수<br>출발</div>
+<div class="ic hol">5/13 목<br>부처님</div>
+<div class="ic">5/14 금<br>(휴가)</div>
+<div class="ic wknd">5/15 토<br>스승의날</div>
+<div class="ic wknd">5/16 일</div>
+<div class="ic day">5/17 월<br>도착</div>
+</div>
+<div style="font-size:11px;color:var(--text-m);margin-top:10px">
+<span style="color:var(--green)">강점:</span> 부처님오신날(목) + 5/14(금) 하루 휴가 → <strong style="color:var(--green)">최대 6일 황금연휴</strong>. 나가사키·상하이 인기 기항. <strong style="color:var(--green)">휴일 3일 포함, 판매 유리</strong>.<br>
+<span style="color:var(--accent)">전략:</span> 1순위 카테고리·발코니 우선 배정. 패키지 가격 +30% 책정 가능. 본 시즌 최강 항차.
+</div>
+</div>
+
+<h3>3항차 <span class="star">★★★</span> · 5/17(월) ~ 5/22(토) · 5박 · 휴일 1일</h3>
+<div class="ac" style="border-left:3px solid var(--amber);padding:14px 18px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div style="font-weight:600;color:var(--amber)">부산 → 사세보 → 해상 → 나하 → 해상 → 부산</div>
+<div style="font-size:11px;color:var(--text-m)">5박 · 비용 ₩15.4억 (정규운항 실비·LB90·마케팅/리포 별도)</div>
+</div>
+<div class="itin">
+<div class="ic day">5/17 월<br>출발</div>
+<div class="ic">5/18 화</div>
+<div class="ic">5/19 수</div>
+<div class="ic">5/20 목</div>
+<div class="ic">5/21 금</div>
+<div class="ic day">5/22 토<br>도착</div>
+</div>
+<div style="font-size:11px;color:var(--text-m);margin-top:10px">
+<span style="color:var(--red)">약점:</span> 평일 위주(월 출발) · 휴일 1일뿐 → 수요 제한적.<br>
+<span style="color:var(--accent)">대응:</span> 나하(오키나와) 리조트성 강조, 시니어·은퇴자 타겟 또는 저가 패키지 검토.
+</div>
+</div>
+
+<h3>4항차 <span class="star">★★★</span> · 5/22(토) ~ 5/27(목) · 5박 · 휴일 2일</h3>
+<div class="ac" style="border-left:3px solid var(--cyan);padding:14px 18px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div style="font-weight:600;color:var(--cyan)">부산 → 사세보 → 해상 → 상하이 → 강정 → 부산</div>
+<div style="font-size:11px;color:var(--text-m)">5박 · 비용 ₩15.4억 (정규운항 실비·LB90·마케팅/리포 별도)</div>
+</div>
+<div class="itin">
+<div class="ic day">5/22 토<br>출발</div>
+<div class="ic wknd">5/23 일</div>
+<div class="ic">5/24 월</div>
+<div class="ic">5/25 화</div>
+<div class="ic">5/26 수</div>
+<div class="ic day">5/27 목<br>도착</div>
+</div>
+<div style="font-size:11px;color:var(--text-m);margin-top:10px">
+<span style="color:var(--green)">강점:</span> 토요일 출발 + 토일 주말 포함. 상하이 + 강정(제주) 기항으로 국내외 결합 차별화.<br>
+<span style="color:var(--amber)">유의:</span> 목요일 도착 · 휴일 2일. 황금연휴 직후라 수요 분산 가능 → 조기예약 유도.
+</div>
+</div>
+
+<h3>봄 4항차 한눈에 보기</h3>
+<div class="tp"><table>
+<tr><th>항차</th><th class="r">일정</th><th class="r">박수</th><th>경유지</th><th class="r">별점</th><th class="r">휴일 수</th></tr>
+<tr><td style="color:var(--accent)">1항차</td><td class="r">5/7~5/12</td><td class="r">5박</td><td>부산→사세보→상하이→부산</td><td class="r"><span class="star">★★★½</span></td><td class="r">2일</td></tr>
+<tr><td style="color:var(--green)">2항차</td><td class="r">5/12~5/17</td><td class="r">5박</td><td>부산→나가사키→상하이→부산</td><td class="r"><span class="star">★★★★</span></td><td class="r">3일</td></tr>
+<tr><td style="color:var(--amber)">3항차</td><td class="r">5/17~5/22</td><td class="r">5박</td><td>부산→사세보→나하→부산</td><td class="r"><span class="star">★★★</span></td><td class="r">1일</td></tr>
+<tr><td style="color:var(--cyan)">4항차</td><td class="r">5/22~5/27</td><td class="r">5박</td><td>부산→사세보→상하이→강정→부산</td><td class="r"><span class="star">★★★</span></td><td class="r">2일</td></tr>
+<tr class="tot"><td>합계</td><td class="r">5/7~5/27 (21일)</td><td class="r">20박</td><td>부산 4회 출발 · 5박×4</td><td class="r">평균 ★★★+</td><td class="r">평균 2일</td></tr>
+</table></div>
+<div class="note">봄4 정규운항 실비 합계 ≈ <strong style="color:var(--text-m)">₩61.5억</strong> (봄4 정규운항만, 리포·마케팅 제외). ※ Overview (c)의 Gross ₩136.2억 / Net ₩131.0억은 봄+가을+리포 전체 계약금액 — 혼동 주의.</div>
+</div>
+
+<!-- ===== 가을 4항차 일정 ===== -->
+<div class="pg" id="pg-it5">
+<div class="pt">가을 4항차 일정 <span class="opt5-tag">5박×4 = 20박 · LB 90%</span></div>
+<div class="ps">2027년 10월 8일 ~ 10월 28일 · 가을 20박 (5박×4) · 부산 출발 · 3차 확정 · LB 90% 기준</div>
+
+<h3>2027년 10월 주요 휴일/기념일</h3>
+<div class="tp"><table>
+<tr><th>날짜</th><th>요일</th><th>구분</th><th>마케팅 활용</th></tr>
+<tr><td style="color:var(--red)">10/9</td><td style="color:var(--red)">토</td><td style="color:var(--red)">한글날 (공휴일) + 주말</td><td style="color:var(--green)">1항차 연휴 핵심 (10/8~10/11)</td></tr>
+<tr><td style="color:var(--red)">10/11</td><td style="color:var(--red)">월</td><td style="color:var(--red)">대체공휴일</td><td style="color:var(--green)">1항차 연휴 마지막 (휴일 3일, 판매 유리)</td></tr>
+<tr><td style="color:var(--amber)">—</td><td style="color:var(--amber)">—</td><td>가을2~4 구간 휴일 없음</td><td style="color:var(--accent)">가을1이 유일 연휴 항차</td></tr>
+</table></div>
+
+<h3>1항차 <span class="star">★★★★</span> · 10/8(금) ~ 10/13(수) · 5박 · 휴일 3일 <span style="background:var(--green-bg);color:var(--green);font-size:11px;padding:2px 8px;border-radius:4px;margin-left:6px">BEST</span></h3>
+<div class="ac" style="border-left:3px solid var(--green);padding:14px 18px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div style="font-weight:600;color:var(--green)">부산 → 해상 → 상하이 → 해상 → 사세보 → 부산</div>
+<div style="font-size:11px;color:var(--text-m)">5박 · 비용 ₩15.4억 (정규운항 실비·LB90·마케팅/리포 별도)</div>
+</div>
+<div class="itin">
+<div class="ic day">10/8 금<br>출발</div>
+<div class="ic hol">10/9 토<br>한글날</div>
+<div class="ic wknd">10/10 일</div>
+<div class="ic hol">10/11 월<br>대체공휴일</div>
+<div class="ic">10/12 화</div>
+<div class="ic day">10/13 수<br>도착</div>
+</div>
+<div style="font-size:11px;color:var(--text-m);margin-top:10px">
+<span style="color:var(--green)">강점:</span> 한글날(토) + 대체공휴일(월) 연휴 포함(10/8~10/11) · <strong style="color:var(--green)">휴일 3일 포함, 판매 유리</strong>. 상하이·사세보 기항.<br>
+<span style="color:var(--accent)">전략:</span> 1순위 카테고리·발코니 우선 배정. 본 시즌 최강 항차. 가을 유일 연휴 상품으로 조기 홍보.
+</div>
+</div>
+
+<h3>2항차 <span class="star">★★★★</span> · 10/13(수) ~ 10/18(월) · 5박 · 휴일 2일</h3>
+<div class="ac" style="border-left:3px solid var(--accent);padding:14px 18px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div style="font-weight:600;color:var(--accent)">부산 → 해상 → 가나자와<span style="color:var(--amber)">*</span> → 사카이미나토 → 나가사키 → 부산</div>
+<div style="font-size:11px;color:var(--text-m)">5박 · 비용 ₩15.4억 (정규운항 실비·LB90·마케팅/리포 별도)</div>
+</div>
+<div class="itin">
+<div class="ic day">10/13 수<br>출발</div>
+<div class="ic">10/14 목</div>
+<div class="ic">10/15 금</div>
+<div class="ic wknd">10/16 토</div>
+<div class="ic wknd">10/17 일</div>
+<div class="ic day">10/18 월<br>도착</div>
+</div>
+<div style="font-size:11px;color:var(--text-m);margin-top:10px">
+<span style="color:var(--green)">강점:</span> 가나자와·사카이미나토·나가사키 3개 기항으로 일본 서안 다채 구성. 토일 주말 포함.<br>
+<span style="color:var(--amber)">유의:</span> <strong style="color:var(--amber)">*가나자와 기항 미확정</strong> — 확정 전 사카이미나토·나가사키 중심 홍보. 휴일 2일.
+</div>
+</div>
+
+<h3>3항차 <span class="star">★★★</span> · 10/18(월) ~ 10/23(토) · 5박 · 휴일 1일</h3>
+<div class="ac" style="border-left:3px solid var(--amber);padding:14px 18px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div style="font-weight:600;color:var(--amber)">부산 → 해상 → 나하 → 해상 → 사세보 → 부산</div>
+<div style="font-size:11px;color:var(--text-m)">5박 · 비용 ₩15.4억 (정규운항 실비·LB90·마케팅/리포 별도)</div>
+</div>
+<div class="itin">
+<div class="ic day">10/18 월<br>출발</div>
+<div class="ic">10/19 화</div>
+<div class="ic">10/20 수</div>
+<div class="ic">10/21 목</div>
+<div class="ic">10/22 금</div>
+<div class="ic day">10/23 토<br>도착</div>
+</div>
+<div style="font-size:11px;color:var(--text-m);margin-top:10px">
+<span style="color:var(--red)">약점:</span> 평일 위주(월 출발) · 휴일 1일뿐(공휴일 없음) → 수요 제한적.<br>
+<span style="color:var(--accent)">대응:</span> 나하(오키나와) 리조트성 강조, 시니어·은퇴자 타겟 또는 저가 패키지 검토.
+</div>
+</div>
+
+<h3>4항차 <span class="star">★★★½</span> · 10/23(토) ~ 10/28(목) · 5박 · 휴일 2일</h3>
+<div class="ac" style="border-left:3px solid var(--cyan);padding:14px 18px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div style="font-weight:600;color:var(--cyan)">부산 → 해상 → 미야코지마 → 해상 → 가고시마 → 부산</div>
+<div style="font-size:11px;color:var(--text-m)">5박 · 비용 ₩15.4억 (정규운항 실비·LB90·마케팅/리포 별도)</div>
+</div>
+<div class="itin">
+<div class="ic day">10/23 토<br>출발</div>
+<div class="ic wknd">10/24 일</div>
+<div class="ic">10/25 월</div>
+<div class="ic">10/26 화</div>
+<div class="ic">10/27 수</div>
+<div class="ic day">10/28 목<br>도착</div>
+</div>
+<div style="font-size:11px;color:var(--text-m);margin-top:10px">
+<span style="color:var(--green)">강점:</span> 토요일 출발 + 토일 주말 포함. 미야코지마·가고시마 기항으로 차별화(신규 기항지).<br>
+<span style="color:var(--amber)">유의:</span> 목요일 도착 · 휴일 2일 · 시즌 말미 → 조기예약 프로모션 유도.
+</div>
+</div>
+
+<h3>가을 4항차 한눈에 보기</h3>
+<div class="tp"><table>
+<tr><th>항차</th><th class="r">일정</th><th class="r">박수</th><th>경유지</th><th class="r">별점</th><th class="r">휴일 수</th></tr>
+<tr><td style="color:var(--green)">1항차</td><td class="r">10/8~10/13</td><td class="r">5박</td><td>부산→상하이→사세보→부산</td><td class="r"><span class="star">★★★★</span></td><td class="r">3일</td></tr>
+<tr><td style="color:var(--accent)">2항차</td><td class="r">10/13~10/18</td><td class="r">5박</td><td>부산→가나자와*→사카이미나토→나가사키→부산</td><td class="r"><span class="star">★★★★</span></td><td class="r">2일</td></tr>
+<tr><td style="color:var(--amber)">3항차</td><td class="r">10/18~10/23</td><td class="r">5박</td><td>부산→나하→사세보→부산</td><td class="r"><span class="star">★★★</span></td><td class="r">1일</td></tr>
+<tr><td style="color:var(--cyan)">4항차</td><td class="r">10/23~10/28</td><td class="r">5박</td><td>부산→미야코지마→가고시마→부산</td><td class="r"><span class="star">★★★½</span></td><td class="r">2일</td></tr>
+<tr class="tot"><td>합계</td><td class="r">10/8~10/28 (21일)</td><td class="r">20박</td><td>부산 4회 출발 · 5박×4</td><td class="r">평균 ★★★+</td><td class="r">평균 2일</td></tr>
+</table></div>
+<div class="note">가을4 정규운항 실비 합계 ≈ <strong style="color:var(--text-m)">₩61.5억</strong> (가을4 정규운항만, 리포·마케팅 제외). ※ *가나자와 기항 미확정. ※ Overview (c)의 Gross ₩136.2억 / Net ₩131.0억은 봄+가을+리포 전체 계약금액 — 혼동 주의.</div>
+</div>
+
+<!-- ===== 1차 제안서 ===== -->
+<div class="pg" id="pg-qt1">
+<div class="pt">1차 제안서 <span class="v1-tag">수령: 2027.03 (사용자 메모)</span></div>
+<div class="ps">Adora Magic City Charter Quotation v1 · Ship Code: MD · Repo 6박 구조</div>
+
+<div class="ac" style="border-color:rgba(210,153,34,.2);padding:10px 14px;margin-bottom:14px">
+<div style="font-size:11px;color:var(--amber)">⚠ 사용자 메모 확인 요청: 1차 제안서 수령일이 "2027년 3월"로 기재되었으나, 2차 제안서(2026.04.21)보다 늦은 시점이 됨. "2026년 3월"의 오타 여부 확인 필요.</div>
+</div>
+
+<h3>Charter Price 기본 조건</h3>
+<div class="tp"><table>
+<tr><th>항목</th><th class="r">CNY (원본)</th><th class="r">USD</th><th>비고</th></tr>
+<tr><td>NPD (인/박)</td><td class="r">¥756</td><td class="r">$109.97</td><td style="color:var(--text-d)">제안서 환율 $109.57</td></tr>
+<tr><td>LB</td><td class="r" colspan="2">2,094명</td><td style="color:var(--text-d)">DBL 100%</td></tr>
+<tr><td>Repo 단가 (1박)</td><td class="r">¥2,016,000</td><td class="r">$292,174</td><td style="color:var(--text-d)">LB 무관</td></tr>
+<tr><td>Repo 박수</td><td class="r" colspan="2">6박</td><td style="color:var(--text-d)">유상</td></tr>
+<tr><td>Marketing 협력비</td><td class="r">¥60,000/N</td><td class="r">$8,727/N</td><td style="color:var(--text-d)">아도라 지원금</td></tr>
+<tr><td>Pax guarantee</td><td class="r" colspan="2">1,800명 미달 시 ¥300/인/박</td><td></td></tr>
+</table></div>
+
+<h3>Charter 총액 (1차 제안서, 40N + Repo 6N)</h3>
+<div class="tp"><table>
+<tr><th>구분</th><th class="r">CNY</th><th class="r">USD</th><th class="r">KRW</th></tr>
+<tr><td>Regular sailing (40N)</td><td class="r">¥63,927,360</td><td class="r">$9,299,201</td><td class="r">₩138.1억</td></tr>
+<tr><td>Repo 유상 (6N)</td><td class="r">¥12,096,000</td><td class="r">$1,753,044</td><td class="r">₩26.0억</td></tr>
+<tr><td style="color:var(--green)">Marketing 수익</td><td class="r" style="color:var(--green)">−¥2,400,000</td><td class="r" style="color:var(--green)">−$349,116</td><td class="r" style="color:var(--green)">−₩5.2억</td></tr>
+<tr class="tot"><td>Grand Total</td><td class="r">¥73,623,360</td><td class="r">$10,703,129</td><td class="r">₩158.9억</td></tr>
+</table></div>
+</div>
+
+<!-- ===== 2차 제안서 ===== -->
+<div class="pg" id="pg-qt2">
+<div class="pt">2차 제안서 <span class="v2-tag">수령: 2026.04.21 · 모든 계산의 기준</span></div>
+<div class="ps">Adora Magic City Charter Quotation v2 · Ship Code: MD · Repo 6박 → 3박 단축 + 단가 10% 인하</div>
+
+<h3>제안서 원본 정보 (2026.04.21 발행)</h3>
+<div class="tp"><table>
+<tr><th>항목</th><th>내용</th></tr>
+<tr><td>Ship Code</td><td>MD (Adora Magic City)</td></tr>
+<tr><td>Sailing</td><td>2027.05.07 ~ 05.27 (봄, 20N) & 2027.10.09 ~ 10.29 (가을, 20N)</td></tr>
+<tr><td>Issue Date</td><td style="color:var(--cyan)">2026-04-21</td></tr>
+<tr><td>Minimum Total Nights</td><td>40N</td></tr>
+<tr><td style="color:var(--cyan)">Repositioning Nights</td><td style="color:var(--cyan)">3N (1차 6N에서 3N 단축)</td></tr>
+<tr><td>Charter Price (총액)</td><td style="color:var(--cyan)">CNY 69,370,560.00</td></tr>
+</table></div>
+
+<h3>Charter Price 분해 (NPD ¥756 가정 시)</h3>
+<div class="tp"><table>
+<tr><th>구분</th><th class="r">CNY</th><th class="r">USD</th><th class="r">KRW</th><th>설명</th></tr>
+<tr><td>Regular sailing (40N)</td><td class="r">¥63,927,360</td><td class="r">$9,299,201</td><td class="r">₩138.1억</td><td style="color:var(--text-d)">NPD ¥756 × LB 2,094 × 40N</td></tr>
+<tr><td style="color:var(--cyan)">Repo 유상 (3N)</td><td class="r" style="color:var(--cyan)">¥5,443,200</td><td class="r" style="color:var(--cyan)">$791,597</td><td class="r" style="color:var(--cyan)">₩11.8억</td><td style="color:var(--text-d)">Repo 단가 ¥1,814,400/박 (-10%)</td></tr>
+<tr class="tot"><td>Charter Price 합계</td><td class="r">¥69,370,560</td><td class="r">$10,090,798</td><td class="r">₩149.8억</td><td style="color:var(--cyan)">제안서 표기 금액과 일치</td></tr>
+<tr><td style="color:var(--green)">Marketing 수익 (40N)</td><td class="r" style="color:var(--green)">−¥2,400,000</td><td class="r" style="color:var(--green)">−$349,116</td><td class="r" style="color:var(--green)">−₩5.2억</td><td style="color:var(--text-d)">¥60,000/박 × 40박</td></tr>
+<tr class="tot"><td>Net Total (40박 기준)</td><td class="r" style="color:var(--accent)">¥66,970,560</td><td class="r" style="color:var(--accent)">$9,741,682</td><td class="r" style="color:var(--accent)">₩144.7억</td><td style="color:var(--accent)">제안서 기준 실 부담액</td></tr>
+</table></div>
+
+<h3>핵심 조건 (2차 제안서)</h3>
+<div class="tp"><table>
+<tr><th>항목</th><th>내용</th><th class="r">1차 대비</th></tr>
+<tr><td>NPD</td><td>¥756 (= $109.97 / 박·인)</td><td class="r diff-eq">동일</td></tr>
+<tr><td>LB</td><td>2,094명 (DBL 100%)</td><td class="r diff-eq">동일</td></tr>
+<tr><td>Marketing Cooperation Fee</td><td>¥60,000/박</td><td class="r diff-eq">동일</td></tr>
+<tr><td style="color:var(--cyan)">Repo Nights</td><td>3박</td><td class="r diff-dn">−3박 (절반)</td></tr>
+<tr><td style="color:var(--cyan)">Repo 단가</td><td>¥1,814,400/박 (= $263,866)</td><td class="r diff-dn">−10%</td></tr>
+<tr><td>Pax Guarantee</td><td>1,800명 미달 시 ¥300/인/박</td><td class="r diff-eq">동일</td></tr>
+<tr><td>Shore Excursion</td><td>크루즈사 미제공</td><td class="r diff-eq">동일</td></tr>
+</table></div>
+
+<h3>2차 제안서 신규 명시 — 서비스피</h3>
+<div class="ac" style="border-color:rgba(248,81,73,.15)">
+<div class="ac-d" style="color:var(--red)">⚠ 1차에는 없던 서비스피 명시 — 고객 별도 부담 / 패키지 표기 필요</div>
+<div class="ai ai-r"><span style="color:var(--text)">Suite Service Fee:</span> HKD 160/인·박 (≈ ₩27,200/인·박)</div>
+<div class="ai ai-r"><span style="color:var(--text)">Standard Cabin Service Fee:</span> HKD 140/인·박 (≈ ₩23,800/인·박)</div>
+<div class="ai ai-r"><span style="color:var(--text)">면제 대상:</span> 만 4세 미만</div>
+<div class="ai ai-a"><span style="color:var(--text);font-weight:600">영향:</span> 1인·5박 일반 캐빈 HKD 700 (≈ ₩119,000) 추가. NPD($109.97)의 약 14.6% — 큰 비중.</div>
+</div>
+
+<h3>결제 스케줄</h3>
+<div class="tp"><table>
+<tr><th>시점</th><th class="r">비율</th></tr>
+<tr><td>1차 Deposit: 계약 체결 후 7일 이내</td><td class="r">25%</td></tr>
+<tr><td>2차 Payment: 출항 6개월 전</td><td class="r">35%</td></tr>
+<tr><td>잔금(Final): 출항 2개월 전</td><td class="r">40%</td></tr>
+</table></div>
+
+<div class="note">* 2차 제안서 봄 시즌(5/7~5/27 · 20박)은 우리 실 운영(봄 21박 또는 26박)과 차이 있음 — 1박 추가에 따른 NPD 동일 적용 확인 필요<br>* 가을 시즌은 봄 운영 옵션에 따라 20박 (옵션 A) 또는 15박 (옵션 B)으로 변동</div>
+</div>
+
+<!-- ===== 1차 vs 2차 비교 ===== -->
+<div class="pg" id="pg-qtc">
+<div class="pt">1차 vs 2차 제안서 비교</div>
+<div class="ps">동일 40박 기준 직접 비교 · 모든 조건 통제</div>
+
+<div class="mr">
+<div class="mc" style="border-color:rgba(255,255,255,.05)">
+<div class="mc-l v1-tag" style="margin-bottom:6px">1차 제안서</div>
+<div class="mc-v">₩158.9억</div>
+<div class="mc-s">40N + Repo 6N · LB100%</div>
+</div>
+<div class="mc" style="border-color:rgba(86,212,221,.3)">
+<div class="mc-l v2-tag" style="margin-bottom:6px">2차 제안서</div>
+<div class="mc-v v-c">₩144.7억</div>
+<div class="mc-s">40N + Repo 3N · LB100%</div>
+</div>
+<div class="mc" style="border-color:rgba(63,185,80,.3)">
+<div class="mc-l" style="color:var(--green);margin-bottom:6px">절감액</div>
+<div class="mc-v v-g">−₩14.2억</div>
+<div class="mc-s">−8.9%</div>
+</div>
+</div>
+
+<h3>항목별 변동 상세</h3>
+<div class="tp"><table>
+<tr><th>항목</th><th class="r">1차 제안서</th><th class="r">2차 제안서</th><th class="r">변동</th></tr>
+<tr><td>NPD</td><td class="r">¥756 / $109.97</td><td class="r">¥756 / $109.97</td><td class="r diff-eq">동일</td></tr>
+<tr><td>LB</td><td class="r">2,094명 (100%)</td><td class="r">2,094명 (100%)</td><td class="r diff-eq">동일</td></tr>
+<tr><td>Regular Charter (40N)</td><td class="r">¥63,927,360</td><td class="r">¥63,927,360</td><td class="r diff-eq">동일</td></tr>
+<tr><td style="color:var(--cyan)">Repo 박수</td><td class="r">6박</td><td class="r" style="color:var(--cyan)">3박</td><td class="r diff-dn">−3박</td></tr>
+<tr><td style="color:var(--cyan)">Repo 단가/박</td><td class="r">¥2,016,000</td><td class="r" style="color:var(--cyan)">¥1,814,400</td><td class="r diff-dn">−10%</td></tr>
+<tr><td style="color:var(--cyan)">Repo 총액</td><td class="r">¥12,096,000</td><td class="r" style="color:var(--cyan)">¥5,443,200</td><td class="r diff-dn">−55%</td></tr>
+<tr><td>Marketing 수익</td><td class="r" style="color:var(--green)">−¥2,400,000</td><td class="r" style="color:var(--green)">−¥2,400,000</td><td class="r diff-eq">동일</td></tr>
+<tr class="tot"><td>Net Total (KRW)</td><td class="r">₩158.9억</td><td class="r" style="color:var(--cyan)">₩144.7억</td><td class="r diff-dn">−₩14.2억</td></tr>
+<tr><td style="color:var(--red)">서비스피 (신규)</td><td class="r">미명시</td><td class="r" style="color:var(--red)">HKD 140~160/박</td><td class="r diff-up">신규 부담</td></tr>
+</table></div>
+
+<h3>우리 측 협상 카드 (2차 → 3차)</h3>
+<div class="ac" style="border-color:rgba(56,139,253,.2)">
+<div class="ai ai-b"><span style="color:var(--text);font-weight:600">카드 1:</span> 한국 모항 확정 → Repo 3박 → 0박 협상 (₩11.8억 추가 절감)</div>
+<div class="ai ai-b"><span style="color:var(--text);font-weight:600">카드 2:</span> 운항 +1박(우리 41N vs 제안 40N) NPD 단가 그대로 적용 확인</div>
+</div>
+</div>
+
+<!-- ===== 3차 제안서 ===== -->
+<!-- 아도라 제안 원안: 46N/9항차(봄5+가을4) → 봄5(5/27~6/2) 포기, 채택: 40N/8항차(봄4+가을4) -->
+<div class="pg" id="pg-qt3">
+<div class="pt">3차 제안서 <span style="font-size:13px;color:var(--green);font-weight:400">v3 최종 · 2026.06.26</span></div>
+<div class="ps">8항차/40N 운영 채택 기준 · 아도라 원안 46N/9항차 → 봄5(5/27~6/2) 제외</div>
+
+<div class="ac" style="border-color:rgba(63,185,80,.15);padding:10px 16px;margin-bottom:16px;font-size:11px;color:var(--text-m)">
+<span style="color:var(--amber);font-weight:600">이력 주석:</span> 아도라 3차 원안은 봄5항차(5/27~6/2, 6N) 포함 46N/9항차. 봄5 포기 결정으로 <strong style="color:var(--green)">40N/8항차 단일 기준 채택</strong>. 마케팅비 CONFIG.MKT_TOTAL_40N(¥2,400,000) 적용. 46N 원안 수치는 CONFIG에 참고용 보존.
+</div>
+
+<h3>가격 구조 (3차 확정 · 8항차/40N)</h3>
+<div class="tp"><table>
+<tr><th>항목</th><th class="r">CNY (¥)</th><th class="r">USD ($)</th><th class="r">KRW (₩)</th><th style="color:var(--text-d)">산출 근거</th></tr>
+<tr><td>정규운항 (40N)</td><td class="r">¥56,990,304</td><td class="r">$8,290,102</td><td class="r">₩123.1억</td><td style="color:var(--text-d)">NPD¥756 × LB90%(1,884.6) × 40N</td></tr>
+<tr><td>리포지셔닝 (3N)</td><td class="r">¥6,048,000</td><td class="r">$879,773</td><td class="r">₩13.1억</td><td style="color:var(--text-d)">¥2,016,000 × 3박 · LB무관 고정</td></tr>
+<tr class="tot"><td>Gross 소계</td><td class="r">¥63,038,304</td><td class="r">$9,169,875</td><td class="r">₩136.2억</td><td style="color:var(--text-d)">명목 계약금액 (마케팅비 차감 전)</td></tr>
+<tr><td style="color:var(--green)">마케팅비 (공제)</td><td class="r" style="color:var(--green)">−¥2,400,000</td><td class="r" style="color:var(--green)">−$349,116</td><td class="r" style="color:var(--green)">−₩5.18억</td><td style="color:var(--text-d)">¥60,000 × 40N</td></tr>
+<tr class="tot"><td style="color:var(--accent)">Net 실부담</td><td class="r" style="color:var(--accent);font-weight:700">¥60,638,304</td><td class="r" style="color:var(--accent);font-weight:700">$8,820,758</td><td class="r" style="color:var(--accent);font-weight:700">₩131.0억</td><td style="color:var(--accent)">최종 선사 실지급액</td></tr>
+</table></div>
+
+<div class="mr">
+<div class="mc"><div class="mc-l">박당 단가 Net ÷ 40N</div><div class="mc-v v-b">¥1,515,958</div><div class="mc-s">$220,519 / ₩3.27억/박</div></div>
+<div class="mc"><div class="mc-l">항차당 단가 Net ÷ 8항차</div><div class="mc-v v-c">¥7,579,788</div><div class="mc-s">$1,102,595 / ₩16.4억/항차</div></div>
+<div class="mc"><div class="mc-l">NPD (3차 고시)</div><div class="mc-v v-g">¥756</div><div class="mc-s">$109.97 / ₩163,296 /인·박</div></div>
+<div class="mc"><div class="mc-l">LB 계약 (100%)</div><div class="mc-v">2,094명</div><div class="mc-s">1,047캐빈 × DBL</div></div>
+</div>
+
+<h3>3차 신규 조건</h3>
+<div class="tp"><table>
+<tr><th>조건</th><th>내용</th><th style="color:var(--text-d)">비고</th></tr>
+<tr><td style="color:var(--red);font-weight:600">Pax Guarantee</td><td>1,500명/항차 미만 시 패널티 부과</td><td style="color:var(--text-d)">부족분 × 박수 × ¥300/인·박</td></tr>
+<tr><td>결제 조건</td><td>25% (계약 후 7일) / 35% (출항 6개월 전) / 40% (출항 2개월 전)</td><td style="color:var(--text-d)">3회 분납</td></tr>
+<tr><td style="color:var(--amber)">서비스차지 (불포함)</td><td>스위트 HKD 160 / 일반 HKD 140 · 인·박</td><td style="color:var(--amber)">당사 별도 부담</td></tr>
+<tr><td style="color:var(--amber)">일본 국제관광세</td><td>¥3,000/인 (일본 기항 항차)</td><td style="color:var(--amber)">당사 별도 부담</td></tr>
+<tr><td>운항 구조</td><td>봄 4항차 (5/7~5/27, 20N) + 가을 4항차 (10/8~10/28, 20N)</td><td style="color:var(--text-d)">8항차 · 총 40N + Repo 3N</td></tr>
+</table></div>
+
+<h3>⚠️ 미기재 조항 경고</h3>
+<div class="ac" style="border-color:rgba(248,81,73,.3);padding:14px 18px">
+<div class="warn-box">❌ <strong>취소·환불 조항 미기재</strong> — 일방 취소 시 귀책 및 위약금 기준 불명확. 계약서 협의 필수.</div>
+<div class="warn-box">❌ <strong>불가항력(Force Majeure) 조항 미기재</strong> — 자연재해·팬데믹 등 불가피한 운항 취소 시 처리 기준 없음.</div>
+<div class="warn-box">❌ <strong>환율 조정 조항 미기재</strong> — CNY/KRW 환율 급변 시 단가 재협의 기준 없음. 환율 리스크 당사 전액 부담 구조.</div>
+<div class="ai ai-b" style="margin-top:8px">계약 체결 전 위 3개 조항 명문화 요청 필수. 특히 환율 조항은 ±10% 초과 시 재협의 조건 삽입 권장.</div>
+</div>
+</div>
+
+<!-- ===== 2차 vs 3차 비교 ===== -->
+<div class="pg" id="pg-qtc3">
+<div class="pt">2차 vs 3차 제안서 비교</div>
+<div class="ps">동일 40N 기준 · LB·NPD 동일 · 핵심 변동: LB% 적용 90% · Pax Guarantee 신규 · 미기재 조항</div>
+
+<div class="mr">
+<div class="mc" style="border-color:rgba(86,212,221,.2)">
+<div class="mc-l" style="color:var(--cyan);margin-bottom:6px">2차 제안서</div>
+<div class="mc-v v-c">₩144.7억</div>
+<div class="mc-s">Net · LB100% 적용 · 40N+Repo3N</div>
+</div>
+<div class="mc" style="border-color:rgba(63,185,80,.3)">
+<div class="mc-l" style="color:var(--green);margin-bottom:6px">3차 제안서 (채택)</div>
+<div class="mc-v v-g">₩131.0억</div>
+<div class="mc-s">Net · LB90% 적용 · 40N+Repo3N</div>
+</div>
+<div class="mc" style="border-color:rgba(63,185,80,.2)">
+<div class="mc-l" style="color:var(--green);margin-bottom:6px">절감액</div>
+<div class="mc-v v-g">−₩13.7억</div>
+<div class="mc-s">−9.5% (LB% 인하 효과)</div>
+</div>
+</div>
+
+<h3>항목별 변동 상세</h3>
+<div class="tp"><table>
+<tr><th>항목</th><th class="r">2차 제안서</th><th class="r">3차 제안서</th><th class="r">변동</th></tr>
+<tr><td>NPD</td><td class="r">¥756</td><td class="r">¥756</td><td class="r diff-eq">동일</td></tr>
+<tr><td>LB 계약 (100%)</td><td class="r">2,094명 <span style="font-size:9px;color:var(--text-d)">(정정 전 표기 2,114)</span></td><td class="r">2,094명</td><td class="r diff-eq">동일</td></tr>
+<tr><td style="color:var(--cyan)">LB% 적용</td><td class="r">100% (2,094명)</td><td class="r" style="color:var(--green)">90% (1,884.6명)</td><td class="r diff-dn">−10%p ↓</td></tr>
+<tr><td>운항 박수</td><td class="r">40~41N</td><td class="r">40N</td><td class="r diff-eq">사실상 동일</td></tr>
+<tr><td>항차 수</td><td class="r">4~5항차 (옵션 A/B)</td><td class="r" style="color:var(--green)">8항차 확정</td><td class="r diff-up">+4항차</td></tr>
+<tr><td>Regular Charter</td><td class="r">¥63,927,360</td><td class="r" style="color:var(--green)">¥56,990,304</td><td class="r diff-dn">−¥6,937,056</td></tr>
+<tr><td>Repo</td><td class="r">¥5,443,200 (3N)</td><td class="r">¥6,048,000 (3N)</td><td class="r diff-up">+¥604,800</td></tr>
+<tr><td>Gross 소계</td><td class="r">¥69,370,560</td><td class="r" style="color:var(--green)">¥63,038,304</td><td class="r diff-dn">−¥6,332,256</td></tr>
+<tr><td style="color:var(--green)">마케팅비 공제</td><td class="r" style="color:var(--green)">−¥2,400,000</td><td class="r" style="color:var(--green)">−¥2,400,000</td><td class="r diff-eq">동일</td></tr>
+<tr class="tot"><td>Net 실부담</td><td class="r" style="color:var(--cyan)">¥66,970,560 (₩144.7억)</td><td class="r" style="color:var(--green)">¥60,638,304 (₩131.0억)</td><td class="r diff-dn">−₩13.7억</td></tr>
+<tr><td style="color:var(--red)">Pax Guarantee 패널티</td><td class="r">미기재</td><td class="r" style="color:var(--red)">1,500명 미만 × ¥300/인·박</td><td class="r diff-up">신규 리스크</td></tr>
+<tr><td style="color:var(--amber)">서비스차지</td><td class="r">HKD 140~160/박</td><td class="r">HKD 140~160/박</td><td class="r diff-eq">동일</td></tr>
+<tr><td style="color:var(--amber)">일본 관광세</td><td class="r">미기재</td><td class="r" style="color:var(--amber)">¥3,000/인</td><td class="r diff-up">신규 부담</td></tr>
+<tr><td style="color:var(--red)">취소·환불 조항</td><td class="r">미기재</td><td class="r" style="color:var(--red)">미기재</td><td class="r" style="color:var(--red)">⚠️ 미해결</td></tr>
+<tr><td style="color:var(--red)">환율 조정 조항</td><td class="r">미기재</td><td class="r" style="color:var(--red)">미기재</td><td class="r" style="color:var(--red)">⚠️ 미해결</td></tr>
+</table></div>
+
+<h3>핵심 변동 요인 정리</h3>
+<div class="ac" style="border-color:rgba(63,185,80,.2)">
+<div class="ai ai-g"><span style="color:var(--text);font-weight:600">절감 원인:</span> LB 적용 100% → 90% 전환. 동일 NPD·박수에서 LB 10%p 인하 → 정규운항 −¥6.9억.</div>
+<div class="ai ai-b"><span style="color:var(--text);font-weight:600">Repo 소폭 증가:</span> 2차 ¥1,814,400/박 → 3차 ¥2,016,000/박. 박수 동일(3N)이나 단가 상승 +¥604,800.</div>
+<div class="ai ai-r"><span style="color:var(--text);font-weight:600">신규 리스크:</span> Pax Guarantee 1,500명 기준 신설. 모객 미달 시 패널티. 8항차 모두 적용.</div>
+<div class="ai ai-a"><span style="color:var(--text);font-weight:600">미기재 3개 조항:</span> 취소·환불 / 불가항력 / 환율 조정. 계약 전 협의 필수.</div>
+</div>
+</div>
+
+<!-- ===== 비용 분석 ===== -->
+<div class="pg" id="pg-co">
+<div class="pt">비용 분석 — 3차 제안서 정밀분석 <span class="new-b">v4 FINAL</span></div>
+<div class="ps">선사 제시 가격조건 · 포함/불포함 · 원가상승 체크포인트 · 리스크 요약</div>
+
+<div class="ac" style="border-color:rgba(56,139,253,.25);background:var(--accent-bg);padding:9px 14px;margin-bottom:16px">
+<div style="font-size:11px;color:var(--text);font-weight:600">💱 환율 기준: 1 USD = 6.8745 CNY / 1 CNY = ₩216 · 모든 금액 CNY 기준 산출</div>
+<div style="font-size:10px;color:var(--text-m);margin-top:2px">USD = CNY ÷ 6.8745 · KRW = CNY × 216 (행별 독립 반올림) · 3통화 병기</div>
+</div>
+
+<!-- 블록1: 선사 제시 가격조건 -->
+<h3>블록 1 · 선사 제시 가격조건 (마케팅·리포 포함)</h3>
+<div class="tp"><table>
+<tr><th>구분</th><th class="r">CNY (¥ · 기준통화)</th><th class="r">USD ($)</th><th class="r">KRW (₩)</th></tr>
+<tr><td>정규운항 (40N)</td><td class="r" id="co-reg-c">—</td><td class="r" id="co-reg-u">—</td><td class="r" id="co-reg-k">—</td></tr>
+<tr><td>리포지셔닝 (3N)</td><td class="r" id="co-repo-c">—</td><td class="r" id="co-repo-u">—</td><td class="r" id="co-repo-k">—</td></tr>
+<tr class="tot"><td>Gross 소계 (명목 계약금액)</td><td class="r v-a" id="co-gross-c">—</td><td class="r v-a" id="co-gross-u">—</td><td class="r v-a" id="co-gross-k">—</td></tr>
+<tr><td style="color:var(--green)">마케팅비 (공제)</td><td class="r" style="color:var(--green)" id="co-mkt-c">—</td><td class="r" style="color:var(--green)" id="co-mkt-u">—</td><td class="r" style="color:var(--green)" id="co-mkt-k">—</td></tr>
+<tr class="tot"><td>Net 실부담</td><td class="r v-g" id="co-net-c">—</td><td class="r v-g" id="co-net-u">—</td><td class="r v-g" id="co-net-k">—</td></tr>
+</table></div>
+<div class="note">정규운항 = NPD(¥756) × LB90(1,884.6) × 40N · 리포 = ¥2,016,000 × 3N · 마케팅비 = ¥2,400,000(40N) · 전부 CONFIG 참조 + Math.round</div>
+
+<!-- 블록2: 포함/불포함 + 원가상승 체크포인트 -->
+<h3>블록 2 · 포함 / 불포함 + 원가상승 체크포인트</h3>
+<div class="opt-compare" style="grid-template-columns:1fr 1fr">
+<div>
+<h4 style="color:var(--green)">✔ 포함 (Charter Fee 내)</h4>
+<div class="tp"><table>
+<tr><th>항목</th><th>비고</th></tr>
+<tr><td>객실</td><td style="color:var(--text-m)">기본 카테고리</td></tr>
+<tr><td>기본 식사</td><td style="color:var(--text-m)">뷔페·메인다이닝</td></tr>
+<tr><td>기본 엔터테인먼트</td><td style="color:var(--text-m)">공연·쇼(표준)</td></tr>
+<tr><td>수영장·헬스장</td><td style="color:var(--text-m)">기본 시설</td></tr>
+<tr><td>1·2인 항비</td><td style="color:var(--text-m)">객실 기준요금</td></tr>
+<tr><td>3·4인 베스요금</td><td style="color:var(--text-m)">berth 요금 포함</td></tr>
+<tr><td>행사공간 (venue)</td><td style="color:var(--text-m)">기본 대관</td></tr>
+</table></div>
+</div>
+<div>
+<h4 style="color:var(--red)">✘ 불포함 (별도 부담)</h4>
+<div class="tp"><table>
+<tr><th>항목</th><th>비고</th></tr>
+<tr><td>서비스 차지</td><td style="color:var(--text-m)">스위트 HKD160 · 일반 HKD140/인·박</td></tr>
+<tr><td>일본 관광세</td><td style="color:var(--text-m)">3,000엔</td></tr>
+<tr><td>3·4인 추가 항비</td><td style="color:var(--text-m)">berth 초과분</td></tr>
+<tr><td>스페셜티·Wi-Fi·VIP석</td><td style="color:var(--text-m)">유료 옵션</td></tr>
+<tr><td>기업행사 기술·인력비</td><td style="color:var(--text-m)">venue 운영 별도</td></tr>
+<tr><td>여행사 수수료</td><td style="color:var(--text-m)">판매 수수료</td></tr>
+</table></div>
+</div>
+</div>
+
+<div class="ac" style="border-color:rgba(248,81,73,.35);background:var(--red-bg);padding:14px 18px">
+<div class="ac-t" style="color:var(--red)">⚠ 불포함이나 차터운영 필수 → 원가전가 위험 항목</div>
+<div style="font-size:11px;color:var(--text-m);margin-bottom:8px">아래 항목은 계약상 불포함이나 실제 차터 운영에는 필수 → 행사·서비스할수록 원가 상승. 각 항목 <strong style="color:var(--text)">포함 협상</strong> 필요.</div>
+<label style="display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px;cursor:pointer"><input type="checkbox" style="margin-top:3px;accent-color:var(--red);flex-shrink:0"><span><strong style="color:var(--text)">공연장·홀 기술·인력비</strong> — 한국 맞춤 공연 운영 필수인데 불포함 → 행사할수록 원가↑. <span style="color:var(--amber)">[체크: 표준운영 포함 협상 필요]</span></span></label>
+<label style="display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px;cursor:pointer"><input type="checkbox" style="margin-top:3px;accent-color:var(--red);flex-shrink:0"><span><strong style="color:var(--text)">스위트 특전</strong> — 프리차지 미포함 시 상품력↓ 또는 우리 부담. <span style="color:var(--amber)">[체크: 특전 무상포함 요구]</span></span></label>
+<label style="display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px;cursor:pointer"><input type="checkbox" style="margin-top:3px;accent-color:var(--red);flex-shrink:0"><span><strong style="color:var(--text)">야식·식사 수준</strong> — 한국 고객 필수, 미포함 시 별도비용. <span style="color:var(--amber)">[체크: 기본제공 요구]</span></span></label>
+<label style="display:flex;gap:9px;align-items:flex-start;padding:7px 0;font-size:11px;cursor:pointer"><input type="checkbox" style="margin-top:3px;accent-color:var(--red);flex-shrink:0"><span><strong style="color:var(--text)">서비스 차지</strong> — 승객 부담이나 소비자가 상승요인. <span style="color:var(--amber)">[체크: 표기·안내]</span></span></label>
+</div>
+
+<!-- 블록3: 리스크 요약 -->
+<h3>블록 3 · 리스크 요약</h3>
+<div class="ac" style="border-color:rgba(210,153,34,.25);padding:12px 16px">
+<div class="ai ai-a"><strong style="color:var(--text)">Pax 보증:</strong> 1,500명/항차 미만 시 ¥300/인·박 패널티.</div>
+<div class="ai ai-a"><strong style="color:var(--text)">환율:</strong> 계약 CNY 고정 → ₩ 변동분 전부 우리 부담(환리스크).</div>
+<div class="ai ai-a"><strong style="color:var(--text)">가나자와 미확정:</strong> 가을2 기항 확정 전 → 일정·홍보 변동 가능.</div>
+<div class="ai ai-a"><strong style="color:var(--text)">취소·환불조항 부재:</strong> 계약서상 취소/환불 규정 미비 → 명문화 필요.</div>
+</div>
+
+<!-- 블록4: 기존 2차 옵션 A/B (이력 보존) -->
+<div class="ndiv" style="margin:24px 0"></div>
+<h3 style="color:var(--text-d)">참고 · 2차 이력 (옵션 A/B) <span class="v1-tag">참고·2차 이력</span></h3>
+<div class="warn-box" style="color:var(--text-m);background:rgba(255,255,255,.02);border-color:var(--border)">아래는 2차 제안서 기준 옵션 A/B(봄 21박/26박) 분석입니다. <strong>환율 1 USD = ₩1,485(2차 당시값)</strong> 기준이며, 3차 최종(위 블록)과 환율·구조가 다릅니다 — 이력 참고용.</div>
+
+<h4>항차별 기본 비용 (가중치 100% 기준)</h4>
+<div class="tp"><table>
+<tr><th>구분</th><th class="r">5박 항차</th><th class="r">+ 1박 추가</th><th class="r">= 6박 항차</th></tr>
+<tr><td style="color:var(--amber)">현행 LB 100%</td><td class="r">$1,118,748 (₩16.6억)</td><td class="r" style="color:var(--cyan)">+$223,760 (₩3.3억)</td><td class="r" style="color:var(--accent)">$1,342,508 (₩19.9억)</td></tr>
+</table></div>
+
+<h4>옵션 A · 봄 4항차 21박 총액 (Regular only)</h4>
+<div class="tp"><table>
+<tr><th></th><th class="r">LB100% (계약)</th></tr>
+<tr><td>Charter (21N)</td><td class="r">$4,883,667 (₩72.5억)</td></tr>
+<tr><td style="color:var(--green)">Marketing 수익</td><td class="r" style="color:var(--green)">−$183,267 (−₩2.7억)</td></tr>
+<tr class="tot"><td>봄 Net Total</td><td class="r">$4,700,400 (₩69.8억)</td></tr>
+</table></div>
+
+<h4>옵션 B · 봄 5항차 26박 총액 (Regular only)</h4>
+<div class="tp"><table>
+<tr><th></th><th class="r">LB100% (계약)</th></tr>
+<tr><td>Charter (26N)</td><td class="r">$6,044,651 (₩89.8억)</td></tr>
+<tr><td style="color:var(--green)">Marketing 수익</td><td class="r" style="color:var(--green)">−$226,902 (−₩3.4억)</td></tr>
+<tr class="tot"><td>봄 Net Total</td><td class="r">$5,817,749 (₩86.4억)</td></tr>
+</table></div>
+
+<h4>연간 41박 + Repo 3박 총액 (옵션 A/B 공통)</h4>
+<div class="pre">두 옵션 모두 연간 41박 · Repo 3박으로 동일 → 연간 총액 동일</div>
+<div class="tp"><table>
+<tr><th></th><th class="r">LB100% (계약)</th></tr>
+<tr><td>Charter (41N)</td><td class="r">$9,535,955 (₩141.6억)</td></tr>
+<tr><td>Repo 유상 (3N)</td><td class="r">$791,598 (₩11.8억)</td></tr>
+<tr><td style="color:var(--green)">Marketing 수익</td><td class="r" style="color:var(--green)">−$357,807 (−₩5.3억)</td></tr>
+<tr class="tot"><td>Grand Total</td><td class="r">$9,969,746 (₩148.1억)</td></tr>
+</table></div>
+
+<h4>봄/가을 박수 분배 비교</h4>
+<div class="tp"><table>
+<tr><th>구분</th><th class="r">봄 박수</th><th class="r">가을 박수</th><th class="r">연간</th></tr>
+<tr><td><span class="opt4-tag">옵션 A</span> 봄 4항차</td><td class="r">21박</td><td class="r">20박</td><td class="r">41박</td></tr>
+<tr><td><span class="opt5-tag">옵션 B</span> 봄 5항차</td><td class="r">26박</td><td class="r">15박</td><td class="r">41박</td></tr>
+<tr class="tot"><td>차이</td><td class="r">+5박 (B)</td><td class="r">−5박 (B)</td><td class="r">동일</td></tr>
+</table></div>
+
+<h4>1차 vs 2차 비교</h4>
+<div class="tp"><table>
+<tr><th>구분</th><th class="r">Repo</th><th class="r">연간 총액</th><th class="r">기준 대비</th></tr>
+<tr><td class="v1-tag">1차 제안서 (40N+Repo6N)</td><td class="r">6박 × $292,174</td><td class="r">₩162.3억</td><td class="r diff-eq">기준점</td></tr>
+<tr><td class="v2-tag" style="color:var(--cyan)">2차 제안서 (41N+Repo3N)</td><td class="r">3박 × $263,866</td><td class="r" style="color:var(--cyan)">₩148.1억</td><td class="r diff-dn">−₩14.2억</td></tr>
+</table></div>
+
+<h4>NPD 구조 (옵션 무관, 동일)</h4>
+<div class="tp"><table>
+<tr><th>구분</th><th class="r">NPD</th></tr>
+<tr><td>Charter NPD</td><td class="r" style="color:var(--accent)">$109.97</td></tr>
+</table></div>
+</div>
+
+<!-- ===== 아젠다 1 ===== -->
+<div class="pg" id="pg-a1">
+<div class="pt">협상 경과 및 향후 과제</div>
+<div class="ps">2027 Adora MD Charter · 협상 진행 현황 · 2026.05.24 기준</div>
+
+<!-- 섹션 1: 협상 완료 -->
+<h3 style="color:var(--green);margin-top:0">✅ 섹션 1 — 협상 완료 사항 (확정)</h3>
+<div class="ac" style="border-color:rgba(63,185,80,.25);padding:16px 20px">
+<div class="tp"><table>
+<tr><th style="width:32px">#</th><th>항목</th><th>결과</th><th style="color:var(--text-d)">비고</th></tr>
+<tr>
+  <td style="color:var(--green);font-weight:700">1</td>
+  <td>LB 산정 기준</td>
+  <td style="color:var(--green);font-weight:600">LB 100% (2,094명) 계약 확정</td>
+  <td style="color:var(--text-d);font-size:11px">아도라 입장 유지, 컨소시엄 수용</td>
+</tr>
+<tr>
+  <td style="color:var(--green);font-weight:700">2</td>
+  <td>Pax Guarantee</td>
+  <td style="color:var(--green);font-weight:600">"may charge" 방향 합의</td>
+  <td style="color:var(--text-d);font-size:11px">shall → may 전환, Costa 선례 적용</td>
+</tr>
+<tr>
+  <td style="color:var(--green);font-weight:700">3</td>
+  <td>일본 기항</td>
+  <td style="color:var(--green);font-weight:600">서면 확인 완료</td>
+  <td style="color:var(--text-d);font-size:11px">"한국 출발 항로 제한 없음"</td>
+</tr>
+<tr>
+  <td style="color:var(--amber);font-weight:700">4</td>
+  <td>대만 기항</td>
+  <td style="color:var(--red);font-weight:600">불가 확정</td>
+  <td style="color:var(--text-d);font-size:11px">아도라 공식 사과, 모니터링 지속</td>
+</tr>
+<tr>
+  <td style="color:var(--green);font-weight:700">5</td>
+  <td>봄 시즌 일정</td>
+  <td style="color:var(--green);font-weight:600">5/7~5/27 (4항차 20박) 확정</td>
+  <td style="color:var(--text-d);font-size:11px">5항차 확장 별도 협의</td>
+</tr>
+<tr>
+  <td style="color:var(--green);font-weight:700">6</td>
+  <td>Repo 구조</td>
+  <td style="color:var(--green);font-weight:600">To KR 3박 50% / From KR 무상</td>
+  <td style="color:var(--text-d);font-size:11px">2차 제안서 기준</td>
+</tr>
+</table></div>
+</div>
+
+<!-- 섹션 2: 진행 중 -->
+<h3 style="color:var(--amber);margin-top:22px">⏳ 섹션 2 — 현재 진행 중 (아도라 회신 대기)</h3>
+<div class="ac" style="border-color:rgba(210,153,34,.3);padding:16px 20px">
+
+<div style="margin-bottom:16px">
+<div style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:8px">(A) LB 비용 협상 — 핵심 미결 사안</div>
+<div style="font-size:12px;color:var(--text-m);line-height:1.9">
+<span style="color:var(--text);font-weight:600">아도라 입장:</span> LB 100% (2,094명) 기준 계약, 변경 불가<br>
+<span style="color:var(--text);font-weight:600">컨소시엄 입장:</span> 실제 최대 탑승은 90% (1,888명)가 한계.
+100% 탑승 시 고객 만족도 하락 → 아도라 브랜드 한국 데뷔에 부정적.
+따라서 실질적으로 탑승 불가능한 10%에 대해 비용 절감 요청.<br>
+<span style="color:var(--text);font-weight:600">현재 상태:</span> 아도라가 컨소시엄 요청 스케줄을 수령 후 내부 회의 진행 중 (5/21)<br>
+<span style="color:var(--red);font-weight:600">주의:</span> 마케팅 지원금 축소 가능성 있음 (아도라 내부 회의 결과에 따라)<br>
+<span style="color:var(--amber);font-weight:600">회신 예정일:</span> <span style="color:var(--text);font-weight:700">5월 29일 ← 현재 대기 중</span>
+</div>
+</div>
+
+<div style="border-top:1px solid var(--border);padding-top:14px">
+<div style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:10px">(B) 타임라인</div>
+<div style="position:relative;padding-left:20px">
+<div style="position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:var(--border);border-radius:1px"></div>
+<div style="position:relative;margin-bottom:10px;font-size:12px">
+  <div style="position:absolute;left:-17px;top:3px;width:8px;height:8px;border-radius:50%;background:var(--green)"></div>
+  <span style="color:var(--text-d)">5/18</span>&nbsp;&nbsp;<span style="color:var(--text)">컨소시엄 카운터 제안서 (v7.6) 발송</span>
+</div>
+<div style="position:relative;margin-bottom:10px;font-size:12px">
+  <div style="position:absolute;left:-17px;top:3px;width:8px;height:8px;border-radius:50%;background:var(--green)"></div>
+  <span style="color:var(--text-d)">5/21</span>&nbsp;&nbsp;<span style="color:var(--text)">아도라 스케줄 수령, 내부 회의 돌입</span>
+</div>
+<div style="position:relative;margin-bottom:10px;font-size:12px">
+  <div style="position:absolute;left:-17px;top:3px;width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 3px rgba(210,153,34,.3)"></div>
+  <span style="color:var(--amber);font-weight:700">5/29</span>&nbsp;&nbsp;<span style="color:var(--amber);font-weight:700">아도라 회신 예정 ← 현재 대기 중</span>
+</div>
+<div style="position:relative;margin-bottom:10px;font-size:12px">
+  <div style="position:absolute;left:-17px;top:3px;width:8px;height:8px;border-radius:50%;background:var(--border)"></div>
+  <span style="color:var(--text-d)">이후</span>&nbsp;&nbsp;<span style="color:var(--text-d)">비디오 미팅 → 방한 대면 미팅</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 섹션 3: 향후 아젠다 -->
+<h3 style="color:var(--accent);margin-top:22px">🗂 섹션 3 — 향후 아젠다 (사전 논의 필요)</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+<div class="ac" style="border-color:rgba(56,139,253,.25);padding:14px 18px">
+<div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.5px;margin-bottom:6px">01</div>
+<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">봄/가을 항차 구성 결정</div>
+<div style="font-size:11px;color:var(--text-m);line-height:1.8">
+<span style="color:var(--amber)">쟁점:</span> 봄 5항차 + 가을 3항차로 진행할지 결정 필요<br>
+봄: 4항차(20박) 확정 + 5항차(+6박) 추가 여부<br>
+가을: 기존 4항차 → 3항차 축소 검토<br>
+<span style="color:var(--text-d)">의사결정 시점: 아도라 5/29 회신 후</span>
+</div>
+</div>
+
+<div class="ac" style="border-color:rgba(56,139,253,.25);padding:14px 18px">
+<div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.5px;margin-bottom:6px">02</div>
+<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">가을 시즌 계약 형태</div>
+<div style="font-size:11px;color:var(--text-m);line-height:1.8">
+<span style="color:var(--red)">아도라 예상:</span> 봄+가을 일괄 계약 (패키지 딜)<br>
+<span style="color:var(--green)">컨소시엄 입장:</span> 봄만 먼저 계약, 가을은 7월에 별도 계약<br>
+논거: 가을 수요 불확실 → 봄 실적 확인 후 결정이 리스크 관리에 유리<br>
+<span style="color:var(--text-d)">대비: 일괄 계약 요구 시 타협안 준비 필요</span>
+</div>
+</div>
+
+<div class="ac" style="border-color:rgba(56,139,253,.25);padding:14px 18px">
+<div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.5px;margin-bottom:6px">03</div>
+<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">일본 입항 거부 시 안전장치</div>
+<div style="font-size:11px;color:var(--text-m);line-height:1.8">
+<span style="color:var(--red)">리스크:</span> 일본 기항 불가 시 상해·중국 외 대안 항로 없음<br>
+<span style="color:var(--green)">현재 보장:</span> 서면 확인("한국 출발 항로 제한 없음") 확보<br>
+<span style="color:var(--amber)">추가 필요:</span> 시점별 보상 차등 / 대체 항로 공동 개발 의무 / 손실 분담 구조<br>
+<span style="color:var(--text-d)">계약서 반영: 방한 대면 미팅 최종 조율</span>
+</div>
+</div>
+
+<div class="ac" style="border-color:rgba(56,139,253,.25);padding:14px 18px">
+<div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.5px;margin-bottom:6px">04</div>
+<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">대금 지급 조건 변경</div>
+<div style="font-size:11px;color:var(--text-m);line-height:1.8">
+<span style="color:var(--red)">현행 (아도라):</span> 3회 분납 — 25% / 35% / 40% (잔금 D-2개월)<br>
+<span style="color:var(--green)">컨소시엄 요구:</span> 4회 분납 — 20% / 30% / 20% / 30%<br>
+논거: 현금 흐름 부담 분산, 잔금 비율 축소<br>
+<span style="color:var(--text-d)">협의 시점: 방한 대면 미팅 최종 조율 사안</span>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ===== 아젠다 2/3 — 보관용 비활성 (pg-a1에 통합됨) ===== -->
+<template id="pg-a2-archived">
+<div class="pg" id="pg-a2">
+<div class="pt">아젠다 2 · 레그 항차 처리</div>
+<div class="ps">한국 모항 → Repo 레그 필요성 재검토</div>
+<div class="fb"><span class="fs">아젠다1</span><span class="fa">→</span><span class="fs cur">아젠다2 · 레그처리</span><span class="fa">→</span><span class="fs">아젠다3</span></div>
+
+<div class="ac" style="border-color:rgba(86,212,221,.2)">
+<div class="ac-t" style="color:var(--cyan)">2차 제안서 Repo 변화</div>
+<div class="ai" style="color:var(--text)"><span style="color:var(--cyan)">1차 → 2차:</span> Repo 6박 ¥12.1M → 3박 ¥5.4M — 절감 ¥6.7M</div>
+<div class="ai" style="color:var(--text)"><span style="color:var(--cyan)">남은 협상:</span> 한국 모항 일관성 시 Repo 0박 가능</div>
+</div>
+
+<div class="ac"><div class="ac-n">02</div><div class="ac-t">목표</div>
+<div class="ai ai-g">2차 Repo 3박 → 0박 추가 협상 (₩11.8억 추가 절감)</div>
+<div class="ai ai-g">한국 모항 항만비·positioning 아도라 부담 확인</div>
+</div>
+</div>
+
+</template>
+<template id="pg-a3-archived">
+<div class="pg" id="pg-a3">
+<div class="pt">아젠다 3 · 항차 배분 (옵션 A/B)</div>
+<div class="ps">옵션별 항차 구성에 따른 배분 룰메이킹</div>
+<div class="fb"><span class="fs">아젠다1</span><span class="fa">→</span><span class="fs">아젠다2</span><span class="fa">→</span><span class="fs cur">아젠다3 · 배분</span></div>
+
+<div class="toggle-row">
+<div class="tog on opt4" onclick="switchA3('4')">옵션 A · 봄 4항차</div>
+<div class="tog opt5" onclick="switchA3('5')">옵션 B · 봄 5항차</div>
+</div>
+
+<div id="a3-4" style="display:block">
+<h3>옵션 A · 봄 4항차 배분</h3>
+<div class="mr">
+<div class="mc" style="border-color:rgba(56,139,253,.3)"><div class="mc-l" style="color:var(--accent);font-weight:600">1항차 5/6~11 · 5박</div><div class="mc-v" style="font-size:16px"><span class="star">★★★★</span></div><div class="mc-s">어버이날+토일 · 110%</div></div>
+<div class="mc" style="border-color:rgba(63,185,80,.3)"><div class="mc-l" style="color:var(--green);font-weight:600">2항차 5/11~16 · 5박</div><div class="mc-v" style="font-size:16px"><span class="star">★★★★★</span></div><div class="mc-s">황금연휴 · 130%</div></div>
+<div class="mc" style="border-color:rgba(210,153,34,.3)"><div class="mc-l" style="color:var(--amber);font-weight:600">3항차 5/16~21 · 5박</div><div class="mc-v" style="font-size:16px"><span class="star">★★</span></div><div class="mc-s">평일only · 70%</div></div>
+<div class="mc" style="border-color:rgba(86,212,221,.3)"><div class="mc-l" style="color:var(--cyan);font-weight:600">4항차 5/21~27 · 6박</div><div class="mc-v" style="font-size:16px"><span class="star">★★★</span></div><div class="mc-s">금토일+6박 · 90%</div></div>
+</div>
+
+<div class="tp"><table>
+<tr><th>항차</th><th class="r">박수</th><th class="r">가중치</th><th class="r">LB100% (계약)</th></tr>
+<tr><td style="color:var(--green)">2항차 ★★★★★</td><td class="r">5박</td><td class="r">130%</td><td class="r">₩21.7억</td></tr>
+<tr><td style="color:var(--accent)">1항차 ★★★★</td><td class="r">5박</td><td class="r">110%</td><td class="r">₩18.4억</td></tr>
+<tr><td style="color:var(--cyan)">4항차 ★★★</td><td class="r">6박</td><td class="r">90%</td><td class="r">₩18.0억</td></tr>
+<tr><td style="color:var(--amber)">3항차 ★★</td><td class="r">5박</td><td class="r">70%</td><td class="r">₩11.7억</td></tr>
+<tr class="tot"><td>봄 합계</td><td class="r">21박</td><td class="r">400%</td><td class="r">₩69.8억</td></tr>
+</table></div>
+</div>
+
+<div id="a3-5" style="display:none">
+<h3>옵션 B · 봄 5항차 배분</h3>
+<div class="mr">
+<div class="mc" style="border-color:rgba(56,139,253,.3)"><div class="mc-l" style="color:var(--accent);font-weight:600">1항차 5/6~11 · 5박</div><div class="mc-v" style="font-size:16px"><span class="star">★★★★</span></div><div class="mc-s">어버이날+토일 · 110%</div></div>
+<div class="mc" style="border-color:rgba(63,185,80,.3)"><div class="mc-l" style="color:var(--green);font-weight:600">2항차 5/11~16 · 5박</div><div class="mc-v" style="font-size:16px"><span class="star">★★★★★</span></div><div class="mc-s">황금연휴 · 130%</div></div>
+<div class="mc" style="border-color:rgba(210,153,34,.3)"><div class="mc-l" style="color:var(--amber);font-weight:600">3항차 5/16~21 · 5박</div><div class="mc-v" style="font-size:16px"><span class="star">★★</span></div><div class="mc-s">평일only · 70%</div></div>
+<div class="mc" style="border-color:rgba(188,140,255,.3)"><div class="mc-l" style="color:var(--purple);font-weight:600">4항차 5/21~26 · 5박</div><div class="mc-v" style="font-size:16px"><span class="star">★★★</span></div><div class="mc-s">금출발+토일 · 90%</div></div>
+<div class="mc" style="border-color:rgba(240,136,62,.3)"><div class="mc-l" style="color:var(--orange);font-weight:600">5항차 5/26~6/1 · 6박</div><div class="mc-v" style="font-size:16px"><span class="star">★★★</span></div><div class="mc-s">토일+6박 · 100%</div></div>
+</div>
+
+<div class="tp"><table>
+<tr><th>항차</th><th class="r">박수</th><th class="r">가중치</th><th class="r">LB100% (계약)</th></tr>
+<tr><td style="color:var(--green)">2항차 ★★★★★</td><td class="r">5박</td><td class="r">130%</td><td class="r">₩21.6억</td></tr>
+<tr><td style="color:var(--orange)">5항차 ★★★</td><td class="r">6박</td><td class="r">100%</td><td class="r">₩19.9억</td></tr>
+<tr><td style="color:var(--accent)">1항차 ★★★★</td><td class="r">5박</td><td class="r">110%</td><td class="r">₩18.3억</td></tr>
+<tr><td style="color:var(--purple)">4항차 ★★★</td><td class="r">5박</td><td class="r">90%</td><td class="r">₩14.9억</td></tr>
+<tr><td style="color:var(--amber)">3항차 ★★</td><td class="r">5박</td><td class="r">70%</td><td class="r">₩11.6억</td></tr>
+<tr class="tot"><td>봄 합계</td><td class="r">26박</td><td class="r">500%</td><td class="r">₩86.4억</td></tr>
+</table></div>
+</div>
+
+<div class="ac"><div class="ac-n">03</div><div class="ac-t">논의점</div>
+<div class="ai ai-b">옵션 A vs B 선택 — 봄/가을 박수 균형</div>
+<div class="ai ai-b">가중치 차등 과금 원칙: 좋은 날짜 = 비싸게, 나쁜 날짜 = 싸게</div>
+<div class="ai ai-b">2항차(BEST, 황금연휴) 쟁탈전 — 사전 룰메이킹 필수</div>
+<div class="ai ai-b">3항차(WORST): 1사 단독 vs 3사 공동 분담</div>
+<div class="ai ai-b">6박 항차: 6박 프리미엄 부담 분배 방식</div>
+</div>
+</div>
+
+</template>
+
+<!-- ===== 시뮬: LB ===== -->
+<div class="pg" id="pg-sl">
+<div class="pt">LB 비용 절감 시나리오</div>
+<div class="ps">LB 100% 계약 기준 · 90% 비용 적용 시 절감 효과 분석</div>
+
+<div class="ac" style="border-color:rgba(56,139,253,.2);padding:14px 18px;margin-bottom:16px">
+<div style="font-size:12px;color:var(--text-m);line-height:1.9">
+<span style="color:var(--text);font-weight:600">계약 구조</span><br>
+• <span style="color:var(--green);font-weight:600">계약 기준:</span> LB 100% (2,094명) — 확정<br>
+• <span style="color:var(--amber);font-weight:600">컨소시엄 주장:</span> 실제 최대 탑승 90% (1,888명)가 한계. 100% 탑승 시 고객 만족도 하락 → 브랜드 데뷔에 부정적. 따라서 실질 탑승 불가능한 10%에 대한 비용 절감 요청.<br>
+• 이 시뮬레이션은 해당 주장이 관철될 경우의 비용 차이를 검토하는 도구입니다.
+</div>
+</div>
+
+<div class="toggle-row">
+<div class="tog on opt4" onclick="setLBOpt('4')">옵션 A · 봄 21박</div>
+<div class="tog opt5" onclick="setLBOpt('5')">옵션 B · 봄 26박</div>
+</div>
+
+<div class="slider-row">
+<label>LB 비율</label>
+<input type="range" id="lb-slider" min="80" max="100" value="80" oninput="calcLB()">
+<span class="sv" id="lb-pct">80%</span>
+</div>
+
+<div class="mr" id="lb-cards">
+<div class="mc"><div class="mc-l">LB 인원</div><div class="mc-v v-b" id="lb-val">1,691</div><div class="mc-s">캐빈 1,049 × 2 × <span id="lb-pct2">80</span>%</div></div>
+<div class="mc"><div class="mc-l">박당 net 단가</div><div class="mc-v v-b" id="lb-pn">$177,232</div><div class="mc-s" id="lb-pn-krw">₩2.63억</div></div>
+<div class="mc"><div class="mc-l">봄 Net <span id="lb-spring-lbl">(21박)</span></div><div class="mc-v v-b" id="lb-spring">₩55.3억</div><div class="mc-s" id="lb-spring-usd">$3,721,872</div></div>
+<div class="mc"><div class="mc-l">연간 41박+Repo 3박</div><div class="mc-v v-b" id="lb-annual">₩119.7억</div><div class="mc-s" id="lb-annual-usd">$8,061,456</div></div>
+</div>
+
+<div class="tp"><table id="lb-table">
+<tr><th>LB%</th><th class="r">LB</th><th class="r">박당 net</th><th class="r">봄 Net</th><th class="r">연간</th></tr>
+</table></div>
+</div>
+
+<!-- ===== 시뮬: 레그 안분 ===== -->
+<div class="pg" id="pg-sr">
+<div class="pt">레그 안분 시뮬레이션 <span style="font-size:11px;color:var(--text-d)">— v1 자료 유지</span></div>
+<div class="ps">한국 모항으로 본 시즌 레그 불필요 가능성. 향후 시즌 협상용 참고.</div>
+
+<div class="pre">v2 봄 일정은 한국 모항이라 레그 항차 사라짐. 2차 제안서 Repo 3박은 아도라 측 positioning 추정.</div>
+
+<div class="toggle-row">
+<div class="tog on" onclick="setAnbun(100)">100% 안분</div>
+<div class="tog" onclick="setAnbun(75)">75% 안분</div>
+<div class="tog" onclick="setAnbun(50)">50% 안분</div>
+<div class="tog" onclick="setAnbun(0)">안분 없음</div>
+</div>
+
+<div class="mr" id="an-cards">
+<div class="mc"><div class="mc-l">일반 항차 추가분 (4항차 분산)</div><div class="mc-v v-a" id="an-add">+₩1.6억</div></div>
+<div class="mc"><div class="mc-l">현행 항차 비용</div><div class="mc-v v-a" id="an-now">₩18.2억</div></div>
+<div class="mc"><div class="mc-l">목표 항차 비용</div><div class="mc-v v-b" id="an-goal">₩14.8억</div></div>
+<div class="mc"><div class="mc-l">레그사 잔여 부담</div><div class="mc-v v-g" id="an-remain">₩0</div></div>
+</div>
+</div>
+
+<!-- ===== 시뮬: 가중치 ===== -->
+<div class="pg" id="pg-sa">
+<div class="pt">가중치 시뮬레이션 <span class="new-b">8항차/40N 확정</span></div>
+<div class="ps">봄4항차(5/7~5/27 · 20N) + 가을4항차(10/8~10/28 · 20N) · LB별 항차 비용 실시간 조정</div>
+
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;padding:8px 14px;border-radius:8px;background:var(--accent-bg);border:1px solid rgba(56,139,253,.25);font-size:11px">
+<span style="font-weight:700;color:var(--accent)">💱 기준통화 CNY</span>
+<span style="color:var(--text-m)">(중국 선사 계약 기준) · 1 USD = 6.8745 CNY / 1 CNY = ₩216</span>
+<span id="basis-chip" style="margin-left:auto;padding:3px 10px;border-radius:10px;background:var(--bg-hover);border:1px solid var(--border);font-size:10px;font-weight:600;color:var(--text)">8항차/40N · LB90 · 봄50%/가을50% · 기준 CNY</span>
+</div>
+
+<div class="ac" style="border-color:rgba(210,153,34,.2);padding:7px 14px;margin-bottom:12px;font-size:10px;color:var(--text-m)">
+<span style="color:var(--amber);font-weight:600">2027 공휴일 근거</span> &nbsp;·&nbsp;
+부처님오신날 <span style="color:var(--amber)">5/13(목)</span> → 봄2 구간 포함 (연차 3일) &nbsp;·&nbsp;
+한글날 연휴 <span style="color:var(--amber)">10/9(토)·10/11(월 대체)</span> → 가을1 구간 포함 (연차 3일) &nbsp;·&nbsp;
+추석 9/14~16 → 10월 항차 무관
+</div>
+
+<div id="lb-toggle-row" style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+<div class="tog" onclick="setLBmode(100)">LB 100% (계약)</div>
+<div class="tog" onclick="setLBmode(95)">LB 95%</div>
+<div class="tog on" onclick="setLBmode(90)">LB 90% (컨소시엄)</div>
+<div style="margin-left:auto"><button onclick="resetW()" style="padding:5px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--bg-hover);color:var(--text-m);font-family:var(--font)" id="reset-btn">초기화</button></div>
+</div>
+
+<div id="sliders-container" style="margin-bottom:14px"></div>
+
+<div class="ac" style="border-color:rgba(63,185,80,.2);padding:10px 16px;margin-bottom:14px;font-size:11px;color:var(--text-m)">
+<span style="color:var(--text);font-weight:600">적용 NPD (3차 확정)</span> &nbsp;
+<span style="color:var(--green);font-weight:700">¥756</span> /
+<span style="color:var(--green);font-weight:700">$109.97</span> /
+<span style="color:var(--green);font-weight:700">₩163,296</span>
+&nbsp;(1인 1박) &nbsp;·&nbsp; 3차 제안서 직접 고시 기준 · LB 2,094 × 40N + Repo 3N
+</div>
+
+<details class="det" style="margin-bottom:14px">
+<summary>📇 항차 카드 상세 (클릭해서 펼치기 — 보정가중치·기본 대비 증감)</summary>
+<div class="mr" id="w-cards" style="margin-top:10px"></div>
+</details>
+
+<div id="w-diff-box" class="ac" style="border-color:rgba(56,139,253,.15);padding:12px 16px"></div>
+
+<h3>항차별 비용 상세</h3>
+<div class="tp"><table id="w-table"></table></div>
+
+<h3>박수 차이 + 1박 추가 반영 원리</h3>
+
+<div class="note" id="w-note"></div>
+
+<div class="ac" style="border-color:rgba(56,139,253,.2);margin-top:14px">
+<div class="ac-t" style="color:var(--accent)">NPD 산출 근거 및 박수별 비용 적용 원리 <span style="font-size:10px;color:var(--green);font-weight:400">3차 확정 기준</span></div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:10px">
+
+<div>
+<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px">3차 기준 가정 (8항차/40N)</div>
+<div style="font-size:11px;color:var(--text-m);line-height:1.8">
+① NPD ¥756 — 3차 제안서 직접 고시 (역산 불필요)<br>
+② 마케팅 협력비(¥60,000/박) 차감 않음 → 부가수익으로 분리<br>
+③ LB 90% (1,884.6명) 적용 — 계약 LB100%=2,094명 기준<br>
+④ 8항차 운영안 · 40N + Repo 3N
+</div>
+<div class="tp" style="margin-top:10px"><table>
+<tr><th>Step</th><th>항목</th><th class="r">CNY</th><th class="r">KRW</th></tr>
+<tr><td>1</td><td>Regular (¥756×1,884.6×40)</td><td class="r">¥56,990,304</td><td class="r">₩123.1억</td></tr>
+<tr><td>2</td><td>Repo To KR (¥2,016,000×3)</td><td class="r">¥6,048,000</td><td class="r">₩13.1억</td></tr>
+<tr><td>3</td><td>Gross 소계</td><td class="r">¥63,038,304</td><td class="r">₩136.2억</td></tr>
+<tr><td>4</td><td>마케팅비 공제 (¥60,000×40)</td><td class="r" style="color:var(--green)">−¥2,400,000</td><td class="r" style="color:var(--green)">−₩5.2억</td></tr>
+<tr style="background:rgba(56,139,253,.1)"><td><strong>5</strong></td><td><strong>Net 실부담</strong></td><td class="r" style="color:var(--accent);font-weight:700">¥60,638,304</td><td class="r" style="color:var(--accent);font-weight:700">₩131.0억</td></tr>
+</table></div>
+</div>
+
+<div>
+<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px">5박/6박 항차 비용 산출 (3차)</div>
+<div style="font-size:11px;color:var(--text-m);line-height:1.8">
+<span style="color:var(--text);font-weight:600">5박 항차 (가중치 100% 기준):</span><br>
+NPD × LB × 5 − Marketing × 5<br>
+= ¥756 × 2,094 × 5 − ¥60,000 × 5<br>
+= ¥7,915,320 − ¥300,000 = <span style="color:var(--accent);font-weight:700">¥7,615,320</span><br>
+= $1,107,760 / ₩16.4억<br><br>
+<span style="color:var(--text);font-weight:600">6박 항차 = 5박 + 1박 추가분:</span><br>
+추가 1박 = ¥756 × 2,094 − ¥60,000<br>
+= ¥1,583,064 − ¥60,000 = <span style="color:var(--cyan);font-weight:700">¥1,523,064/박</span><br>
+= $221,530 / ₩3.29억<br><br>
+<span style="color:var(--text-d);font-size:10px">※ LB 모드(100%/95%/90%)에 따라 위 금액 자동 변동</span>
+</div>
+<div style="margin-top:8px;padding:8px;background:rgba(56,139,253,.06);border-radius:6px;font-size:10px;color:var(--text-d);line-height:1.7">
+1인 5박 NPD: ₩816,480 &nbsp;|&nbsp; 1인 6박 NPD: ₩979,776<br>
+마케팅비는 수익 시뮬의 체크박스 설정과 무관하게 이 계산에서 고정 차감됨
+</div>
+</div>
+
+</div>
+
+<details class="det">
+<summary>📌 [참고·2차] 보수적 NPD 역산 근거 (구 ¥807 기준 — 클릭해서 펼치기)</summary>
+<div class="det-body" style="font-size:11px;color:var(--text-m);line-height:1.9">
+<div style="color:var(--amber);font-size:10px;margin-bottom:8px">⚠️ 2차 제안서 기준 역산값. 3차에서는 NPD가 제안서에서 직접 고시(¥756)되므로 역산 불필요. 이력 참고용으로만 보존.</div>
+<strong style="color:var(--text)">3대 가정:</strong> ① 마케팅비 미차감 ② Repo 안분 포함 ③ LB 100% 구 기준 2,098명<br>
+Regular (¥756×2,098×40) = ¥63,422,880 → ÷ 41박 = ¥1,694,168/박 → ÷ 2,098명 = <strong style="color:var(--accent)">¥807</strong><br>
+5박: ¥807×2,098×5 − ¥300,000 = ¥8,173,230 ($1,188,740 / ₩17.7억)<br>
+추가 1박: ¥807×2,098 − ¥60,000 = ¥1,634,646 ($237,774 / ₩3.54억)
+</div>
+</details>
+
+</div>
+</div>
+
+<!-- ===== 캐빈 쉐어 시뮬 ===== -->
+<div class="pg" id="pg-csh">
+<div class="pt">캐빈 쉐어 시뮬레이션 <span class="new-b">신규 · 3사 컨소시엄</span></div>
+<div class="ps">각 항차별 캐빈 공유 시뮬레이션 · 공용 배분 비율, 의무화 여부, 정산 단가 의사결정 도구</div>
+
+<h3>왜 캐빈 쉐어가 필요한가?</h3>
+<div class="ac" style="border-color:rgba(86,212,221,.2);padding:14px 18px">
+<div class="ai ai-c"><span style="color:var(--text);font-weight:600">문제:</span> 한 사의 메인 항차라도 그 사의 고객만 살 수 있다면, 다른 사 고객은 그 날짜를 선택 불가 → 가격·일정 매칭 실패 시 캐빈 잔여 발생</div>
+<div class="ai ai-c"><span style="color:var(--text);font-weight:600">해결:</span> 메인 사가 X%를 책임지고, 나머지를 타사가 균등 분할받아 자기 고객에게 판매할 권한 확보 → 모든 사의 고객이 모든 날짜를 선택 가능</div>
+<div class="ai ai-c"><span style="color:var(--text);font-weight:600">효과:</span> 캐빈 활용도 극대화 + 사별 고객층 다양화 + 3사 간 공정성 확보 + 잔여 캐빈 리스크 분산</div>
+</div>
+
+<h3>시뮬레이션 설정</h3>
+<div class="toggle-row">
+<div class="tog on opt4 csh-opt" onclick="setCSHOpt('4')">옵션 A · 봄 4항차</div>
+<div class="tog opt5 csh-opt" onclick="setCSHOpt('5')">옵션 B · 봄 5항차</div>
+</div>
+<div class="toggle-row">
+<div class="tog csh-lb" onclick="setCSHLB(100)">LB 100% (현행)</div>
+<div class="tog on csh-lb" onclick="setCSHLB(80)">LB 80%</div>
+</div>
+
+<div class="slider-row">
+<label>공용 배분 비율</label>
+<input type="range" id="csh-share" min="0" max="50" value="20" step="5" oninput="updateCSHShare()">
+<span class="sv" id="csh-share-v">20%</span>
+</div>
+
+<div class="mr">
+<div class="mc"><div class="mc-l">메인 사 책임 비율</div><div class="mc-v v-b" id="csh-main-pct">80%</div><div class="mc-s">자사 메인 항차</div></div>
+<div class="mc"><div class="mc-l">타사 1곳당 받는 비율</div><div class="mc-v v-c" id="csh-per-pct">10%</div><div class="mc-s">2개 타사가 균등</div></div>
+<div class="mc"><div class="mc-l">메인 사 책임 인원/캐빈</div><div class="mc-v" id="csh-main-ppl">1,353명</div><div class="mc-s" id="csh-main-cabin">677캐빈</div></div>
+<div class="mc"><div class="mc-l">타사 1곳당 받는 인원/캐빈</div><div class="mc-v" id="csh-per-ppl">169명</div><div class="mc-s" id="csh-per-cabin">85캐빈</div></div>
+</div>
+
+<h3>의사결정 옵션</h3>
+<div class="ac">
+<h4>1. 의무화 여부 (판매 권한 명문화)</h4>
+<div class="toggle-row" style="margin-bottom:8px">
+<div class="tog on" id="csh-mand-tog" onclick="toggleCSHMand()">의무화 ON</div>
+</div>
+<div style="font-size:11px;color:var(--text-m);margin-bottom:14px" id="csh-mand-desc">
+<span style="color:var(--green)">의무화 ON:</span> 타사가 받은 비율을 책임 판매 (사전 정산). 메인 사 100% 수입 보장.
+</div>
+
+<h4>2. 정산 단가 (메인사 마진 추가 여부)</h4>
+<div class="slider-row">
+<label>메인사 마진</label>
+<input type="range" id="csh-margin" min="0" max="20" value="0" step="1" oninput="updateCSHMargin()">
+<span class="sv" id="csh-margin-v">0%</span>
+</div>
+<div style="font-size:11px;color:var(--text-m);margin-top:6px" id="csh-margin-desc">
+<span style="color:var(--accent)">0% = NPD 그대로:</span> 메인 사가 타사에 NPD($109.97/박/인) 단가로 캐빈 제공. 마진 없음.
+</div>
+</div>
+
+<h3>항차별 메인 사 지정 <span style="font-size:11px;color:var(--text-m);font-weight:400">— A사/B사/C사 버튼을 클릭하여 변경</span></h3>
+<div class="mr" id="csh-mains"></div>
+
+<h3>시뮬레이션 결과 — 항차별 사별 분배</h3>
+<div class="tp"><table id="csh-voy-table"></table></div>
+
+<h3>사별 책임 합계 (봄 시즌)</h3>
+<div class="mr" id="csh-summary"></div>
+
+<h3>의사결정 가이드</h3>
+<div class="ac" style="border-color:rgba(56,139,253,.2)">
+<h4 style="color:var(--accent)">공용 배분 비율 — 권장: 20%</h4>
+<div class="ai ai-r"><span style="color:var(--text)">10% 미만:</span> 메인 사 의존도 너무 높음. 타사 고객 유치 효과 미미 — 권장 X</div>
+<div class="ai ai-g"><span style="color:var(--text)">20% (균형점, 권장):</span> 메인 사 80% 책임 유지하면서 타사 10%씩 받아 다양한 고객 흡수. 업계 일반적 비율</div>
+<div class="ai ai-r"><span style="color:var(--text)">30% 이상:</span> 메인 사 70% 미만이면 본인 항차 책임감 약화. 마케팅 비용 회수 어려움</div>
+
+<h4 style="color:var(--accent);margin-top:14px">의무화 vs 자율 — 권장: 의무화 (사전 정산)</h4>
+<div class="ai ai-g"><span style="color:var(--text)">의무화 (권장):</span> 타사가 받은 비율을 반드시 인수·판매 책임. 메인 사 안정 수입 + 타사 적극 영업 유도. <strong>3사 컨소시엄 계약서에 명문화 필수</strong></div>
+<div class="ai ai-a"><span style="color:var(--text)">자율 선택 시:</span> 타사가 안 팔면 메인 사 잔여 책임. 메인 사에게 불리한 구조 → 컨소시엄 신뢰 저하 위험</div>
+
+<h4 style="color:var(--accent);margin-top:14px">정산 단가 — 권장: NPD 그대로 (0% 마진)</h4>
+<div class="ai ai-g"><span style="color:var(--text)">NPD 그대로 (권장):</span> 단순·공정. 모든 사가 동일 단가로 거래. 분쟁 소지 없음. 컨소시엄 운영 효율 ↑</div>
+<div class="ai ai-a"><span style="color:var(--text)">마진 5~10%:</span> 메인 사가 마케팅·운영 부담 보상. 타사 입장 단가 부담 ↑. 사전 합의 필요</div>
+<div class="ai ai-r"><span style="color:var(--text)">10% 초과 마진:</span> 타사 메리트 없음 → 캐빈 쉐어 거부 가능성. 권장 X</div>
+
+<h4 style="color:var(--accent);margin-top:14px">3사 컨소시엄 계약서 권장 조항</h4>
+<div class="ai ai-b">제X조: 각 사는 자사 메인 항차의 80%를 책임 판매하며, 나머지 20%는 균등(각 10%) 분할하여 타사 2곳에 의무 배분한다.</div>
+<div class="ai ai-b">제X조: 타사가 배분받은 캐빈은 NPD 단가 그대로 정산하며, 별도 마진 가산 없이 인수·판매한다.</div>
+<div class="ai ai-b">제X조: 의무 배분 캐빈의 판매 부진 시 책임은 인수한 사가 부담하며, 메인 사는 본인 책임분(80%) 외 추가 부담하지 않는다.</div>
+<div class="ai ai-b">제X조: 배분 정산은 출항 N개월 전 사전 정산 방식으로 진행한다 (Pax Guarantee 1,800명 대비 책임 비율 적용).</div>
+</div>
+
+<div class="note">* 모든 계산은 2차 제안서 기준 (NPD $109.97/박/인, Marketing $8,727/박, 환율 1USD=₩1,485)<br>* 캐빈 수는 인원 ÷ 2 (DBL 기준) 환산<br>* 메인 사 지정은 항차 카드의 [A사][B사][C사] 버튼 클릭으로 변경 가능</div>
+</div>
+
+<!-- ===== 27년 대안분석 ===== -->
+<div class="pg" id="pg-alt">
+<div class="pt">27년 대안분석 · MD가 유일한 대안인 이유</div>
+<div class="ps">세레나 이탈 · 벨리시마 소진 — 소거법 + 차터 적합성 비교 (컨소시엄 공유용)</div>
+
+<h3>(a) 소거법 플로우</h3>
+<div class="opt-compare" style="grid-template-columns:1fr 1fr 1fr">
+<div class="opt-card" style="border-color:rgba(248,81,73,.35)">
+<div class="opt-h"><span class="opt-t" style="color:var(--red)">코스타 세레나 → 탈락</span></div>
+<div class="opt-desc">코스타 공식 발표 (2026.2): 27년 4월부터 사보나 모항, 지중해 배치. 26.10.18 도쿄 출발 월드크루즈로 아시아 이탈</div>
+</div>
+<div class="opt-card" style="border-color:rgba(248,81,73,.35)">
+<div class="opt-h"><span class="opt-t" style="color:var(--red)">MSC 벨리시마 → 탈락</span></div>
+<div class="opt-desc">롯데관광 6/17 출발 1항차 기계약. 27년 추가 계약석 없음 <span style="background:rgba(255,220,0,.15);padding:1px 5px;border-radius:3px">【확인필요: 업계 확인 기준】</span></div>
+</div>
+<div class="opt-card" style="border-color:var(--green)">
+<div class="opt-h"><span class="opt-t" style="color:var(--green)">아도라 MD → 유일 대안</span></div>
+<div class="opt-desc">8항차 40박 확보, 5월·10월 황금날짜 선점</div>
+</div>
+</div>
+<div class="note">세레나 출처: Costa Cruises 공식 발표 2026.2 / Cruise Industry News</div>
+
+<h3>(b) 3선박 병렬 제원표</h3>
+<div class="tp"><table>
+<tr><th>항목</th><th class="r">세레나 (26년)</th><th class="r">벨리시마</th><th class="r">아도라 MD</th></tr>
+<tr><td>총 톤수</td><td class="r">114,500 GT</td><td class="r">171,598 GT</td><td class="r">85,619 GT</td></tr>
+<tr><td>건조·리퍼비시</td><td class="r">2007 · 2017</td><td class="r">2019 · 2023.11(상하이)</td><td class="r">2003 · 2024</td></tr>
+<tr><td>총 캐빈</td><td class="r">1,507</td><td class="r">2,217</td><td class="r">1,057 (계약 LB 1,047)</td></tr>
+<tr><td>발코니</td><td class="r">521실 (34.6%)</td><td class="r">1,418실 (약 64%)</td><td class="r" style="color:var(--accent)">620실 (58.7%)</td></tr>
+<tr><td>표준 정원 (DBL)</td><td class="r">3,014</td><td class="r">약 4,488 (최대 5,686)</td><td class="r">2,537 (최대 2,680)</td></tr>
+<tr><td>Space ratio</td><td class="r">38.0</td><td class="r" style="color:var(--red)">31.1 (만석 시)</td><td class="r">33.7</td></tr>
+<tr><td>차터 판매 규모</td><td class="r">2,400명</td><td class="r">약 3,800명</td><td class="r" style="color:var(--amber)">1,885명 (LB90)</td></tr>
+<tr><td>항차당 계약금</td><td class="r">약 ₩27~28억 <span style="background:rgba(255,220,0,.15);padding:1px 5px;border-radius:3px">【확인필요】</span></td><td class="r">₩40억+ 추정 <span style="background:rgba(255,220,0,.15);padding:1px 5px;border-radius:3px">【확인필요】</span></td><td class="r v-g">평균 ₩17.0억 (Gross)</td></tr>
+</table></div>
+<div class="note">주석: 벨리시마 제원은 공개 자료 기준(2026.7). Space ratio는 만석 기준 MD(33.7)보다 낮아 혼잡도 열위.</div>
+
+<h3>(c) 극장 2회 공연 수용률 — 배는 3배 커도 무대는 같다</h3>
+<div class="ac">
+<div style="display:flex;flex-direction:column;gap:14px">
+<div>
+<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-m);margin-bottom:4px"><span>세레나 · 탑승 2,400명 · 1,000석</span><span style="color:var(--amber);font-weight:700">83%</span></div>
+<div style="background:rgba(0,0,0,.3);border-radius:5px;height:18px;overflow:hidden"><div style="width:83%;height:100%;background:var(--amber)"></div></div>
+</div>
+<div>
+<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-m);margin-bottom:4px"><span>벨리시마 · 탑승 3,800명 · 975석 (MSC 공식 테크니컬 시트) — <span style="color:var(--red)">절반 가까이 관람 불가</span></span><span style="color:var(--red);font-weight:700">51%</span></div>
+<div style="background:rgba(0,0,0,.3);border-radius:5px;height:18px;overflow:hidden"><div style="width:51%;height:100%;background:var(--red)"></div></div>
+</div>
+<div>
+<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-m);margin-bottom:4px"><span>아도라 MD · 탑승 1,885명 · 980석 — <span style="color:var(--green)">2회 공연 전원 수용 + 여유</span></span><span style="color:var(--green);font-weight:700">104%</span></div>
+<div style="background:rgba(0,0,0,.3);border-radius:5px;height:18px;overflow:hidden;position:relative">
+<div style="width:100%;height:100%;background:var(--green)"></div>
+<div style="position:absolute;right:0;top:0;bottom:0;width:4%;background:repeating-linear-gradient(45deg,var(--green),var(--green) 3px,rgba(255,255,255,.5) 3px,rgba(255,255,255,.5) 6px);box-shadow:2px 0 0 var(--bg-card)"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="note">MD는 만석(2,094명) 판매 시에도 94% 수용. 벨리시마 전원 관람에는 1일 4회 공연 필요 — 출연진·리허설·기항 일정상 비현실적.</div>
+
+<h3>(d) 차터 적합성 종합표</h3>
+<div class="tp"><table>
+<tr><th>평가 축</th><th>벨리시마</th><th>아도라 메디테라니아</th></tr>
+<tr><td>하드웨어 (선령·음식·서비스)</td><td style="color:var(--green)">우위 (정직 인정)</td><td style="color:var(--text-m)">열위 — 2024 리퍼비시로 보완</td></tr>
+<tr><td>계약 가용성</td><td style="color:var(--red)">없음 (롯데 1항차 소진)</td><td style="color:var(--green)">8항차 확보 ✓</td></tr>
+<tr><td>공연 운영</td><td style="color:var(--red)">구조적 불가 (수용률 51%)</td><td style="color:var(--green)">최적 (전원 수용) ✓</td></tr>
+<tr><td>기항지관광 (오키나와권)</td><td style="color:var(--red)">3,800명 수용 한계 초과</td><td style="color:var(--green)">1,900명 적정 규모 ✓</td></tr>
+<tr><td>판매 부담</td><td style="color:var(--red)">3,500명+ · ₩40억+</td><td style="color:var(--green)">1,885명 · ₩17억 ✓</td></tr>
+<tr><td>리포지셔닝 리스크</td><td style="color:var(--red)">MSC 저가 살포 관행 (롯데 사례)</td><td style="color:var(--green)">레그 포함 계약으로 원천 차단 ✓</td></tr>
+<tr class="tot"><td>차터 사업 적합성</td><td style="color:var(--red);font-weight:700">부적합</td><td style="color:var(--green);font-weight:700">적합</td></tr>
+</table></div>
+
+<h3>결론</h3>
+<div class="ac" style="border-color:var(--accent)">
+<div class="ac-t" style="color:var(--accent)">벨리시마는 더 좋은 배지만, 더 좋은 차터선은 아니다</div>
+<div style="font-size:11px;color:var(--text-m);line-height:1.7;margin-bottom:10px">차터의 승부처인 공연·부대서비스·기항지관광에서 벨리시마는 규모 자체가 구조적 한계이며 계약석마저 존재하지 않는다. 메디테라니아는 하드웨어 열위를 차터 차별화 영역에서 상쇄할 수 있고, 판매 부담이 우리 역량에 정합하는 — 27년 유일하면서도 최적인 대안이다.</div>
+<div class="ai ai-g">항차당 계약금 −37% (17억 vs 27~28억)</div>
+<div class="ai ai-g">판매목표 −22% (1,885명 vs 2,400명)</div>
+<div class="ai ai-g">페널티 발동선 만석의 72% (버퍼 385명)</div>
+</div>
+</div>
+
+<!-- ===== 1항차 수익 검증 (pg-rev2) — pg-rev에 흡수, 보관용 비활성 ===== -->
+<template id="pg-rev2-archived">
+<div class="pg" id="pg-rev2">
+<div class="pt">1항차 수익 검증 <span class="new-b">5박 6일 표준 · 완전 재계산</span></div>
+<div class="ps">스텝/인솔자 캐빈 차감 반영 · LB 90% 적정 상한 적용 · 비전문가도 이해 가능한 단계별 설명</div>
+
+<h3>🎓 STEP 0. 수익 계산이 왜 어려운가? (식당 운영 비유)</h3>
+<div class="ac" style="border-color:rgba(86,212,221,.2);padding:16px 22px">
+<div style="font-size:12px;color:var(--text-m);line-height:1.9">
+<span style="color:var(--text);font-weight:600;font-size:13px">크루즈 차터 = 큰 식당을 1주일 통째로 빌리는 것</span><br><br>
+
+여러분이 큰 식당을 1주일 빌렸다고 상상해보세요. 식당 주인(=아도라)에게 임대료를 내고, 손님(=고객)을 모집해서 음식을 팔아야 합니다.<br><br>
+
+<span style="color:var(--accent);font-weight:600">[1] 임대료 (NPD = 배값)</span>: 손님이 1명만 와도, 가득 차도 식당 주인에게 내는 돈은 동일. <span style="color:var(--text-d)">고정비</span><br>
+<span style="color:var(--accent);font-weight:600">[2] 매출 (판매가)</span>: 손님 한 명당 얼마씩 받느냐 × 손님 수<br>
+<span style="color:var(--accent);font-weight:600">[3] 수수료</span>: 손님이 결제할 때 카드사·여행사·포인트 적립으로 빠져나가는 돈 (받은 매출의 21.5%)<br>
+<span style="color:var(--accent);font-weight:600">[4] 보험료</span>: 손님 1명당 ₩20,000 보험 가입 비용 (인원 수에 비례)<br>
+<span style="color:var(--accent);font-weight:600">[5] 스텝/인솔자 비용</span>: 안내·통역 직원 90명분 캐빈 비용 — <span style="color:var(--red)">수익 없이 임대료만 발생</span><br><br>
+
+<span style="color:var(--text);font-weight:600">수익 = 매출 − (NPD + 수수료 + 보험료 + 스텝 비용)</span><br><br>
+
+여기서 핵심:<br>
+🔹 손님이 안 와도 임대료(NPD)는 똑같이 나감 → <span style="color:var(--red)">덜 팔리면 손실 누적</span><br>
+🔹 손님이 가격을 깎으면(=프로모션 할인) 수수료도 함께 줄어듦 → 손실이 무한정 늘진 않음<br>
+🔹 스텝 90명 캐빈은 1원도 안 받고 임대료만 내므로 <span style="color:var(--red)">고정 손실</span>
+</div>
+</div>
+
+<h3>🏨 STEP 1. 5박 1항차 캐빈 구성 (스텝/인솔자 90실 차감)</h3>
+<div class="ac" style="border-color:rgba(248,81,73,.2);padding:14px 18px;margin-bottom:10px">
+<div style="font-size:11px;color:var(--text-m);line-height:1.8">
+<span style="color:var(--text);font-weight:600">왜 캐빈이 줄어드는가?</span><br>
+선상 운영을 위해 <span style="color:var(--red);font-weight:600">인사이드 80캐빈 + 발코니 10캐빈 = 90캐빈 (180명)</span>이 스텝·인솔자 숙소로 사용됩니다.<br>
+→ 이 캐빈은 매출 0원이지만, 1인당 NPD(₩816,527) + 보험료(₩20,000)는 우리가 부담해야 합니다.<br>
+→ 봄 1항차 5박 기준 스텝 비용: 약 <span style="color:var(--red);font-weight:600">(₩816,527 + ₩20,000) × 180명 = ₩1.5억</span> (고정 손실)
+</div>
+</div>
+<div class="tp"><table id="rev2-cabin"></table></div>
+
+<h3>💰 STEP 2. 1인당 수익 분석 (5박, 프로모션 적용 후)</h3>
+<div class="ac" style="border-color:rgba(56,139,253,.15);padding:14px 18px;margin-bottom:10px">
+<div style="font-size:11px;color:var(--text-m);line-height:1.8">
+<span style="color:var(--text);font-weight:600">매출 → 원가 → 수익 흐름:</span><br>
+① <span style="color:var(--purple)">평균 결제</span>: 고객이 실제 결제한 평균 금액 (정가 − 시점별 할인 가중평균)<br>
+&nbsp;&nbsp;예: 정가 ₩2,890,000인 발코니, 6개월전 35%/5개월전 20%/4개월전 30%/정가 15% 비율로 예약<br>
+&nbsp;&nbsp;→ 평균 결제 = ₩2,890,000×0.15 + (₩2,890,000−₩30만)×0.35 + ... = <span style="color:var(--purple);font-weight:600">₩2,715,000</span><br><br>
+
+② <span style="color:var(--text-d)">총 원가</span> = NPD(배값) + 보험료 + 수수료(결제금액 × 21.5%)<br>
+&nbsp;&nbsp;<span style="color:var(--red)">중요:</span> 수수료는 <span style="color:var(--purple)">결제금액 기준</span>이지 정가 기준이 아닙니다. 할인하면 수수료도 같이 줄어요.<br><br>
+
+③ <span style="color:var(--green)">1인 수익</span> = 평균 결제 − 총 원가
+</div>
+</div>
+<div class="tp"><table id="rev2-perperson"></table></div>
+
+<h3>📊 STEP 3. 모객률별 1항차 수익 (5박 표준)</h3>
+<div class="ac" style="border-color:rgba(63,185,80,.2);padding:14px 18px;margin-bottom:10px">
+<div style="font-size:11px;color:var(--text-m);line-height:1.8">
+<span style="color:var(--text);font-weight:600">왜 LB 90%까지가 적정인가?</span><br>
+LB 100%는 캐빈 1,047실의 100% 가동(2,094명) 의미. 그러나:<br>
+🔹 100% 가까이 모객 시 캐빈 클레임, 룸 트러블 등 발생 시 대체 캐빈 부족 → <span style="color:var(--red)">대응 불가</span><br>
+🔹 스텝/인솔자 캐빈 90실은 이미 차 있음 → 판매 가능 캐빈은 967실 (1,934명)뿐<br>
+🔹 <span style="color:var(--green);font-weight:600">LB 90% (1,903명) = 캐빈 952실 ≈ 판매가능캐빈의 98.4%</span> → 안전 여유 유지<br><br>
+
+<span style="color:var(--text);font-weight:600">계산 흐름:</span><br>
+[매출] 캐빈 타입별 평균 결제 × 사용 인원 합계<br>
+[변동비] 매출에 비례 (수수료 21.5%)<br>
+[고정비] (NPD + 보험료) × 인원 (모객 줄어도 인원당 부과)<br>
+[스텝 비용] (NPD + 보험료) × 180명 = <span style="color:var(--red)">₩1.5억 (모객률 무관 고정)</span><br>
+[순 수익] 매출 − 변동비 − 고정비 − 스텝 비용
+</div>
+</div>
+<div class="tp"><table id="rev2-occ"></table></div>
+
+<h3>📌 STEP 4. 핵심 요약</h3>
+<div class="mr" id="rev2-summary"></div>
+
+<div class="ac" style="border-color:rgba(56,139,253,.2);margin-top:14px">
+<div class="ac-t" style="color:var(--accent)">💡 의사결정 인사이트</div>
+<div style="font-size:11px;color:var(--text-m);line-height:1.8;margin-top:6px">
+<span style="color:var(--text);font-weight:600">1. 적정 운영 (LB 90% 모객)</span><br>
+&nbsp;&nbsp;1항차 5박 예상 수익 = 표시된 ★ 카드 금액 — 봄 4항차로 단순 환산하면 4배 (실제는 가중치·박수 차이 있음)<br><br>
+
+<span style="color:var(--text);font-weight:600">2. 손익분기 모객률의 의미</span><br>
+&nbsp;&nbsp;이 모객률 아래로 모객되면 1항차당 손실. 이 숫자는 우리의 <span style="color:var(--red)">최소 모객 안전선</span>입니다.<br><br>
+
+<span style="color:var(--text);font-weight:600">3. 스텝 비용의 비중</span><br>
+&nbsp;&nbsp;고정 ₩1.5억은 1항차 매출의 약 6~8%에 해당. 4항차 합계 약 ₩6억의 고정 손실 — 컨소시엄 분담 시 사별 ₩2억<br><br>
+
+<span style="color:var(--text);font-weight:600">4. 프로모션·예약비율 슬라이더가 결과를 크게 바꿉니다</span><br>
+&nbsp;&nbsp;위 페이지 「📈 항차별 수익 시뮬」에서 시점별 할인액과 예약비율을 조절하면 이 페이지에도 반영됩니다.<br>
+&nbsp;&nbsp;특히 <span style="color:var(--purple)">정가 예약 비율(현재 자동 산출)</span>이 높을수록 수익 증가.<br><br>
+
+<span style="color:var(--text);font-weight:600">5. 기존 「항차별 수익 시뮬」 수치와 차이가 나는 이유</span><br>
+&nbsp;&nbsp;🔹 기존: 전체 캐빈 1,047실 × 모객률 — 스텝 캐빈 미반영<br>
+&nbsp;&nbsp;🔹 본 검증: <span style="color:var(--red)">판매 가능 967실 + 스텝 비용 ₩1.5억 차감</span> — 더 보수적·정확<br>
+&nbsp;&nbsp;🔹 기존: LB 100%까지 모객 가능 가정<br>
+&nbsp;&nbsp;🔹 본 검증: <span style="color:var(--green)">LB 90% 상한 강조</span> — 현실적 운영 기준
+</div>
+</div>
+
+<div class="note" style="margin-top:14px">* 본 페이지는 5박 6일 기본 항차 1개를 기준으로 계산 (6박 항차는 5박 기준의 1.2배)<br>* 모든 수치는 「항차별 수익 시뮬」 페이지의 슬라이더(판매가/수수료/프로모션 할인·비율)에 연동 — 슬라이더 변경 시 본 페이지도 자동 재계산<br>* 5박 1항차 표준 = 봄 4항차 평균값 기준 (가중치 100%)<br>* 스텝/인솔자 캐빈: 인사이드 80실 + 발코니 10실 = 90실 (180명)<br>* 적정 모객 상한: LB 90% (1,903명) — 그 이상은 룸 트러블 대응 불가</div>
+</div>
+</template>
+
+<!-- ===== 수익 시뮬레이션 (pg-rev) ===== -->
+<div class="pg" id="pg-rev">
+<div class="pt">항차별 예상 수익 시뮬레이션 <span class="new-b">신규</span></div>
+<div class="ps">캐빈 타입별 평균 판매가 기준 · 원가비율·수익률·BEP·대리점 커미션 민감도 분석</div>
+
+<h3>옵션 선택</h3>
+<div class="toggle-row">
+<div class="tog on opt4 rev-opt" onclick="setRevOpt('4', event)">옵션 A · 봄 4항차</div>
+<div class="tog opt5 rev-opt" onclick="setRevOpt('5', event)">옵션 B · 봄 5항차</div>
+</div>
+<div class="toggle-row">
+<div class="tog on" style="cursor:default;opacity:.85">LB 100% 고정 (1,047캐빈 · 2,094명) — 계약 확정</div>
+</div>
+
+<h3>캐빈 타입별 1인 판매가 (5박 기준 · 중간 등급) <span style="font-size:11px;color:var(--text-m);font-weight:400">— 직접 입력 시 즉시 반영</span></h3>
+<div class="tp"><table>
+<tr><th>캐빈 타입</th><th class="r">총실 (스텝제외→가능실)</th><th class="r">비중</th><th class="r">5박 1인 판매가</th><th class="r">6박 1인 (자동, ×1.2)</th></tr>
+<tr><td>🛏️ <span style="color:var(--text-m)">인사이드</span> <span style="font-size:9px;color:var(--text-d)">(프리미엄)</span></td><td class="r">211실 <span style="color:var(--red);font-size:10px">−80→131</span></td><td class="r">20.1%</td><td class="r"><input type="number" id="price-inside" value="2090000" step="10000" onchange="updateRevPrice('inside', this.value)" style="width:120px;padding:4px 8px;border-radius:4px;background:var(--bg-hover);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-variant-numeric:tabular-nums;text-align:right">원</td><td class="r" id="price-inside-6">₩2,508,000</td></tr>
+<tr><td>🌊 <span style="color:var(--cyan)">오션</span> <span style="font-size:9px;color:var(--text-d)">(프리미엄)</span></td><td class="r">166실</td><td class="r">15.8%</td><td class="r"><input type="number" id="price-ocean" value="2390000" step="10000" onchange="updateRevPrice('ocean', this.value)" style="width:120px;padding:4px 8px;border-radius:4px;background:var(--bg-hover);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-variant-numeric:tabular-nums;text-align:right">원</td><td class="r" id="price-ocean-6">₩2,868,000</td></tr>
+<tr><td>🪟 <span style="color:var(--accent)">발코니</span> <span style="font-size:9px;color:var(--text-d)">(프리미엄)</span></td><td class="r">614실 <span style="color:var(--red);font-size:10px">−10→604</span></td><td class="r">58.5%</td><td class="r"><input type="number" id="price-balcony" value="2890000" step="10000" onchange="updateRevPrice('balcony', this.value)" style="width:120px;padding:4px 8px;border-radius:4px;background:var(--bg-hover);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-variant-numeric:tabular-nums;text-align:right">원</td><td class="r" id="price-balcony-6">₩3,468,000</td></tr>
+<tr><td>💎 <span style="color:var(--amber)">스위트</span> <span style="font-size:9px;color:var(--text-d)">(스위트, 중간 등급)</span></td><td class="r">58실</td><td class="r">5.5%</td><td class="r"><input type="number" id="price-suite" value="4390000" step="10000" onchange="updateRevPrice('suite', this.value)" style="width:120px;padding:4px 8px;border-radius:4px;background:var(--bg-hover);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-variant-numeric:tabular-nums;text-align:right">원</td><td class="r" id="price-suite-6">₩5,268,000</td></tr>
+</table></div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;margin-bottom:0">
+<div>
+<h3>비용 파라미터 (조정 가능)</h3>
+<div class="ac" style="padding:14px 18px">
+<div class="slider-row" style="margin:6px 0">
+<label style="min-width:140px">대리점 수수료 <span style="font-size:9px;color:var(--amber)">★핵심</span></label>
+<input type="range" id="fee-agent" min="0" max="30" step="0.5" value="18" oninput="updateRevFee('agent', this.value)">
+<span class="sv" id="fee-agent-v">18%</span>
+</div>
+<div class="slider-row" style="margin:6px 0">
+<label style="min-width:140px">카드 수수료</label>
+<input type="range" id="fee-card" min="0" max="5" step="0.1" value="2.5" oninput="updateRevFee('card', this.value)">
+<span class="sv" id="fee-card-v">2.5%</span>
+</div>
+<div class="slider-row" style="margin:6px 0">
+<label style="min-width:140px">마일리지 적립</label>
+<input type="range" id="fee-mileage" min="0" max="3" step="0.1" value="1" oninput="updateRevFee('mileage', this.value)">
+<span class="sv" id="fee-mileage-v">1%</span>
+</div>
+<div class="slider-row" style="margin:6px 0">
+<label style="min-width:140px">보험료 (1인 고정)</label>
+<input type="range" id="fee-insurance" min="0" max="50000" step="5000" value="20000" oninput="updateRevFee('insurance', this.value)">
+<span class="sv" id="fee-insurance-v">20,000원</span>
+</div>
+<div style="font-size:11px;color:var(--text-d);margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+※ NPD ($109.97/박/인 × ₩1,485)는 2차 제안서 기준 고정 · 보험료는 1인 고정 금액 · 기타는 판매가 대비 %
+</div>
+</div>
+
+</div>
+<div>
+<h3>프로모션 시뮬레이션 (조기예약 할인) <span style="font-size:11px;color:var(--text-m);font-weight:400">— 캐빈 타입별 개별 적용 · 결제금액 기준 수수료 차감</span></h3>
+<div class="ac" style="border-color:rgba(188,140,255,.2);padding:14px 18px">
+
+<h4 style="margin-top:0;color:var(--purple)">① 시점별 할인 금액 (10만원 단위, 최대 50만원)</h4>
+<div class="slider-row" style="margin:6px 0">
+<label style="min-width:160px">6개월 전 할인</label>
+<input type="range" id="promo-d6" min="0" max="500000" step="100000" value="300000" oninput="updatePromo('d6', this.value)">
+<span class="sv" id="promo-d6-v">30만원</span>
+</div>
+<div class="slider-row" style="margin:6px 0">
+<label style="min-width:160px">5개월 전 할인</label>
+<input type="range" id="promo-d5" min="0" max="500000" step="100000" value="200000" oninput="updatePromo('d5', this.value)">
+<span class="sv" id="promo-d5-v">20만원</span>
+</div>
+<div class="slider-row" style="margin:6px 0">
+<label style="min-width:160px">4개월 전 할인</label>
+<input type="range" id="promo-d4" min="0" max="500000" step="100000" value="100000" oninput="updatePromo('d4', this.value)">
+<span class="sv" id="promo-d4-v">10만원</span>
+</div>
+
+<h4 style="margin-top:14px;color:var(--purple)">② 시점별 예약 비율 (수익에 가장 큰 영향)</h4>
+<div class="slider-row" style="margin:6px 0">
+<label style="min-width:160px">6개월 전 예약</label>
+<input type="range" id="promo-r6" min="0" max="80" step="5" value="35" oninput="updatePromo('r6', this.value)">
+<span class="sv" id="promo-r6-v">35%</span>
+</div>
+<div class="slider-row" style="margin:6px 0">
+<label style="min-width:160px">5개월 전 예약</label>
+<input type="range" id="promo-r5" min="0" max="80" step="5" value="20" oninput="updatePromo('r5', this.value)">
+<span class="sv" id="promo-r5-v">20%</span>
+</div>
+<div class="slider-row" style="margin:6px 0">
+<label style="min-width:160px">4개월 전 예약</label>
+<input type="range" id="promo-r4" min="0" max="80" step="5" value="30" oninput="updatePromo('r4', this.value)">
+<span class="sv" id="promo-r4-v">30%</span>
+</div>
+<div class="slider-row" style="margin:6px 0;background:rgba(188,140,255,.08)">
+<label style="min-width:160px"><span style="color:var(--purple)">정가 예약 (이후)</span></label>
+<div style="flex:1;height:6px;background:var(--bg-hover);border-radius:3px;position:relative;overflow:hidden">
+<div id="promo-r0-bar" style="position:absolute;left:0;top:0;height:100%;background:var(--purple);width:15%"></div>
+</div>
+<span class="sv" id="promo-r0-v" style="color:var(--purple)">15%</span>
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:8px 0;border-top:1px solid var(--border);flex-wrap:wrap;gap:10px">
+<div style="font-size:11px;color:var(--text-m)" id="promo-warning">
+<span style="color:var(--text);font-weight:600">자동 조정:</span> 6+5+4개월 예약 비율 합계가 100% 미만일 때 차액은 정가 예약. 100% 초과 시 비례 축소.<br>
+<span style="color:var(--text-d)">슬라이더는 10만원 / 5% 단위 · 캐빈 타입별 개별 할인 적용 · 결제금액 기준 수수료 차감</span>
+</div>
+<div style="text-align:right">
+<div style="font-size:10px;color:var(--text-d)">평균 1인당 할인액</div>
+<div style="font-size:18px;font-weight:700;color:var(--purple)" id="promo-avg">₩175,000</div>
+<div style="font-size:10px;color:var(--text-d)" id="promo-avg-calc">30만×35% + 20만×20% + 10만×30%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<h3>캐빈별 로드율 (판매 목표) <span style="font-size:11px;color:var(--amber);font-weight:400">— 90% 상한 = 룸 트러블 대응 여유 · 판매가능 = 총캐빈 − 스텝캐빈</span></h3>
+<div class="ac" style="padding:14px 18px">
+<div class="tp" style="margin-bottom:16px"><table id="rev-load-table"></table></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<div>
+<div class="slider-row" style="margin:6px 0">
+<label style="min-width:100px">🛏️ 인사이드</label>
+<input type="range" id="load-inside" min="0" max="90" step="5" value="70" oninput="updateCabinLoad('inside', this.value)">
+<span class="sv" id="load-inside-v">70%</span>
+</div>
+<div class="slider-row" style="margin:6px 0">
+<label style="min-width:100px">🌊 오션</label>
+<input type="range" id="load-ocean" min="0" max="90" step="5" value="70" oninput="updateCabinLoad('ocean', this.value)">
+<span class="sv" id="load-ocean-v">70%</span>
+</div>
+</div>
+<div>
+<div class="slider-row" style="margin:6px 0">
+<label style="min-width:100px">🪟 발코니</label>
+<input type="range" id="load-balcony" min="0" max="90" step="5" value="70" oninput="updateCabinLoad('balcony', this.value)">
+<span class="sv" id="load-balcony-v">70%</span>
+</div>
+<div class="slider-row" style="margin:6px 0">
+<label style="min-width:100px">💎 스위트</label>
+<input type="range" id="load-suite" min="0" max="90" step="5" value="70" oninput="updateCabinLoad('suite', this.value)">
+<span class="sv" id="load-suite-v">70%</span>
+</div>
+</div>
+</div>
+<div id="rev-load-summary" style="margin-top:12px;padding:10px 14px;background:var(--bg-hover);border-radius:6px;font-size:12px;line-height:1.8"></div>
+</div>
+
+<h3>1인당 수익 분석 (캐빈 타입별 · 박수별)</h3>
+<div class="tp"><table id="rev-perperson"></table></div>
+
+<h3>항차별 예상 수익</h3>
+<div class="tp"><table id="rev-voy"></table></div>
+
+<h3>봄 시즌 종합</h3>
+<div class="mr">
+<div class="mc"><div class="mc-l">총 매출 (Gross)</div><div class="mc-v v-b" id="rev-total-revenue">-</div><div class="mc-s">전 항차 판매가 합계</div></div>
+<div class="mc"><div class="mc-l">총 원가 (NPD+수수료+보험)</div><div class="mc-v v-a" id="rev-total-cost">-</div><div class="mc-s">모든 비용 포함</div></div>
+<div class="mc"><div class="mc-l">총 수익 (Net Profit)</div><div class="mc-v v-g" id="rev-total-profit">-</div><div class="mc-s">매출 − 원가</div></div>
+<div class="mc"><div class="mc-l">평균 수익률 (매출 대비)</div><div class="mc-v v-g" id="rev-total-rate">-</div><div class="mc-s">수익 ÷ 매출</div></div>
+</div>
+
+<h4 style="margin-top:10px">비용 구성 분해 (총 원가의 내역)</h4>
+<div class="mr">
+<div class="mc" style="border-left:3px solid var(--red)"><div class="mc-l">NPD (배값, 선사 지급)</div><div class="mc-v v-r" id="rev-cost-npd">-</div><div class="mc-s" id="rev-cost-npd-pct">- · LB×박수×$109.97</div></div>
+<div class="mc" style="border-left:3px solid var(--amber)"><div class="mc-l">대리점·카드·마일리지</div><div class="mc-v v-a" id="rev-cost-fee">-</div><div class="mc-s" id="rev-cost-fee-pct">- · 판매가 대비 %</div></div>
+<div class="mc" style="border-left:3px solid var(--purple)"><div class="mc-l">보험료 (고정)</div><div class="mc-v v-p" id="rev-cost-ins">-</div><div class="mc-s" id="rev-cost-ins-pct">- · 1인 고정</div></div>
+<div class="mc" style="border-left:3px solid var(--green)"><div class="mc-l">총 인원</div><div class="mc-v v-g" id="rev-total-ppl">-</div><div class="mc-s" id="rev-total-cabin">- · 봄 합계</div></div>
+</div>
+
+<h3>프로모션 영향 비교 (정가 vs 조기예약 할인 집행)</h3>
+<div class="tp"><table id="rev-promo-compare"></table></div>
+<div class="note" style="margin-bottom:14px">* 프로모션 집행 시 할인된 가격이 결제되므로 대리점·카드·마일리지 수수료(판매가 비례)도 자동 감소 → 매출 감소액보다 수익 감소액이 작음<br>* NPD(배값)와 보험료는 판매가와 무관하므로 변동 없음<br>* 슬라이더 조절 시 즉시 재계산</div>
+
+<h3>모객률별 수익 시나리오 <span style="font-size:11px;color:var(--text-m);font-weight:400">— LB 대비 실제 탑승 인원 시뮬레이션</span></h3>
+
+<div class="ac" style="border-color:rgba(240,136,62,.2);padding:14px 18px;margin-bottom:14px">
+<h4 style="color:var(--orange);margin-top:0">패널티 협상 시나리오 (Pax Guarantee)</h4>
+<div class="toggle-row" style="margin:8px 0">
+<div class="tog penalty-tog" onclick="setPenalty(1800, event)">현행 1,800명 미만 부과</div>
+<div class="tog penalty-tog" onclick="setPenalty(1500, event)">협상 1,500명 미만 부과</div>
+<div class="tog on penalty-tog" onclick="setPenalty(0, event)">최선 부과 없음</div>
+</div>
+<div style="font-size:11px;color:var(--text-m);line-height:1.7">
+<span style="color:var(--text);font-weight:600">2차 제안서:</span> 1,800명 미달 시 ¥300/인·박 부과 (≈ ₩64,800/인·박)<br>
+<span style="color:var(--text);font-weight:600">계산:</span> 패널티 = max(0, 기준선 − 실제 모객) × 박수 × ₩64,800<br>
+<span style="color:var(--purple);font-weight:600">선택된 시나리오:</span> <span id="penalty-current" style="color:var(--text)">부과 없음</span>
+</div>
+</div>
+
+<h4>모객률별 수익 시뮬레이션 표 (정가 기준)</h4>
+<div class="tp"><table id="rev-occ-regular"></table></div>
+
+<h4 style="margin-top:14px">모객률별 수익 시뮬레이션 표 (프로모션 집행 기준)</h4>
+<div class="tp"><table id="rev-occ-promo"></table></div>
+
+<h4 style="margin-top:14px">패널티 시나리오 3종 비교 (현재 선택 LB·옵션 기준)</h4>
+<div class="tp"><table id="rev-penalty-compare"></table></div>
+
+<div class="note" style="margin-bottom:14px">* 모객률 = 실제 탑승 인원 ÷ LB · LB 100% (계약 확정) = 2,094명이 100% 모객 기준<br>* 패널티는 항차별로 부과 — 박수가 길수록(6박) 패널티 부담 증가<br>* "부과 없음" 협상 성공 시 모객 60% 이하 시나리오에서도 패널티 0원 보장</div>
+
+<h3>대리점 수수료 민감도 분석 <span style="font-size:11px;color:var(--text-m);font-weight:400">— 봄 시즌 총 수익 변화</span></h3>
+<div class="tp"><table id="rev-sens"></table></div>
+
+<h3>BEP (Break-Even Point) 분석 <span style="font-size:11px;color:var(--text-m);font-weight:400">— 판매가 ≥ BEP일 때 흑자</span></h3>
+<div class="tp"><table id="rev-bep"></table></div>
+
+<div class="ac" style="border-color:rgba(56,139,253,.2)">
+<div class="ac-t" style="color:var(--accent)">계산식 해설</div>
+<div style="font-size:11px;color:var(--text-m);line-height:1.8;margin-top:6px">
+<span style="color:var(--text);font-weight:600">1인당 원가</span> = NPD ($109.97 × 박수 × 환율) + 보험료 + 판매가 × (대리점% + 카드% + 마일리지%)<br>
+<span style="color:var(--text);font-weight:600">1인당 수익</span> = 판매가 − 원가<br>
+<span style="color:var(--text);font-weight:600">수익률(매출 대비)</span> = 수익 ÷ 판매가<br>
+<span style="color:var(--text);font-weight:600">BEP (손익분기 판매가)</span> = (NPD + 보험료) ÷ (1 − 수수료비율)<br>
+<span style="color:var(--text);font-weight:600">항차 매출/원가/수익</span> = 캐빈 타입별 1인 값 × 캐빈 수 × 2명 (DBL 기준)<br><br>
+<span style="color:var(--text);font-weight:600">예시 — 발코니 프리미엄 5박 판매가 ₩2,890,000 (기본 비용 파라미터):</span><br>
+NPD = $109.97 × 5 × ₩1,485 = ₩816,527<br>
+수수료 = ₩2,890,000 × 21.5% = ₩621,350<br>
+원가 = 816,527 + 20,000 + 621,350 = ₩1,457,877<br>
+수익 = 2,890,000 − 1,457,877 = <span style="color:var(--green)">₩1,432,123 (수익률 49.6%)</span><br>
+BEP = (816,527 + 20,000) ÷ 0.785 = ₩1,065,640 → 현재 판매가가 BEP보다 ₩1,824,360 높음 (안정적 흑자 영역)
+</div>
+</div>
+</div>
+
+</div>
+
+<script>
+// ===== 핵심 상수 (3차 제안 2026-06-26 기준) =====
+const CONFIG = {
+  // LB 인원 (3차 제안 기준: LB_100=2,094)
+  // LB_90/LB_80은 정밀 계산을 위해 소수 저장, 화면 표시 시 반올림
+  LB_100: 2094,
+  LB_90: 1884.6,   // 2094×0.9=1884.6
+  LB_80: 1675.2,   // 2094×0.8=1675.2
+
+  // 캐빈 분배 (총 1,047실) 【확인필요: 3차 룸리스트 미수령, 기존 세부 비율 유지】
+  CABINS: {
+    inside: 211,
+    ocean: 166,
+    balcony: 614,
+    suite: 58,
+    total: 1047
+  },
+
+  // 스텝/인솔자 캐빈 (비용 차감 대상)
+  STEP_CABINS: {
+    inside: 80,
+    balcony: 10,
+    total: 90,
+    pax: 180
+  },
+
+  // 판매 가능 캐빈 (1047 - 90 = 957)
+  SELLABLE: {
+    inside: 131,    // 211 - 80
+    ocean: 166,
+    balcony: 604,   // 614 - 10
+    suite: 58,
+    total: 957,
+    pax: 1914
+  },
+
+  // 환율
+  RATES: {
+    USD_KRW: 1485,
+    CNY_KRW: 216,
+    USD_CNY: 6.8745
+  },
+
+  // NPD (3차 제안 기준: ¥756/인·박)
+  NPD: {
+    CNY: 756,
+    USD: 109.97,    // 756 / 6.8745
+    KRW: 163296,    // 756 × 216
+    // 박수별 1인 NPD (KRW)
+    KRW_5N: 816480,  // 756 × 216 × 5
+    KRW_6N: 979776   // 756 × 216 × 6
+  },
+
+  // 아도라 총액 Gross (3차 제안 — 마케팅 차감 전)
+  // 검산: 756 × 1884.6 × 46 × (정규) + 2,016,000 × 3(Repo) = 71,586,850
+  TOTAL: {
+    CNY: 71586850,
+    USD: 10413392,
+    KRW: 15462760000  // ₩154.6억
+  },
+
+  // 마케팅 협력비 (부가수익으로 분리)
+  MARKETING: {
+    CNY_PER_NIGHT: 60000,
+    USD_PER_NIGHT: 8727,
+    KRW_PER_NIGHT: 12960000,  // ₩1,296만/박
+    // 총액: 46N 기준
+    MKT_TOTAL_46N: { CNY: 2760000, USD: 401484, KRW: 596160000 },
+    // 총액: 40N 기준 (봄5 배제 운영안)
+    MKT_TOTAL_40N: { CNY: 2400000, USD: 349116, KRW: 518400000 }
+  },
+
+  // Pax Guarantee 패널티 (3차: 1,500명/항차 미만 시 ¥300/인·박)
+  PENALTY: {
+    THRESHOLD_DEFAULT: 1500,
+    PER_PAX_NIGHT_CNY: 300,
+    PER_PAX_NIGHT_KRW: 64800
+  },
+
+  // 3차 운항구조 (봄5 + 가을4 = 9항차)
+  NIGHTS_V3: { spring: 26, autumn: 20, regular: 46, repo: 3, total: 49 },
+  VOYAGES_V3: 9,  // 봄5 + 가을4
+
+  // 8항차 운영안 (봄5 배제)
+  NIGHTS_OP: { spring: 20, autumn: 20, regular: 40, repo: 3, total: 43 },
+  VOYAGES_OP: 8,
+
+  // 비용 파라미터 기본값
+  FEES: {
+    AGENT: 18,      // 대리점 수수료 %
+    CARD: 2.5,      // 카드 수수료 %
+    MILEAGE: 1,     // 마일리지 적립 %
+    INSURANCE: 20000  // 보험료 원/인
+  },
+
+  // 판매가 (모두투어 5박 기준, 중간 등급)
+  PRICES: {
+    inside: 2090000,
+    ocean: 2390000,
+    balcony: 2890000,
+    suite: 4390000
+  },
+
+  // 프로모션 (조기예약 할인)
+  PROMO: {
+    DISCOUNT_6M: 300000,
+    DISCOUNT_5M: 200000,
+    DISCOUNT_4M: 100000,
+    RATIO_6M: 35,
+    RATIO_5M: 20,
+    RATIO_4M: 30
+  }
+};
+
+function go(id){
+document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+document.getElementById('pg-'+id).classList.add('on');
+document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+event.currentTarget.classList.add('on');
+window.scrollTo(0,0);
+}
+
+const NPD=CONFIG.NPD.USD,MKT=CONFIG.MARKETING.USD_PER_NIGHT,KRW=CONFIG.RATES.USD_KRW;
+const REPO_N=263866; // 2차 제안서: ¥1,814,400/박
+const REPO_NIGHTS=3;
+const ANNUAL_N=41;
+
+function fmt(n){return n<0?'-₩'+(Math.abs(n)/1e8).toFixed(1)+'억':'₩'+(n/1e8).toFixed(1)+'억'}
+function fmtU(n){return '$'+Math.round(n).toLocaleString()}
+
+// === LB 시뮬 ===
+let lbSpringN = 21; // 기본 옵션 A
+function setLBOpt(opt){
+  lbSpringN = opt === '4' ? 21 : 26;
+  document.querySelectorAll('#pg-sl .tog').forEach(t=>t.classList.remove('on'));
+  event.currentTarget.classList.add('on');
+  document.getElementById('lb-spring-lbl').textContent = opt === '4' ? '(21박)' : '(26박)';
+  calcLB();
+}
+
+function calcLB(){
+const p=+document.getElementById('lb-slider').value;
+document.getElementById('lb-pct').textContent=p+'%';
+document.getElementById('lb-pct2').textContent=p;
+const lb=Math.round(CONFIG.CABINS.total*2*p/100);
+document.getElementById('lb-val').textContent=lb.toLocaleString();
+const perNight=NPD*lb-MKT;
+const spring=perNight*lbSpringN;
+const annual=perNight*ANNUAL_N+REPO_N*REPO_NIGHTS;
+document.getElementById('lb-pn').textContent=fmtU(perNight);
+document.getElementById('lb-pn-krw').textContent='₩'+(perNight*KRW/1e8).toFixed(2)+'억';
+document.getElementById('lb-spring').textContent=fmt(spring*KRW);
+document.getElementById('lb-spring-usd').textContent=fmtU(spring);
+document.getElementById('lb-annual').textContent=fmt(annual*KRW);
+document.getElementById('lb-annual-usd').textContent=fmtU(annual);
+const lb100=Math.round(CONFIG.CABINS.total*2*100/100);
+const pn100=NPD*lb100-MKT;
+let html='<tr><th>LB%</th><th class="r">LB</th><th class="r">박당 net</th><th class="r">봄 Net ('+lbSpringN+'박)</th><th class="r">연간 41박+Repo3박</th><th class="r">계약 대비 절감</th></tr>';
+[100,95,90,85].forEach(pp=>{
+const llb=Math.round(CONFIG.CABINS.total*2*pp/100);
+const pn=NPD*llb-MKT;
+const sp=pn*lbSpringN;
+const an=pn*ANNUAL_N+REPO_N*REPO_NIGHTS;
+const hl=pp==p?'style="color:var(--accent)"':'';
+const lbl=pp===100?' (계약 기준)':pp===90?' (컨소시엄 주장)':pp===95?' (95%)':' (85%)';
+const savingSpring=(pn100-pn)*lbSpringN*KRW;
+const savingAnnual=(pn100-pn)*ANNUAL_N*KRW;
+const savingCell=pp===100
+  ?'<td class="r" style="color:var(--text-d)">—</td>'
+  :`<td class="r" style="color:var(--green);font-weight:600">봄 −${fmt(savingSpring)} / 연간 −${fmt(savingAnnual)}</td>`;
+html+=`<tr ${hl}><td>${pp}%${lbl}</td><td class="r">${llb.toLocaleString()}</td><td class="r">${fmtU(pn)}</td><td class="r">${fmt(sp*KRW)}</td><td class="r">${fmt(an*KRW)}</td>${savingCell}</tr>`;
+});
+document.getElementById('lb-table').innerHTML=html;
+}
+calcLB();
+
+// === 레그 안분 ===
+const LEG_SPRING=438261;
+function setAnbun(pct){
+document.querySelectorAll('#pg-sr .tog').forEach(t=>t.classList.remove('on'));
+event.currentTarget.classList.add('on');
+const addPer=LEG_SPRING*pct/100/4;
+const remain=LEG_SPRING*(100-pct)/100;
+const nowBase=1118748;const goalBase=886165;
+document.getElementById('an-add').textContent=addPer>0?'+₩'+(addPer*KRW/1e8).toFixed(1)+'억':'-';
+document.getElementById('an-now').textContent=fmt((nowBase+addPer)*KRW);
+document.getElementById('an-goal').textContent=fmt((goalBase+addPer)*KRW);
+document.getElementById('an-remain').textContent=remain>0?'₩'+(remain*KRW/1e8).toFixed(1)+'억':'₩0';
+document.getElementById('an-remain').style.color=remain>0?'var(--red)':'var(--green)';
+}
+
+// === 아젠다 3 토글 ===
+function switchA3(opt){
+  document.querySelectorAll('#pg-a3 .tog').forEach(t=>t.classList.remove('on'));
+  event.currentTarget.classList.add('on');
+  document.getElementById('a3-4').style.display = opt === '4' ? 'block' : 'none';
+  document.getElementById('a3-5').style.display = opt === '5' ? 'block' : 'none';
+}
+
+// === 가중치 시뮬 ===
+const voyDataMap = {
+  '8': [
+    {name:'봄1', dates:'5/7~5/12',  nights:5, color:'var(--accent)', stars:'★★★½', defW:110,
+     ports:'사세보·상하이', leavedays:4, holiday:'', season:'5월초◎'},
+    {name:'봄2', dates:'5/12~5/17', nights:5, color:'var(--green)',  stars:'★★★★', defW:130,
+     ports:'나가사키·상하이', leavedays:3, holiday:'부처님오신날 5/13(목)', season:'봄 최우수'},
+    {name:'봄3', dates:'5/17~5/22', nights:5, color:'var(--amber)',  stars:'★★★',  defW:80,
+     ports:'사세보·나하', leavedays:5, holiday:'', season:''},
+    {name:'봄4', dates:'5/22~5/27', nights:5, color:'var(--purple)', stars:'★★★',  defW:90,
+     ports:'사세보·상하이·강정', leavedays:4, holiday:'', season:'5월말'},
+    {name:'가을1', dates:'10/8~10/13',  nights:5, color:'var(--cyan)',   stars:'★★★★', defW:130,
+     ports:'상하이·사세보', leavedays:3, holiday:'한글날연휴 10/9·11', season:'가을 최우수'},
+    {name:'가을2', dates:'10/13~10/18', nights:5, color:'var(--orange)', stars:'★★★★', defW:120,
+     ports:'가나자와*·사카이미나토·나가사키', leavedays:4, holiday:'', season:'*미확정'},
+    {name:'가을3', dates:'10/18~10/23', nights:5, color:'var(--red)',    stars:'★★★',  defW:75,
+     ports:'나하·사세보', leavedays:5, holiday:'', season:''},
+    {name:'가을4', dates:'10/23~10/28', nights:5, color:'var(--text-m)', stars:'★★★½', defW:65,
+     ports:'미야코지마·가고시마', leavedays:4, holiday:'', season:''}
+  ]
+  // defW 합계: 110+130+80+90+130+120+75+65 = 800 = 8×100 ✓
+};
+
+let currentOpt = '8';
+let currentLBmode = 90;  // v4: 디폴트 LB90 (컨소시엄)
+let voyData = voyDataMap[currentOpt];
+
+// v4 수정: 캐빈쉐어·수익 시뮬의 옵션 A/B('4'/'5')가 참조하던 voyDataMap 키가 v3에서
+// '8' 단일 키로 통합되며 undefined 참조(콘솔 TypeError) 발생 → 봄 시즌 슬라이스로 파생.
+// 옵션 B(봄 5항차)의 봄5는 3차 원안(46N)의 5/27~6/2 · 6N — 참고용 합성 항차.
+const springVoys = voyDataMap['8'].filter(v=>v.name.startsWith('봄'));
+const seasonVoyMap = {
+  '4': springVoys,
+  '5': springVoys.concat([{name:'봄5(원안)', dates:'5/27~6/2', nights:6, color:'var(--red)', stars:'—', defW:100,
+    ports:'', leavedays:0, holiday:'', season:'46N 원안 참고'}])
+};
+
+function renderSliders(){
+  const c = document.getElementById('sliders-container');
+  const mkCol = (label, icon, color, range, idxs, totId) => {
+    let h = `<div class="scol"><div class="scol-h" style="color:${color}">${icon} ${label} 4항차 (${range} · 20N)</div>`;
+    idxs.forEach(i=>{
+      const v = voyData[i];
+      const holBadge = v.holiday ? `<span title="${v.holiday}"> 🎌</span>` : '';
+      const tip = `${v.name} ${v.dates} · ${v.nights}박 · 📍 ${v.ports} · 연차 ${v.leavedays}일${v.holiday?' · 🎌 '+v.holiday:''}${v.season?' · '+v.season:''}`;
+      h += `<div class="vrow">
+<span class="vlab" title="${tip}"><span style="color:${v.color};font-weight:600">${v.name}</span> ${v.dates} · ${v.ports} <span class="star">${v.stars}</span>${holBadge}<span style="color:var(--text-d)"> 연차${v.leavedays}</span></span>
+<input type="range" id="w${i+1}" min="50" max="150" value="${v.defW}" oninput="calcW()">
+<span class="wbar" id="w${i+1}bar"></span>
+<span class="sv" id="w${i+1}v">${v.defW}%</span>
+<span class="vamt" id="w${i+1}amt">—</span>
+</div>`;
+    });
+    h += `<div class="stot" id="${totId}"></div></div>`;
+    return h;
+  };
+  const sprIdx = voyData.map((v,i)=>v.name.startsWith('봄')?i:-1).filter(i=>i>=0);
+  const autIdx = voyData.map((v,i)=>v.name.startsWith('가을')?i:-1).filter(i=>i>=0);
+  const totalDef = voyData.reduce((a,v)=>a+v.defW,0);
+  c.innerHTML = `<div class="sim2col">`
+    + mkCol('봄','🌸','var(--green)','5/7~5/27',sprIdx,'spr-total')
+    + mkCol('가을','🍂','var(--amber)','10/8~10/28',autIdx,'aut-total')
+    + `</div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;padding:4px 2px">
+<span id="tot-badge" style="padding:3px 10px;border-radius:10px;background:var(--green-bg);border:1px solid rgba(63,185,80,.3);font-size:11px;font-weight:600;color:var(--green);font-variant-numeric:tabular-nums"></span>
+<span style="font-size:10px;color:var(--text-m)">🚢 리포지셔닝 3N ¥6,048,000 <span style="color:var(--text-d)">($879,773 / ₩13.1억)</span> — 별도 정액, 시즌 배분 제외</span>
+<span style="font-size:11px;color:var(--text-m)">${voyData.length}항차 설정 합 <span style="font-weight:600" id="w-sum">${totalDef}%</span></span>
+</div>
+<div style="font-size:10px;color:var(--text-d);padding:0 2px">가중치는 시즌 내 400% 자동 정규화 — 시즌 예산 불변 · 금액에 마우스 올리면 USD 표시</div>`;
+  document.getElementById('reset-btn').textContent = `초기화 (${voyData.map(v=>v.defW).join('-')})`;
+}
+
+function setOpt(opt){
+  currentOpt = opt;
+  voyData = voyDataMap[opt];
+  renderSliders();
+  calcW();
+}
+
+function resetW(){
+  voyData.forEach((v,i)=>document.getElementById('w'+(i+1)).value=v.defW);
+  calcW();
+}
+
+function setLBmode(m){
+  currentLBmode=m;
+  document.querySelectorAll('#lb-toggle-row .tog').forEach(t=>t.classList.remove('on'));
+  event.currentTarget.classList.add('on');
+  calcW();
+}
+
+function calcW(){
+// ── CNY 기준 계산 (정밀도 보장) ──
+const NPD_C = CONFIG.NPD.CNY;                          // 756
+const MKT_C = CONFIG.MARKETING.CNY_PER_NIGHT;          // 60,000
+const C2K   = CONFIG.RATES.CNY_KRW;                    // 216
+const C2U   = CONFIG.RATES.USD_CNY;                    // 6.8745
+const REPO_C = 2016000 * CONFIG.NIGHTS_OP.repo;        // 2,016,000×3 = 6,048,000 (LB무관 고정)
+const MKT_TOTAL = CONFIG.MARKETING.MKT_TOTAL_40N.CNY;  // 2,400,000
+
+// lb: LB_90 = 1884.6 exact (Math.round 금지)
+const lb = currentLBmode===100 ? CONFIG.LB_100 :
+           currentLBmode===95  ? CONFIG.LB_100*0.95 :
+                                  CONFIG.LB_90;
+
+const w=voyData.map((v,i)=>+document.getElementById('w'+(i+1)).value);
+w.forEach((wi,i)=>document.getElementById('w'+(i+1)+'v').textContent=wi+'%');
+
+const rawSum=w.reduce((a,b)=>a+b,0);
+const expectedSum = voyData.length * 100;
+document.getElementById('w-sum').textContent=rawSum+'%';
+document.getElementById('w-sum').style.color=rawSum===expectedSum?'var(--green)':'var(--amber)';
+
+// ── v4: 봄/가을 독립 예산 (8항차 합산 방식 폐기) ──
+// 시즌예산(CNY) = NPD × LB × 20N (마케팅 차감 전 정규운항 기준)
+// LB90: 756 × 1884.6 × 20 = 28,495,152 → 봄=가을 정확히 50:50
+const springBudget = Math.round(NPD_C * lb * CONFIG.NIGHTS_OP.spring);
+const autumnBudget = Math.round(NPD_C * lb * CONFIG.NIGHTS_OP.autumn);
+const sprIdx = voyData.map((v,i)=>v.name.startsWith('봄')?i:-1).filter(i=>i>=0);
+const autIdx = voyData.map((v,i)=>v.name.startsWith('가을')?i:-1).filter(i=>i>=0);
+
+// 시즌 내 가중치 합을 400%로 자동 정규화 → 배분액 = 시즌예산 × (보정가중치 ÷ 400%)
+// Math.round 후 잔차(±1~2)는 최대 배분 항차에 귀속 → 시즌 합 = 예산 정확 일치
+function allocSeason(budget, idxs){
+  const sumW = idxs.reduce((a,i)=>a+w[i],0);
+  const alloc = idxs.map(i=>Math.round(budget*w[i]/sumW));
+  const resid = budget - alloc.reduce((a,b)=>a+b,0);
+  if(resid!==0){
+    let k=0; alloc.forEach((a,j)=>{if(a>alloc[k])k=j;});
+    alloc[k]+=resid;
+  }
+  return alloc;
+}
+const costs=new Array(voyData.length);          // CNY (정수, 저장·계산 기준)
+allocSeason(springBudget, sprIdx).forEach((a,j)=>costs[sprIdx[j]]=a);
+allocSeason(autumnBudget, autIdx).forEach((a,j)=>costs[autIdx[j]]=a);
+
+// 기준(가중치 100%) = 시즌예산 ÷ 4 (균등 배분) · 보정가중치 = 배분액 ÷ 기준
+const baseVoy=voyData.map((v,i)=>(sprIdx.includes(i)?springBudget:autumnBudget)/sprIdx.length);
+const effW=costs.map((c,i)=>c/baseVoy[i]*100);
+const totalReg = springBudget + autumnBudget;   // LB90: 56,990,304 (정규운항 40N)
+
+// Gross/Net 총액 (검산: LB90 → Gross=63,038,304 / Net=60,638,304)
+const grossTotal = totalReg + REPO_C;
+const netTotal   = grossTotal - MKT_TOTAL;
+
+// ── v4 컴팩트 행 갱신: 미니바 · 배분액(¥ 주표기 + ₩억 보조, USD는 툴팁) ──
+voyData.forEach((v,i)=>{
+  const f=Math.max(1,Math.min(4,Math.round(w[i]/37.5)));
+  document.getElementById('w'+(i+1)+'bar').textContent='▓'.repeat(f)+'░'.repeat(4-f);
+  const amtEl=document.getElementById('w'+(i+1)+'amt');
+  amtEl.innerHTML=`¥${costs[i].toLocaleString()} <span style="color:var(--text-d);font-weight:400">(₩${(costs[i]*C2K/1e8).toFixed(1)}억)</span>`;
+  amtEl.title=`$${Math.round(costs[i]/C2U).toLocaleString()} / ₩${(costs[i]*C2K/1e8).toFixed(1)}억 / 보정 ${effW[i].toFixed(1)}%`;
+});
+const sprSum=sprIdx.reduce((a,i)=>a+costs[i],0);
+const autSum=autIdx.reduce((a,i)=>a+costs[i],0);
+const seasonTot=(el,icon,label,sum,budget,color)=>{
+  document.getElementById(el).innerHTML=`<span style="color:${color}">${icon} ${label} 합계</span> ¥${sum.toLocaleString()} <span style="color:var(--text-m);font-weight:400">($${Math.round(sum/C2U).toLocaleString()} / ₩${(sum*C2K/1e8).toFixed(1)}억)</span> — 예산 대비 ${sum===budget?'<span style="color:var(--green)">✓</span>':`<span style="color:var(--red)">✗ ${(sum-budget>0?'+':'')+(sum-budget).toLocaleString()}</span>`}`;
+};
+seasonTot('spr-total','🌸','봄',sprSum,springBudget,'var(--green)');
+seasonTot('aut-total','🍂','가을',autSum,autumnBudget,'var(--amber)');
+document.getElementById('basis-chip').textContent=`8항차/40N · LB${currentLBmode} · 봄50%/가을50% · 기준 CNY`;
+const totOK = sprSum+autSum===totalReg;
+const totBadge=document.getElementById('tot-badge');
+totBadge.textContent=`봄+가을 = ¥${(sprSum+autSum).toLocaleString()} (정규운항 ${voyData.reduce((a,v)=>a+v.nights,0)}N) ${totOK?'✓':'✗ 불일치'}`;
+totBadge.style.color=totOK?'var(--green)':'var(--red)';
+totBadge.style.background=totOK?'var(--green-bg)':'var(--red-bg)';
+totBadge.style.borderColor=totOK?'rgba(63,185,80,.3)':'rgba(248,81,73,.3)';
+
+const grossKRW   = grossTotal * C2K;
+const grossUSD   = grossTotal / C2U;
+const netKRW     = netTotal * C2K;
+const netUSD     = netTotal / C2U;
+
+let cardsHtml='';
+voyData.forEach((v,i)=>{
+const cnyVal=costs[i];
+const krwVal=cnyVal*C2K;
+const pnC=cnyVal/lb/v.nights, pnU=pnC/C2U;
+const diff=cnyVal-baseVoy[i];
+const diffKrw=diff*C2K;
+const diffSign=diff>=0?'+':'';
+const diffColor=diff>0?'var(--red)':diff<0?'var(--green)':'var(--text-m)';
+const effWStr=effW[i].toFixed(0);
+const holLine = v.holiday ? `<div style="font-size:9px;color:var(--amber);margin-top:2px">🎌 ${v.holiday}</div>` : '';
+const portLine = v.ports ? `<div style="font-size:9px;color:var(--text-d);margin-top:1px">📍 ${v.ports} · 연차${v.leavedays}일</div>` : '';
+cardsHtml+=`<div class="mc" style="border-left:3px solid ${v.color};min-width:185px">
+<div class="mc-l" style="color:${v.color}">${v.name} ${v.dates} (${v.nights}박) <span class="star">${v.stars}</span></div>
+<div class="mc-v" style="font-size:16px">₩${(krwVal/1e8).toFixed(1)}억</div>
+<div class="mc-s">¥${cnyVal.toLocaleString()} · ¥${pnC.toFixed(2)}/pn ($${pnU.toFixed(2)})</div>
+${portLine}${holLine}
+<div style="font-size:10px;color:var(--text-d);margin-top:3px">설정 ${w[i]}% → 보정 ${effWStr}%</div>
+<div style="font-size:11px;color:${diffColor};margin-top:2px;font-weight:600">기본 대비 ${diffSign}₩${(Math.abs(diffKrw)/1e8).toFixed(1)}억</div>
+</div>`;
+});
+document.getElementById('w-cards').innerHTML=cardsHtml;
+
+const totalNights=voyData.reduce((a,v)=>a+v.nights,0);
+document.getElementById('w-diff-box').innerHTML=`
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+<div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+  <div>
+    <div class="mc-l" style="margin-bottom:3px">명목 계약금액 (Gross)</div>
+    <div style="font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text)">₩${(grossKRW/1e8).toFixed(1)}억</div>
+    <div style="font-size:11px;color:var(--text-m);margin-top:2px">$${Math.round(grossUSD).toLocaleString()} / ¥${Math.round(grossTotal).toLocaleString()}</div>
+    <div style="font-size:10px;color:var(--text-d);margin-top:1px">정규운항+리포(3N)</div>
+  </div>
+  <div style="width:1px;background:var(--border);align-self:stretch;min-height:48px"></div>
+  <div>
+    <div class="mc-l" style="color:var(--accent);margin-bottom:3px">Net 실부담 (선사 실지급액)</div>
+    <div style="font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent)">₩${(netKRW/1e8).toFixed(1)}억</div>
+    <div style="font-size:11px;color:var(--accent);opacity:.8;margin-top:2px">$${Math.round(netUSD).toLocaleString()} / ¥${Math.round(netTotal).toLocaleString()}</div>
+    <div style="font-size:10px;color:var(--text-d);margin-top:1px">Gross − 마케팅비¥${MKT_TOTAL.toLocaleString()}</div>
+  </div>
+</div>
+<div style="text-align:right"><div class="mc-l">LB ${currentLBmode}% (${Math.round(lb).toLocaleString()}명)</div><div style="font-size:13px;color:var(--text-m)">봄4+가을4 · 8항차/40N</div></div>
+</div>`;
+
+// 평균 계산 (2패스)
+const krwVals=costs.map(c=>c*C2K);
+const avgCostKrw=krwVals.reduce((a,b)=>a+b,0)/voyData.length;
+
+let tHtml=`<tr><th>항차</th><th class="r">박수</th><th class="r">연차</th><th class="r">설정</th><th class="r">보정</th><th class="r">비용 (KRW·CNY)</th><th class="r">평균 대비</th><th class="r">NPD(유효)/pn</th></tr>`;
+let totalCny=0,totalKrw=0;
+voyData.forEach((v,i)=>{
+const cnyVal=costs[i];
+const krwVal=krwVals[i];
+const pnC=cnyVal/lb/v.nights, pnU=pnC/C2U;
+totalCny+=cnyVal; totalKrw+=krwVal;
+const diffFromAvg=krwVal-avgCostKrw;
+const diffSign=diffFromAvg>=0?'+':'';
+const diffColor=diffFromAvg>0?'var(--red)':diffFromAvg<0?'var(--green)':'var(--text-d)';
+const diffPct=(diffFromAvg/avgCostKrw*100).toFixed(0);
+const holMark = v.holiday ? ' 🎌' : '';
+tHtml+=`<tr><td style="color:${v.color}">${v.name} ${v.dates} <span class="star">${v.stars}</span>${holMark}<br><span style="font-size:9px;color:var(--text-d)">📍 ${v.ports||''}</span></td>
+<td class="r">${v.nights}박</td><td class="r">${v.leavedays}일</td><td class="r">${w[i]}%</td><td class="r">${effW[i].toFixed(1)}%</td>
+<td class="r">₩${(krwVal/1e8).toFixed(1)}억<br><span style="font-size:10px;color:var(--text-d)">¥${(cnyVal/1e6).toFixed(2)}M</span></td>
+<td class="r" style="color:${diffColor};font-weight:600">${diffSign}₩${(Math.abs(diffFromAvg)/1e8).toFixed(1)}억 (${diffSign}${diffPct}%)</td>
+<td class="r">¥${pnC.toFixed(2)}<br><span style="font-size:9px;color:var(--text-d)">$${pnU.toFixed(2)}</span></td></tr>`;
+});
+tHtml+=`<tr style="background:rgba(56,139,253,.06)"><td style="color:var(--accent)">항차 평균</td>
+<td class="r">${(totalNights/voyData.length).toFixed(1)}박</td><td class="r">—</td><td class="r">—</td><td class="r">100%</td>
+<td class="r" style="color:var(--accent);font-weight:600">₩${(avgCostKrw/1e8).toFixed(1)}억<br><span style="font-size:10px;color:var(--text-d)">¥${(totalCny/voyData.length/1e6).toFixed(2)}M</span></td>
+<td class="r" style="color:var(--text-d)">기준</td>
+<td class="r">¥${(totalCny/lb/totalNights).toFixed(2)}<br><span style="font-size:9px;color:var(--text-d)">$${(totalCny/lb/totalNights/C2U).toFixed(2)}</span></td></tr>`;
+tHtml+=`<tr class="tot"><td>정규운항 소계</td><td class="r">${totalNights}박</td><td class="r">—</td><td class="r">${rawSum}%</td><td class="r">${expectedSum}%</td>
+<td class="r">₩${(totalKrw/1e8).toFixed(1)}억<br><span style="font-size:10px;color:var(--text-d)">¥${(totalCny/1e6).toFixed(2)}M</span></td>
+<td class="r" style="color:var(--text-d)">—</td>
+<td class="r">¥${(totalCny/lb/totalNights).toFixed(2)}<br><span style="font-size:9px;color:var(--text-d)">$${(totalCny/lb/totalNights/C2U).toFixed(2)}</span></td></tr>`;
+tHtml+=`<tr style="background:rgba(63,185,80,.05)"><td style="color:var(--green)">+ Repo (3N · LB무관 · 별도 정액, 시즌 배분 제외)</td>
+<td class="r">3박</td><td class="r">—</td><td class="r">—</td><td class="r">—</td>
+<td class="r" style="color:var(--green)">₩${(REPO_C*C2K/1e8).toFixed(1)}억<br><span style="font-size:10px;color:var(--text-d)">¥${(REPO_C/1e6).toFixed(3)}M</span></td>
+<td class="r" style="color:var(--text-d)">고정</td>
+<td class="r" style="color:var(--text-d)">¥2,016,000/박</td></tr>`;
+tHtml+=`<tr style="background:rgba(56,139,253,.10);font-weight:700"><td style="color:var(--accent)">Gross 합계</td>
+<td class="r">${totalNights+3}박</td><td class="r">—</td><td class="r">—</td><td class="r">—</td>
+<td class="r" style="color:var(--accent)">₩${(grossKRW/1e8).toFixed(1)}억<br><span style="font-size:10px">¥${Math.round(grossTotal).toLocaleString()}</span></td>
+<td class="r" style="color:var(--text-d)">—</td>
+<td class="r" style="color:var(--accent)">$${Math.round(grossUSD).toLocaleString()}</td></tr>`;
+document.getElementById('w-table').innerHTML=tHtml;
+
+document.getElementById('w-note').innerHTML=`* 봄4+가을4 · 8항차/40N · LB ${currentLBmode}% (${Math.round(lb).toLocaleString()}명) · NPD ¥${CONFIG.NPD.CNY}/$${CONFIG.NPD.USD}/₩${CONFIG.NPD.KRW.toLocaleString()}<br>
+* Gross(명목 계약금액) ₩${(grossKRW/1e8).toFixed(1)}억($${Math.round(grossUSD).toLocaleString()}/¥${Math.round(grossTotal).toLocaleString()}) · Net(실부담) ₩${(netKRW/1e8).toFixed(1)}억($${Math.round(netUSD).toLocaleString()}/¥${Math.round(netTotal).toLocaleString()})<br>
+* 봄/가을 독립 예산 각 ¥${springBudget.toLocaleString()} (NPD×LB×20N) · 시즌 내 가중치 400% 정규화 배분 — 가중치 조절 시 시즌 내 분배만 재계산, 시즌 예산·Gross/Net 총액 불변 · 🎌 봄2·가을1 공휴일 프리미엄 반영`;
+}
+
+renderSliders();
+calcW();
+
+// === 캐빈 쉐어 시뮬 ===
+let cshOpt = '4';
+let cshLB = 80;
+let cshShare = 20;
+let cshMandatory = true;
+let cshMargin = 0;
+let cshMains = { '4': ['A', 'B', 'C', 'A'], '5': ['A', 'B', 'C', 'A', 'C'] };
+
+const CSH_COMPANIES = ['A', 'B', 'C'];
+const CSH_COLORS = { 'A': 'var(--accent)', 'B': 'var(--green)', 'C': 'var(--purple)' };
+const CSH_BG = { 'A': 'rgba(56,139,253,.18)', 'B': 'rgba(63,185,80,.18)', 'C': 'rgba(188,140,255,.18)' };
+const CSH_BORDER = { 'A': 'rgba(56,139,253,.4)', 'B': 'rgba(63,185,80,.4)', 'C': 'rgba(188,140,255,.4)' };
+
+function setCSHOpt(opt) {
+  cshOpt = opt;
+  document.querySelectorAll('#pg-csh .csh-opt').forEach(t=>t.classList.remove('on'));
+  event.currentTarget.classList.add('on');
+  renderCSHMains();
+  calcCSH();
+}
+
+function setCSHLB(mode) {
+  cshLB = mode;
+  document.querySelectorAll('#pg-csh .csh-lb').forEach(t=>t.classList.remove('on'));
+  event.currentTarget.classList.add('on');
+  calcCSH();
+}
+
+function updateCSHShare() {
+  cshShare = +document.getElementById('csh-share').value;
+  document.getElementById('csh-share-v').textContent = cshShare + '%';
+  calcCSH();
+}
+
+function toggleCSHMand() {
+  cshMandatory = !cshMandatory;
+  const t = document.getElementById('csh-mand-tog');
+  t.textContent = cshMandatory ? '의무화 ON' : '자율 모드';
+  if (cshMandatory) t.classList.add('on'); else t.classList.remove('on');
+  const desc = document.getElementById('csh-mand-desc');
+  if (cshMandatory) {
+    desc.innerHTML = '<span style="color:var(--green)">의무화 ON:</span> 타사가 받은 비율을 책임 판매 (사전 정산). 메인 사 100% 수입 보장.';
+  } else {
+    desc.innerHTML = '<span style="color:var(--amber)">자율 모드:</span> 타사 판매 권한만 제공. 안 팔리면 메인 사 잔여 책임 — 컨소시엄 신뢰 저하 위험.';
+  }
+  calcCSH();
+}
+
+function updateCSHMargin() {
+  cshMargin = +document.getElementById('csh-margin').value;
+  document.getElementById('csh-margin-v').textContent = cshMargin + '%';
+  const desc = document.getElementById('csh-margin-desc');
+  if (cshMargin === 0) {
+    desc.innerHTML = '<span style="color:var(--accent)">0% = NPD 그대로:</span> 메인 사가 타사에 NPD($109.97/박/인) 단가로 캐빈 제공. 마진 없음.';
+  } else {
+    desc.innerHTML = '<span style="color:var(--amber)">마진 ' + cshMargin + '%:</span> 메인 사가 NPD + ' + cshMargin + '% 단가로 타사 제공. 마케팅·운영 부담 보상.';
+  }
+  calcCSH();
+}
+
+function setCSHMain(idx, company) {
+  cshMains[cshOpt][idx] = company;
+  renderCSHMains();
+  calcCSH();
+}
+
+function renderCSHMains() {
+  const voys = seasonVoyMap[cshOpt];
+  const container = document.getElementById('csh-mains');
+  let html = '';
+  voys.forEach((v, i) => {
+    const main = cshMains[cshOpt][i];
+    let btns = '';
+    CSH_COMPANIES.forEach(c => {
+      const sel = main === c;
+      const sty = sel ? 'background:' + CSH_BG[c] + ';color:' + CSH_COLORS[c] + ';border-color:' + CSH_BORDER[c] + ';font-weight:700' : '';
+      btns += '<div class="tog" style="padding:5px 0;font-size:11px;flex:1;text-align:center;' + sty + '" onclick="setCSHMain(' + i + ",'" + c + "')\">" + c + '사</div>';
+    });
+    html += '<div class="mc" style="border-left:3px solid ' + v.color + ';min-width:170px">' +
+      '<div class="mc-l" style="color:' + v.color + ';font-weight:600">' + v.name + '</div>' +
+      '<div style="font-size:11px;color:var(--text-m);margin:2px 0">' + v.dates + ' · ' + v.nights + '박 · ' + v.stars + '</div>' +
+      '<div style="display:flex;gap:4px;margin-top:6px">' + btns + '</div>' +
+      '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function calcCSH() {
+  const voys = seasonVoyMap[cshOpt];
+  const lb = cshLB === 100 ? CONFIG.LB_100 : CONFIG.LB_80;
+  const mains = cshMains[cshOpt];
+  const sharePct = cshShare / 100;
+  const mainPct = 1 - sharePct;
+  const otherCount = CSH_COMPANIES.length - 1;
+  const perOtherPct = otherCount > 0 ? sharePct / otherCount : 0;
+  const marginMult = 1 + cshMargin / 100;
+  
+  document.getElementById('csh-main-pct').textContent = (mainPct * 100).toFixed(0) + '%';
+  document.getElementById('csh-per-pct').textContent = (perOtherPct * 100).toFixed(1) + '%';
+  const mainPplCalc = Math.round(lb * mainPct);
+  const perPplCalc = Math.round(lb * perOtherPct);
+  document.getElementById('csh-main-ppl').textContent = mainPplCalc.toLocaleString() + '명';
+  document.getElementById('csh-main-cabin').textContent = Math.round(mainPplCalc/2) + '캐빈';
+  document.getElementById('csh-per-ppl').textContent = perPplCalc.toLocaleString() + '명';
+  document.getElementById('csh-per-cabin').textContent = Math.round(perPplCalc/2) + '캐빈';
+  
+  const companyTotal = {};
+  CSH_COMPANIES.forEach(c => {
+    companyTotal[c] = { ppl: 0, cost: 0, mainVoys: 0, sharedVoys: 0, mainCost: 0, sharedCost: 0, marginIn: 0, marginOut: 0 };
+  });
+  
+  let voyHtml = '<tr><th>항차</th><th class="r">메인</th>';
+  CSH_COMPANIES.forEach(c => {
+    voyHtml += '<th class="r" style="color:' + CSH_COLORS[c] + '">' + c + '사<br><span style="font-size:9px;color:var(--text-d);font-weight:400">인원(캐빈)·비용</span></th>';
+  });
+  voyHtml += '<th class="r">항차 총액</th></tr>';
+  
+  let totalVoyCost = 0;
+  
+  voys.forEach((v, i) => {
+    const main = mains[i];
+    const voyCost = NPD * lb * v.nights - MKT * v.nights;
+    totalVoyCost += voyCost;
+    
+    voyHtml += '<tr><td><span style="color:' + v.color + ';font-weight:600">' + v.name + '</span> ' + v.dates + '<br><span style="font-size:10px;color:var(--text-d)">' + v.nights + '박 · ' + v.stars + '</span></td>' +
+               '<td class="r" style="color:' + CSH_COLORS[main] + ';font-weight:600">' + main + '사</td>';
+    
+    CSH_COMPANIES.forEach(c => {
+      let ppl, cost;
+      if (c === main) {
+        ppl = lb * mainPct;
+        cost = voyCost * mainPct;
+        const marginIncome = voyCost * sharePct * (marginMult - 1);
+        companyTotal[c].marginIn += marginIncome;
+        companyTotal[c].mainVoys++;
+        companyTotal[c].mainCost += cost;
+      } else {
+        ppl = lb * perOtherPct;
+        cost = voyCost * perOtherPct * marginMult;
+        const marginExpense = voyCost * perOtherPct * (marginMult - 1);
+        companyTotal[c].marginOut += marginExpense;
+        companyTotal[c].sharedVoys++;
+        companyTotal[c].sharedCost += cost;
+      }
+      
+      companyTotal[c].ppl += ppl;
+      companyTotal[c].cost += cost;
+      
+      const cabin = Math.round(ppl / 2);
+      const isMainBg = c === main ? 'background:' + CSH_BG[c].replace('.18', '.08') + ';' : '';
+      voyHtml += '<td class="r" style="' + isMainBg + 'color:' + CSH_COLORS[c] + '">' + Math.round(ppl).toLocaleString() + ' (' + cabin + ')<br><span style="font-size:10px;color:var(--text-d)">₩' + (cost*KRW/1e8).toFixed(2) + '억</span></td>';
+    });
+    
+    voyHtml += '<td class="r">₩' + (voyCost*KRW/1e8).toFixed(1) + '억</td></tr>';
+  });
+  
+  voyHtml += '<tr class="tot"><td>봄 합계</td><td class="r">-</td>';
+  CSH_COMPANIES.forEach(c => {
+    voyHtml += '<td class="r" style="color:' + CSH_COLORS[c] + '">' + Math.round(companyTotal[c].ppl).toLocaleString() + '명<br>₩' + (companyTotal[c].cost*KRW/1e8).toFixed(1) + '억</td>';
+  });
+  voyHtml += '<td class="r">₩' + (totalVoyCost*KRW/1e8).toFixed(1) + '억</td></tr>';
+  
+  document.getElementById('csh-voy-table').innerHTML = voyHtml;
+  
+  let cardsHtml = '';
+  CSH_COMPANIES.forEach(c => {
+    const total = companyTotal[c];
+    const netMargin = total.marginIn - total.marginOut;
+    let marginStr = '';
+    if (cshMargin > 0) {
+      const sign = netMargin >= 0 ? '+' : '';
+      const color = netMargin >= 0 ? 'var(--green)' : 'var(--red)';
+      marginStr = '<div style="font-size:10px;color:' + color + ';margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.05)">마진 net: ' + sign + '₩' + (netMargin*KRW/1e8).toFixed(2) + '억<br><span style="color:var(--text-d)">(수익 ' + (total.marginIn*KRW/1e8).toFixed(2) + '억 − 비용 ' + (total.marginOut*KRW/1e8).toFixed(2) + '억)</span></div>';
+    }
+    
+    cardsHtml += '<div class="mc" style="border-left:3px solid ' + CSH_COLORS[c] + '">' +
+      '<div class="mc-l" style="color:' + CSH_COLORS[c] + ';font-weight:600">' + c + '사 총 책임</div>' +
+      '<div class="mc-v" style="font-size:18px">₩' + (total.cost*KRW/1e8).toFixed(1) + '억</div>' +
+      '<div class="mc-s">' + fmtU(total.cost) + ' · 인원 ' + Math.round(total.ppl).toLocaleString() + '명</div>' +
+      '<div style="font-size:10px;color:var(--text-d);margin-top:5px">메인 ' + total.mainVoys + '항차 (₩' + (total.mainCost*KRW/1e8).toFixed(1) + '억)<br>공유 ' + total.sharedVoys + '항차 (₩' + (total.sharedCost*KRW/1e8).toFixed(1) + '억)</div>' +
+      marginStr +
+      '</div>';
+  });
+  document.getElementById('csh-summary').innerHTML = cardsHtml;
+}
+
+renderCSHMains();
+calcCSH();
+
+// === 항차별 수익 시뮬 ===
+let revOpt = '4';
+let revLB = 100; // LB 100% 고정 (CONFIG.LB_100 = 2,094명)
+let revPrices = {
+  inside: CONFIG.PRICES.inside,
+  ocean: CONFIG.PRICES.ocean,
+  balcony: CONFIG.PRICES.balcony,
+  suite: CONFIG.PRICES.suite
+};
+let revFees = {
+  agent: CONFIG.FEES.AGENT,
+  card: CONFIG.FEES.CARD,
+  mileage: CONFIG.FEES.MILEAGE,
+  insurance: CONFIG.FEES.INSURANCE
+};
+
+const REV_CABIN_TYPES = [
+  {key:'inside', name:'🛏️ 인사이드 (프리미엄)', cabins:CONFIG.CABINS.inside, ratio:CONFIG.CABINS.inside/CONFIG.CABINS.total, color:'var(--text-m)'},
+  {key:'ocean', name:'🌊 오션 (프리미엄)', cabins:CONFIG.CABINS.ocean, ratio:CONFIG.CABINS.ocean/CONFIG.CABINS.total, color:'var(--cyan)'},
+  {key:'balcony', name:'🪟 발코니 (프리미엄)', cabins:CONFIG.CABINS.balcony, ratio:CONFIG.CABINS.balcony/CONFIG.CABINS.total, color:'var(--accent)'},
+  {key:'suite', name:'💎 스위트', cabins:CONFIG.CABINS.suite, ratio:CONFIG.CABINS.suite/CONFIG.CABINS.total, color:'var(--amber)'}
+];
+
+function setRevOpt(opt) {
+  revOpt = opt;
+  document.querySelectorAll('#pg-rev .rev-opt').forEach(t=>t.classList.remove('on'));
+  event.currentTarget.classList.add('on');
+  calcRevLoadTable();
+  calcRev();
+}
+
+function setRevLB(mode) {
+  revLB = mode;
+  document.querySelectorAll('#pg-rev .rev-lb').forEach(t=>t.classList.remove('on'));
+  event.currentTarget.classList.add('on');
+  calcRev();
+}
+
+function updateRevPrice(key, val) {
+  revPrices[key] = +val;
+  document.getElementById('price-' + key + '-6').textContent = '₩' + Math.round(+val * 1.2).toLocaleString();
+  calcRevLoadTable();
+  calcRev();
+}
+
+function updateRevFee(key, val) {
+  revFees[key] = +val;
+  if (key === 'insurance') {
+    document.getElementById('fee-' + key + '-v').textContent = (+val).toLocaleString() + '원';
+  } else {
+    document.getElementById('fee-' + key + '-v').textContent = val + '%';
+  }
+  calcRevLoadTable();
+  calcRev();
+}
+
+function fmtMan(n) {
+  return '₩' + Math.round(n/10000).toLocaleString() + '만';
+}
+function fmtEok(n) {
+  return '₩' + (n/1e8).toFixed(2) + '억';
+}
+
+function calcPersonProfit(priceFull, nights, usePromo, feePct, insurance, promoSegs) {
+  const npd = NPD * nights * KRW;
+  if (!usePromo) {
+    const fee = priceFull * feePct;
+    const cost = npd + insurance + fee;
+    return { revenue: priceFull, npd, fee, ins: insurance, cost, profit: priceFull - cost };
+  }
+  let avgRev = 0, avgFee = 0;
+  promoSegs.forEach(s => {
+    const pay = Math.max(priceFull - s.disc, 0);
+    avgRev += pay * s.ratio;
+    avgFee += pay * feePct * s.ratio;
+  });
+  const cost = npd + insurance + avgFee;
+  return { revenue: avgRev, npd, fee: avgFee, ins: insurance, cost, profit: avgRev - cost };
+}
+
+function calcRev() {
+  const voys = seasonVoyMap[revOpt];
+  const cabinsByType = {};
+  REV_CABIN_TYPES.forEach(t => {
+    cabinsByType[t.key] = Math.round(SELLABLE_CABINS[t.key] * cabinLoads[t.key] / 100);
+  });
+  
+  const feePct = (revFees.agent + revFees.card + revFees.mileage) / 100;
+  const insurance = revFees.insurance;
+  
+  // 예약 비율 정규화 (합계 > 100% 시 비례 축소)
+  const rSum = revPromo.r6 + revPromo.r5 + revPromo.r4;
+  let r6, r5, r4, r0;
+  if (rSum > 100) {
+    r6 = revPromo.r6 / rSum * 100;
+    r5 = revPromo.r5 / rSum * 100;
+    r4 = revPromo.r4 / rSum * 100;
+    r0 = 0;
+  } else {
+    r6 = revPromo.r6;
+    r5 = revPromo.r5;
+    r4 = revPromo.r4;
+    r0 = 100 - rSum;
+  }
+  
+  function mkSegs(nights) {
+    return [
+      { ratio: r6/100, disc: revPromo.d6 * (nights/5) },
+      { ratio: r5/100, disc: revPromo.d5 * (nights/5) },
+      { ratio: r4/100, disc: revPromo.d4 * (nights/5) },
+      { ratio: r0/100, disc: 0 }
+    ];
+  }
+
+  // 정가 예약 표시 갱신
+  const r0El = document.getElementById('promo-r0-v');
+  if (r0El) r0El.textContent = r0.toFixed(0) + '%';
+  const r0Bar = document.getElementById('promo-r0-bar');
+  if (r0Bar) r0Bar.style.width = r0 + '%';
+  const warnEl = document.getElementById('promo-warning');
+  if (warnEl && rSum > 100) {
+    warnEl.innerHTML = '<span style="color:var(--amber);font-weight:600">⚠ 예약 비율 합계 ' + rSum + '%로 100% 초과 → 비례 축소 적용 (정가 예약 0%)</span>';
+  } else if (warnEl) {
+    warnEl.innerHTML = '<span style="color:var(--text);font-weight:600">자동 조정:</span> 6+5+4개월 예약 비율 합계가 100% 미만일 때 차액은 정가 예약. 100% 초과 시 비례 축소.<br><span style="color:var(--text-d)">슬라이더는 10만원 / 5% 단위 · 캐빈 타입별 개별 할인 적용 · 결제금액 기준 수수료 차감</span>';
+  }
+  
+  // === 1인당 분석 ===
+  const nightsSet = [...new Set(voys.map(v => v.nights))].sort();
+  let perHtml = '<tr><th>캐빈</th><th class="r">박수</th><th class="r">정가</th><th class="r">평균 결제</th><th class="r">NPD</th><th class="r">수수료</th><th class="r">보험료</th><th class="r">총원가</th><th class="r">수익</th><th class="r">수익률(매출)</th><th class="r">BEP</th></tr>';
+  
+  nightsSet.forEach(n => {
+    REV_CABIN_TYPES.forEach(t => {
+      const priceFull = revPrices[t.key] * (n / 5);
+      const r = calcPersonProfit(priceFull, n, true, feePct, insurance, mkSegs(n));
+      const pColor = r.profit >= 0 ? 'var(--green)' : 'var(--red)';
+      const bep = (r.npd + insurance) / (1 - feePct);
+      
+      perHtml += '<tr><td style="color:' + t.color + '">' + t.name + '</td>' +
+        '<td class="r">' + n + '박</td>' +
+        '<td class="r" style="color:var(--text-d)">' + fmtMan(priceFull) + '</td>' +
+        '<td class="r" style="color:var(--purple);font-weight:600">' + fmtMan(r.revenue) + '</td>' +
+        '<td class="r" style="color:var(--text-d)">' + fmtMan(r.npd) + '</td>' +
+        '<td class="r" style="color:var(--text-d)">' + fmtMan(r.fee) + '</td>' +
+        '<td class="r" style="color:var(--text-d)">' + (insurance/10000).toFixed(0) + '만</td>' +
+        '<td class="r">' + fmtMan(r.cost) + '</td>' +
+        '<td class="r" style="color:' + pColor + ';font-weight:600">' + fmtMan(r.profit) + '</td>' +
+        '<td class="r" style="color:' + pColor + ';font-weight:600">' + (r.profit/r.revenue*100).toFixed(1) + '%</td>' +
+        '<td class="r" style="color:var(--amber)">' + fmtMan(bep) + '</td></tr>';
+    });
+  });
+  document.getElementById('rev-perperson').innerHTML = perHtml;
+  
+  // === 항차별 (프로모션 적용) ===
+  let voyHtml = '<tr><th>항차</th><th class="r">박수</th><th class="r">캐빈 합계</th><th class="r">탑승 인원</th><th class="r">매출</th><th class="r">원가</th><th class="r">수익</th><th class="r">수익률</th></tr>';
+  let totalRev = 0, totalCost = 0;
+  let totalCabins = Object.values(cabinsByType).reduce((a,b)=>a+b,0);
+  
+  voys.forEach(v => {
+    let vRev = 0, vCost = 0;
+    REV_CABIN_TYPES.forEach(t => {
+      const priceFull = revPrices[t.key] * (v.nights / 5);
+      const r = calcPersonProfit(priceFull, v.nights, true, feePct, insurance, mkSegs(v.nights));
+      const ppl = cabinsByType[t.key] * 2;
+      vRev += r.revenue * ppl;
+      vCost += r.cost * ppl;
+    });
+    const vProfit = vRev - vCost;
+    const vRate = vProfit / vRev;
+    totalRev += vRev;
+    totalCost += vCost;
+    const pColor = vProfit >= 0 ? 'var(--green)' : 'var(--red)';
+    
+    voyHtml += '<tr><td style="color:' + v.color + '">' + v.name + ' ' + v.dates + ' <span class="star">' + v.stars + '</span></td>' +
+      '<td class="r">' + v.nights + '박</td>' +
+      '<td class="r">' + totalCabins + '실</td>' +
+      '<td class="r">' + (totalCabins * 2).toLocaleString() + '명</td>' +
+      '<td class="r">' + fmtEok(vRev) + '</td>' +
+      '<td class="r">' + fmtEok(vCost) + '</td>' +
+      '<td class="r" style="color:' + pColor + ';font-weight:600">' + fmtEok(vProfit) + '</td>' +
+      '<td class="r" style="color:' + pColor + ';font-weight:600">' + (vRate*100).toFixed(1) + '%</td></tr>';
+  });
+  
+  const totalProfit = totalRev - totalCost;
+  const totalRate = totalProfit / totalRev;
+  const tColor = totalProfit >= 0 ? 'var(--green)' : 'var(--red)';
+  const totalNights = voys.reduce((a,v)=>a+v.nights,0);
+  
+  voyHtml += '<tr class="tot"><td>봄 합계</td><td class="r">' + totalNights + '박</td>' +
+    '<td class="r">' + (totalCabins * voys.length) + '실</td>' +
+    '<td class="r">' + (totalCabins * voys.length * 2).toLocaleString() + '명</td>' +
+    '<td class="r">' + fmtEok(totalRev) + '</td>' +
+    '<td class="r">' + fmtEok(totalCost) + '</td>' +
+    '<td class="r" style="color:' + tColor + ';font-weight:600">' + fmtEok(totalProfit) + '</td>' +
+    '<td class="r" style="color:' + tColor + ';font-weight:600">' + (totalRate*100).toFixed(1) + '%</td></tr>';
+  document.getElementById('rev-voy').innerHTML = voyHtml;
+  
+  // === 종합 카드 ===
+  document.getElementById('rev-total-revenue').textContent = fmtEok(totalRev);
+  document.getElementById('rev-total-cost').textContent = fmtEok(totalCost);
+  document.getElementById('rev-total-profit').textContent = fmtEok(totalProfit);
+  document.getElementById('rev-total-profit').style.color = tColor;
+  document.getElementById('rev-total-rate').textContent = (totalRate*100).toFixed(1) + '%';
+  document.getElementById('rev-total-rate').style.color = tColor;
+  
+  // === 비용 분해 (프로모션 적용 기준) ===
+  let totalNPDCost = 0, totalFeeCost = 0, totalInsCost = 0, totalPpl = 0;
+  let totalRevFull = 0, totalCostFull = 0;
+  voys.forEach(v => {
+    REV_CABIN_TYPES.forEach(t => {
+      const priceFull = revPrices[t.key] * (v.nights / 5);
+      const rP = calcPersonProfit(priceFull, v.nights, true, feePct, insurance, mkSegs(v.nights));
+      const rF = calcPersonProfit(priceFull, v.nights, false, feePct, insurance, mkSegs(v.nights));
+      const ppl = cabinsByType[t.key] * 2;
+      totalNPDCost += rP.npd * ppl;
+      totalFeeCost += rP.fee * ppl;
+      totalInsCost += rP.ins * ppl;
+      totalPpl += ppl;
+      totalRevFull += rF.revenue * ppl;
+      totalCostFull += rF.cost * ppl;
+    });
+  });
+  
+  document.getElementById('rev-cost-npd').textContent = fmtEok(totalNPDCost);
+  document.getElementById('rev-cost-npd-pct').textContent = (totalNPDCost/totalCost*100).toFixed(1) + '% · LB × 박수 × $109.97';
+  document.getElementById('rev-cost-fee').textContent = fmtEok(totalFeeCost);
+  document.getElementById('rev-cost-fee-pct').textContent = (totalFeeCost/totalCost*100).toFixed(1) + '% · 결제금액 × ' + (feePct*100).toFixed(1) + '%';
+  document.getElementById('rev-cost-ins').textContent = fmtEok(totalInsCost);
+  document.getElementById('rev-cost-ins-pct').textContent = (totalInsCost/totalCost*100).toFixed(1) + '% · ' + (insurance/10000).toFixed(1) + '만원/인';
+  document.getElementById('rev-total-ppl').textContent = totalPpl.toLocaleString() + '명';
+  document.getElementById('rev-total-cabin').textContent = (totalPpl/2).toLocaleString() + '캐빈 · 봄 합계';
+  
+  // === 평균 할인액 표시 ===
+  const avgDisc = (revPromo.d6 * r6 + revPromo.d5 * r5 + revPromo.d4 * r4) / 100;
+  const pAvgEl = document.getElementById('promo-avg');
+  if (pAvgEl) pAvgEl.textContent = '₩' + Math.round(avgDisc).toLocaleString();
+  const pAvgCalc = document.getElementById('promo-avg-calc');
+  if (pAvgCalc) pAvgCalc.textContent = (revPromo.d6/10000).toFixed(0) + '만×' + r6.toFixed(0) + '% + ' + (revPromo.d5/10000).toFixed(0) + '만×' + r5.toFixed(0) + '% + ' + (revPromo.d4/10000).toFixed(0) + '만×' + r4.toFixed(0) + '%';
+  
+  // === 프로모션 비교 표 ===
+  const totalProfitFull = totalRevFull - totalCostFull;
+  const totalRateFull = totalRevFull > 0 ? totalProfitFull / totalRevFull : 0;
+  const revDiff = totalRevFull - totalRev;
+  const costDiff = totalCostFull - totalCost;
+  const profitDiff = totalProfit - totalProfitFull;
+  const pColorP = profitDiff >= 0 ? 'var(--green)' : 'var(--red)';
+  const sign = profitDiff >= 0 ? '+' : '−';
+  const rateDiff = (totalRate - totalRateFull) * 100;
+  
+  let promoHtml = '<tr><th>시나리오</th><th class="r">총 매출</th><th class="r">총 원가</th><th class="r">총 수익</th><th class="r">수익률</th></tr>';
+  promoHtml += '<tr><td>📌 정가 (기존안, 할인 없음)</td><td class="r">' + fmtEok(totalRevFull) + '</td><td class="r">' + fmtEok(totalCostFull) + '</td><td class="r" style="color:var(--green);font-weight:600">' + fmtEok(totalProfitFull) + '</td><td class="r" style="color:var(--green);font-weight:600">' + (totalRateFull*100).toFixed(1) + '%</td></tr>';
+  promoHtml += '<tr style="background:rgba(188,140,255,.08)"><td style="color:var(--purple);font-weight:600">🎯 프로모션 (캐빈별 개별 적용, 평균 −₩' + Math.round(avgDisc).toLocaleString() + '/인)</td><td class="r">' + fmtEok(totalRev) + '</td><td class="r">' + fmtEok(totalCost) + '</td><td class="r" style="color:' + (totalProfit>=0?'var(--green)':'var(--red)') + ';font-weight:600">' + fmtEok(totalProfit) + '</td><td class="r" style="color:' + (totalProfit>=0?'var(--green)':'var(--red)') + ';font-weight:600">' + (totalRate*100).toFixed(1) + '%</td></tr>';
+  promoHtml += '<tr class="tot"><td>차이 (프로모션 영향)</td><td class="r" style="color:var(--red)">−' + (Math.abs(revDiff)/1e8).toFixed(2) + '억 (매출↓)</td><td class="r" style="color:var(--green)">−' + (Math.abs(costDiff)/1e8).toFixed(2) + '억 (수수료↓)</td><td class="r" style="color:' + pColorP + ';font-weight:600">' + sign + '₩' + (Math.abs(profitDiff)/1e8).toFixed(2) + '억</td><td class="r" style="color:' + pColorP + ';font-weight:600">' + (rateDiff >= 0 ? '+' : '') + rateDiff.toFixed(1) + '%p</td></tr>';
+  
+  document.getElementById('rev-promo-compare').innerHTML = promoHtml;
+  
+  // === 민감도 분석 ===
+  let sensHtml = '<tr><th>대리점 수수료</th><th class="r">총 매출</th><th class="r">총 원가</th><th class="r">총 수익</th><th class="r">수익률</th><th class="r">현재(' + revFees.agent + '%) 대비</th></tr>';
+  const sensRates = [10, 12, 14, 16, 18, 20, 22, 24, 26];
+  
+  sensRates.forEach(rate => {
+    const sFeePct = (rate + revFees.card + revFees.mileage) / 100;
+    let sRev = 0, sCost = 0;
+    voys.forEach(v => {
+      const npd = NPD * v.nights * KRW;
+      REV_CABIN_TYPES.forEach(t => {
+        const priceFull = revPrices[t.key] * (v.nights / 5);
+        const segments = [
+          { ratio: r6/100, disc: revPromo.d6 * (v.nights/5) },
+          { ratio: r5/100, disc: revPromo.d5 * (v.nights/5) },
+          { ratio: r4/100, disc: revPromo.d4 * (v.nights/5) },
+          { ratio: r0/100, disc: 0 }
+        ];
+        let avgRev = 0, avgFee = 0;
+        segments.forEach(s => {
+          const pay = Math.max(priceFull - s.disc, 0);
+          avgRev += pay * s.ratio;
+          avgFee += pay * sFeePct * s.ratio;
+        });
+        const cppCost = npd + insurance + avgFee;
+        const ppl = cabinsByType[t.key] * 2;
+        sRev += avgRev * ppl;
+        sCost += cppCost * ppl;
+      });
+    });
+    const sProfit = sRev - sCost;
+    const sRate = sProfit / sRev;
+    const diff = sProfit - totalProfit;
+    const isCur = Math.abs(rate - revFees.agent) < 0.01;
+    const hl = isCur ? 'style="background:var(--accent-bg);font-weight:600"' : '';
+    const pColor = sProfit >= 0 ? 'var(--green)' : 'var(--red)';
+    const dColor = diff >= 0 ? 'var(--green)' : 'var(--red)';
+    const dSign = diff >= 0 ? '+' : '−';
+    
+    sensHtml += '<tr ' + hl + '><td>' + rate + '%' + (isCur ? ' ← 현재' : '') + '</td>' +
+      '<td class="r">' + fmtEok(sRev) + '</td>' +
+      '<td class="r">' + fmtEok(sCost) + '</td>' +
+      '<td class="r" style="color:' + pColor + '">' + fmtEok(sProfit) + '</td>' +
+      '<td class="r" style="color:' + pColor + '">' + (sRate*100).toFixed(1) + '%</td>' +
+      '<td class="r" style="color:' + dColor + '">' + (isCur ? '-' : dSign + '₩' + (Math.abs(diff)/1e8).toFixed(2) + '억') + '</td></tr>';
+  });
+  document.getElementById('rev-sens').innerHTML = sensHtml;
+  
+  // === BEP 분석 ===
+  let bepHtml = '<tr><th>캐빈</th><th class="r">박수</th><th class="r">정가</th><th class="r">평균 결제</th><th class="r">BEP</th><th class="r">현재(평균결제) − BEP</th><th>상태</th></tr>';
+  nightsSet.forEach(n => {
+    REV_CABIN_TYPES.forEach(t => {
+      const priceFull = revPrices[t.key] * (n / 5);
+      const r = calcPersonProfit(priceFull, n, true, feePct, insurance, mkSegs(n));
+      const npd = NPD * n * KRW;
+      const bep = (npd + insurance) / (1 - feePct);
+      const margin = r.revenue - bep;
+      const marginPct = margin / bep;
+      const mColor = margin >= 0 ? 'var(--green)' : 'var(--red)';
+      const status = margin >= 0 
+        ? '<span style="color:var(--green);font-weight:600">✓ 흑자 (+' + (marginPct*100).toFixed(1) + '%)</span>'
+        : '<span style="color:var(--red);font-weight:600">✗ 적자 (' + (marginPct*100).toFixed(1) + '%)</span>';
+      
+      bepHtml += '<tr><td style="color:' + t.color + '">' + t.name + '</td>' +
+        '<td class="r">' + n + '박</td>' +
+        '<td class="r" style="color:var(--text-d)">' + fmtMan(priceFull) + '</td>' +
+        '<td class="r" style="color:var(--purple)">' + fmtMan(r.revenue) + '</td>' +
+        '<td class="r" style="color:var(--amber)">' + fmtMan(bep) + '</td>' +
+        '<td class="r" style="color:' + mColor + ';font-weight:600">' + (margin >= 0 ? '+' : '') + fmtMan(margin) + '</td>' +
+        '<td>' + status + '</td></tr>';
+    });
+  });
+  document.getElementById('rev-bep').innerHTML = bepHtml;
+}
+
+const SELLABLE_CABINS = {
+  inside: CONFIG.CABINS.inside - CONFIG.STEP_CABINS.inside,
+  ocean: CONFIG.CABINS.ocean,
+  balcony: CONFIG.CABINS.balcony - CONFIG.STEP_CABINS.balcony,
+  suite: CONFIG.CABINS.suite
+};
+let cabinLoads = { inside: 70, ocean: 70, balcony: 70, suite: 70 };
+
+let revPromo = { d6: CONFIG.PROMO.DISCOUNT_6M, d5: CONFIG.PROMO.DISCOUNT_5M, d4: CONFIG.PROMO.DISCOUNT_4M, r6: CONFIG.PROMO.RATIO_6M, r5: CONFIG.PROMO.RATIO_5M, r4: CONFIG.PROMO.RATIO_4M };
+let penaltyThreshold = CONFIG.PENALTY.THRESHOLD_DEFAULT; // 0 = 부과없음, 1500, 1800
+const PENALTY_PER_PAX_NIGHT = CONFIG.PENALTY.PER_PAX_NIGHT_KRW; // ¥300 × ₩216
+
+function updateCabinLoad(type, val) {
+  cabinLoads[type] = +val;
+  document.getElementById('load-' + type + '-v').textContent = val + '%';
+  calcRevLoadTable();
+  calcRev();
+  calcOccupancy();
+}
+
+function calcRevLoadTable() {
+  const feePct = (revFees.agent + revFees.card + revFees.mileage) / 100;
+  const insurance = revFees.insurance;
+  const voys = seasonVoyMap[revOpt];
+
+  const stepEx = { inside: CONFIG.STEP_CABINS.inside, ocean: 0, balcony: CONFIG.STEP_CABINS.balcony, suite: 0 };
+  const totalCabins = { inside: CONFIG.CABINS.inside, ocean: CONFIG.CABINS.ocean, balcony: CONFIG.CABINS.balcony, suite: CONFIG.CABINS.suite };
+
+  // promo ratios (same logic as calcRev)
+  const rSum = revPromo.r6 + revPromo.r5 + revPromo.r4;
+  let r6p, r5p, r4p, r0p;
+  if (rSum > 100) {
+    r6p = revPromo.r6 / rSum * 100; r5p = revPromo.r5 / rSum * 100;
+    r4p = revPromo.r4 / rSum * 100; r0p = 0;
+  } else {
+    r6p = revPromo.r6; r5p = revPromo.r5; r4p = revPromo.r4; r0p = 100 - rSum;
+  }
+
+  function mkSegs(nights) {
+    return [
+      { ratio: r6p/100, disc: revPromo.d6 * (nights/5) },
+      { ratio: r5p/100, disc: revPromo.d5 * (nights/5) },
+      { ratio: r4p/100, disc: revPromo.d4 * (nights/5) },
+      { ratio: r0p/100, disc: 0 }
+    ];
+  }
+
+  let html = '<tr><th>캐빈</th><th class="r">총실</th><th class="r">스텝제외</th><th class="r">가능실</th><th class="r">로드율</th><th class="r">판매실</th><th class="r">판매인원</th><th class="r">1인수익(5박)</th><th class="r">소계(5박)</th><th class="r">1인수익(6박)</th><th class="r">소계(6박)</th></tr>';
+
+  let totSold = 0, totPpl = 0, totSubRev5 = 0, totSubRev6 = 0;
+  let totGross5 = 0, totGross6 = 0;
+
+  function signedEok(n) {
+    return n < 0 ? '-' + fmtEok(Math.abs(n)) : fmtEok(n);
+  }
+  function costEok(n) {
+    return n > 0 ? '-' + fmtEok(n) : fmtEok(0);
+  }
+  function amountColor(n) {
+    return n >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+
+  REV_CABIN_TYPES.forEach(t => {
+    const tot = totalCabins[t.key];
+    const ex = stepEx[t.key];
+    const sell = SELLABLE_CABINS[t.key];
+    const ld = cabinLoads[t.key];
+    const sold = Math.round(sell * ld / 100);
+    const ppl = sold * 2;
+
+    const p5 = revPrices[t.key];
+    const p6 = revPrices[t.key] * 1.2;
+    const r5 = calcPersonProfit(p5, 5, true, feePct, insurance, mkSegs(5));
+    const r6 = calcPersonProfit(p6, 6, true, feePct, insurance, mkSegs(6));
+
+    const sub5 = r5.profit * ppl;
+    const sub6 = r6.profit * ppl;
+    const gross5 = r5.revenue * ppl;
+    const gross6 = r6.revenue * ppl;
+
+    totSold += sold; totPpl += ppl;
+    totSubRev5 += sub5; totSubRev6 += sub6;
+    totGross5 += gross5; totGross6 += gross6;
+
+    const c5 = r5.profit >= 0 ? 'var(--green)' : 'var(--red)';
+    const c6 = r6.profit >= 0 ? 'var(--green)' : 'var(--red)';
+
+    html += '<tr><td style="color:' + t.color + '">' + t.name + '</td>' +
+      '<td class="r">' + tot + '실</td>' +
+      '<td class="r" style="color:var(--red)">' + (ex > 0 ? '−' + ex : '−') + '</td>' +
+      '<td class="r">' + sell + '실</td>' +
+      '<td class="r"><span style="color:var(--accent);font-weight:600">' + ld + '%</span></td>' +
+      '<td class="r">' + sold + '실</td>' +
+      '<td class="r">' + ppl.toLocaleString() + '명</td>' +
+      '<td class="r" style="color:' + c5 + ';font-weight:600">' + fmtMan(r5.profit) + '</td>' +
+      '<td class="r" style="color:' + c5 + '">' + fmtEok(sub5) + '</td>' +
+      '<td class="r" style="color:' + c6 + ';font-weight:600">' + fmtMan(r6.profit) + '</td>' +
+      '<td class="r" style="color:' + c6 + '">' + fmtEok(sub6) + '</td></tr>';
+  });
+
+  const charterCost5 = CONFIG.NPD.KRW * CONFIG.LB_100 * 5;
+  const charterCost6 = CONFIG.NPD.KRW * CONFIG.LB_100 * 6;
+  const insuranceCost = totPpl * insurance;
+  const commission5 = totGross5 * feePct;
+  const commission6 = totGross6 * feePct;
+  const penaltyCost5 = calcPenalty(totPpl, 5, penaltyThreshold);
+  const penaltyCost6 = calcPenalty(totPpl, 6, penaltyThreshold);
+  const net5 = totGross5 - charterCost5 - insuranceCost - commission5 - penaltyCost5;
+  const net6 = totGross6 - charterCost6 - insuranceCost - commission6 - penaltyCost6;
+  const wtAvgLoad = totSold > 0 ? Math.round(totSold / CONFIG.SELLABLE.total * 100) : 0;
+
+  html += '<tr class="tot"><td>합계 (판매 캐빈)</td>' +
+    '<td class="r">1,049실</td><td class="r" style="color:var(--red)">−90</td><td class="r">959실</td>' +
+    '<td class="r" style="color:var(--accent)">' + wtAvgLoad + '% 평균</td>' +
+    '<td class="r">' + totSold + '실</td><td class="r">' + totPpl.toLocaleString() + '명</td>' +
+    '<td class="r">—</td><td class="r" style="color:var(--green)">' + fmtEok(totSubRev5) + '</td>' +
+    '<td class="r">—</td><td class="r" style="color:var(--green)">' + fmtEok(totSubRev6) + '</td></tr>';
+
+  html += '<tr style="color:var(--red)"><td>스텝/인솔자 비용 (차감)</td>' +
+    '<td class="r" colspan="5" style="font-size:10px;color:var(--text-d)">인사이드 80실 + 발코니 10실 = 90실 × 2명 × NPD</td>' +
+    '<td class="r">180명</td><td class="r">—</td>' +
+    '<td class="r">−' + fmtEok(stepCost5) + '</td>' +
+    '<td class="r">—</td><td class="r">−' + fmtEok(stepCost6) + '</td></tr>';
+
+  const nc5 = net5 >= 0 ? 'var(--green)' : 'var(--red)';
+  const nc6 = net6 >= 0 ? 'var(--green)' : 'var(--red)';
+  html += '<tr class="tot"><td style="color:var(--accent)">순수익 (스텝 차감 후)</td>' +
+    '<td class="r" colspan="6"></td><td class="r">—</td>' +
+    '<td class="r" style="color:' + nc5 + ';font-weight:700">' + fmtEok(net5) + '</td>' +
+    '<td class="r">—</td><td class="r" style="color:' + nc6 + ';font-weight:700">' + fmtEok(net6) + '</td></tr>';
+
+  const el = document.getElementById('rev-load-table');
+  if (el) el.innerHTML = html;
+
+  const pen5 = calcPenalty(totPpl, 5, penaltyThreshold);
+  const pen6 = calcPenalty(totPpl, 6, penaltyThreshold);
+  const final5 = net5 - pen5;
+  const final6 = net6 - pen6;
+  const penLabel = penaltyThreshold === 0 ? '없음' : penaltyThreshold + '명 기준';
+  const sf = document.getElementById('rev-load-summary');
+  if (sf) sf.innerHTML =
+    '<span style="color:var(--text-m)">판매인원</span> <strong>' + totPpl.toLocaleString() + '명</strong>' +
+    ' (LB ' + (totPpl / CONFIG.LB_100 * 100).toFixed(1) + '%)&nbsp;&nbsp;|&nbsp;&nbsp;' +
+    '<span style="color:var(--text-m)">패널티 기준</span> ' + penLabel + '&nbsp;&nbsp;|&nbsp;&nbsp;' +
+    '<span style="color:var(--amber)">5박 패널티</span> ' + (pen5 > 0 ? '−' + fmtEok(pen5) : '없음') + '&nbsp;&nbsp;|&nbsp;&nbsp;' +
+    '<span style="color:var(--amber)">6박 패널티</span> ' + (pen6 > 0 ? '−' + fmtEok(pen6) : '없음') + '&nbsp;&nbsp;|&nbsp;&nbsp;' +
+    '<span style="color:var(--green)">5박 최종수익</span> ' + fmtEok(final5) + '&nbsp;&nbsp;|&nbsp;&nbsp;' +
+    '<span style="color:var(--green)">6박 최종수익</span> ' + fmtEok(final6);
+}
+
+function updatePromo(key, val) {
+  revPromo[key] = +val;
+  const isRatio = key.startsWith('r');
+  document.getElementById('promo-' + key + '-v').textContent =
+    isRatio ? (+val).toFixed(0) + '%' : (+val/10000).toFixed(0) + '만원';
+  calcRevLoadTable();
+  calcRev();
+  calcOccupancy();
+}
+
+function setPenalty(threshold, ev) {
+  penaltyThreshold = threshold;
+  document.querySelectorAll('#pg-rev .penalty-tog').forEach(t=>t.classList.remove('on'));
+  const target = (ev && ev.currentTarget) || (typeof event !== 'undefined' && event && event.currentTarget);
+  if (target) target.classList.add('on');
+  const label = threshold === 0 ? '부과 없음 (최선 협상)' : threshold === 1500 ? '1,500명 미만 부과 (협상 중간안)' : '1,800명 미만 부과 (현행)';
+  document.getElementById('penalty-current').textContent = label;
+  calcRevLoadTable();
+  calcOccupancy();
+}
+
+function calcPenalty(actualPax, nights, threshold) {
+  if (threshold === 0) return 0;
+  const shortage = Math.max(0, threshold - actualPax);
+  return shortage * nights * PENALTY_PER_PAX_NIGHT;
+}
+
+function calcOccupancy() {
+  const voys = seasonVoyMap[revOpt];
+  const cabinsByType = {};
+  REV_CABIN_TYPES.forEach(t => {
+    cabinsByType[t.key] = Math.round(SELLABLE_CABINS[t.key] * cabinLoads[t.key] / 100);
+  });
+  const feePct = (revFees.agent + revFees.card + revFees.mileage) / 100;
+  const insurance = revFees.insurance;
+  
+  // 예약 비율 정규화
+  const rSum = revPromo.r6 + revPromo.r5 + revPromo.r4;
+  let r6, r5, r4, r0;
+  if (rSum > 100) {
+    r6 = revPromo.r6 / rSum * 100;
+    r5 = revPromo.r5 / rSum * 100;
+    r4 = revPromo.r4 / rSum * 100;
+    r0 = 0;
+  } else {
+    r6 = revPromo.r6;
+    r5 = revPromo.r5;
+    r4 = revPromo.r4;
+    r0 = 100 - rSum;
+  }
+  
+  // 1인당 평균 결제금액 및 수수료 (캐빈 타입별, 박수별, 프로모션 적용 시)
+  function calcPersonProfitOcc(priceFull, nights, usePromo) {
+    const npd = NPD * nights * KRW;
+    if (!usePromo) {
+      return { rev: priceFull, varCost: priceFull * feePct, fixCost: npd + insurance };
+    }
+    const segments = [
+      { ratio: r6/100, disc: revPromo.d6 * (nights/5) },
+      { ratio: r5/100, disc: revPromo.d5 * (nights/5) },
+      { ratio: r4/100, disc: revPromo.d4 * (nights/5) },
+      { ratio: r0/100, disc: 0 }
+    ];
+    let avgRev = 0, avgFee = 0;
+    segments.forEach(s => {
+      const pay = Math.max(priceFull - s.disc, 0);
+      avgRev += pay * s.ratio;
+      avgFee += pay * feePct * s.ratio;
+    });
+    return { rev: avgRev, varCost: avgFee, fixCost: npd + insurance };
+  }
+  
+  const occRates = [100, 90, 80, 70, 60, 50, 40, 30];
+  const totalCabinsPerVoy = Object.values(cabinsByType).reduce((a,b)=>a+b,0);
+  const fullPax = totalCabinsPerVoy * 2;
+  
+  // 봄 시즌 총 매출/원가를 모객률 함수로 만들기
+  function totalsAtOcc(occRatio, usePromo, penThreshold) {
+    let tRev = 0, tVarCost = 0, tFixCost = 0, tPenalty = 0;
+    const voyPax = Math.round(fullPax * occRatio);
+    voys.forEach(v => {
+      REV_CABIN_TYPES.forEach(t => {
+        const priceFull = revPrices[t.key] * (v.nights / 5);
+        const r = calcPersonProfitOcc(priceFull, v.nights, usePromo);
+        const ppl = Math.round(cabinsByType[t.key] * 2 * occRatio);
+        tRev += r.rev * ppl;
+        tVarCost += r.varCost * ppl;
+        tFixCost += r.fixCost * ppl;
+      });
+      tPenalty += calcPenalty(voyPax, v.nights, penThreshold);
+    });
+    return { rev: tRev, varCost: tVarCost, fixCost: tFixCost, penalty: tPenalty, pax: voyPax };
+  }
+  
+  // 손익분기점 모객률 찾기 (이진 탐색)
+  function findBEPOccupancy(usePromo, penThreshold) {
+    let lo = 0, hi = 1;
+    const target = 0;
+    for (let i = 0; i < 50; i++) {
+      const mid = (lo + hi) / 2;
+      const t = totalsAtOcc(mid, usePromo, penThreshold);
+      const profit = t.rev - t.varCost - t.fixCost - t.penalty;
+      if (profit < target) lo = mid; else hi = mid;
+    }
+    return (lo + hi) / 2;
+  }
+  
+  function buildOccTable(usePromo) {
+    let html = '<tr><th>모객률</th><th class="r">탑승 인원/항차</th><th class="r">매출</th><th class="r">변동비<br><span style="font-size:9px;color:var(--text-d)">결제금액 × ' + (feePct*100).toFixed(1) + '%</span></th><th class="r">고정비<br><span style="font-size:9px;color:var(--text-d)">NPD + 보험</span></th><th class="r">총 원가</th><th class="r">패널티</th><th class="r">순 수익</th><th class="r">수익률</th></tr>';
+    
+    occRates.forEach(occ => {
+      const occRatio = occ / 100;
+      const t = totalsAtOcc(occRatio, usePromo, penaltyThreshold);
+      const totalCost = t.varCost + t.fixCost + t.penalty;
+      const totalProfit = t.rev - totalCost;
+      const rate = t.rev > 0 ? totalProfit / t.rev : 0;
+      const pColor = totalProfit >= 0 ? 'var(--green)' : 'var(--red)';
+      const isFull = occ === 100;
+      const hl = isFull ? 'style="background:rgba(56,139,253,.08);font-weight:600"' : '';
+      const penColor = t.penalty > 0 ? 'var(--red)' : 'var(--text-d)';
+      
+      html += '<tr ' + hl + '><td>' + occ + '% ' + (occ === 100 ? '(LB 만석)' : '') + '</td>' +
+        '<td class="r">' + t.pax.toLocaleString() + '명</td>' +
+        '<td class="r">' + fmtEok(t.rev) + '</td>' +
+        '<td class="r" style="color:var(--text-d)">' + fmtEok(t.varCost) + '</td>' +
+        '<td class="r" style="color:var(--text-d)">' + fmtEok(t.fixCost) + '</td>' +
+        '<td class="r">' + fmtEok(totalCost) + '</td>' +
+        '<td class="r" style="color:' + penColor + '">' + (t.penalty > 0 ? '+' + fmtEok(t.penalty) : '₩0') + '</td>' +
+        '<td class="r" style="color:' + pColor + ';font-weight:600">' + fmtEok(totalProfit) + '</td>' +
+        '<td class="r" style="color:' + pColor + ';font-weight:600">' + (rate*100).toFixed(1) + '%</td></tr>';
+    });
+    
+    // 손익분기 모객률 찾기 (현재 패널티 조건 적용)
+    const bepOcc = findBEPOccupancy(usePromo, penaltyThreshold);
+    const bepPax = Math.round(fullPax * bepOcc);
+    const bepOccPct = (bepOcc * 100).toFixed(1);
+    
+    // 패널티 없는 경우 BEP도 비교용으로
+    const bepOccNoPen = findBEPOccupancy(usePromo, 0);
+    
+    html += '<tr style="background:rgba(248,81,73,.08);border-top:2px solid var(--red)">' +
+      '<td style="color:var(--red);font-weight:700">📌 손익분기 모객률 (현재 패널티 조건)</td>' +
+      '<td class="r" style="color:var(--red);font-weight:700">' + bepOccPct + '%</td>' +
+      '<td class="r" colspan="7" style="color:var(--red)">≈ ' + bepPax.toLocaleString() + '명/항차 모객 시 수익 ₩0 · 이 이하는 적자<br><span style="font-size:10px;color:var(--text-m);font-weight:400">패널티 부과 없는 경우 BEP: ' + (bepOccNoPen*100).toFixed(1) + '% (' + Math.round(fullPax * bepOccNoPen).toLocaleString() + '명)</span></td></tr>';
+    
+    return html;
+  }
+  
+  document.getElementById('rev-occ-regular').innerHTML = buildOccTable(false);
+  document.getElementById('rev-occ-promo').innerHTML = buildOccTable(true);
+  
+  // === 패널티 시나리오 3종 비교 ===
+  let cmpHtml = '<tr><th>모객률</th><th class="r">인원/항차</th><th class="r" style="color:var(--red)">1,800명 미만 부과 (현행)</th><th class="r" style="color:var(--amber)">1,500명 미만 부과</th><th class="r" style="color:var(--green)">부과 없음</th><th class="r">최선/최악 차이</th></tr>';
+  
+  occRates.forEach(occ => {
+    const occRatio = occ / 100;
+    const base = totalsAtOcc(occRatio, true, 0); // 프로모션 적용, 패널티 없이 기준 계산
+    const baseProfit = base.rev - base.varCost - base.fixCost;
+    
+    let pen1800 = 0, pen1500 = 0;
+    voys.forEach(v => {
+      pen1800 += calcPenalty(base.pax, v.nights, 1800);
+      pen1500 += calcPenalty(base.pax, v.nights, 1500);
+    });
+    
+    const profit1800 = baseProfit - pen1800;
+    const profit1500 = baseProfit - pen1500;
+    const profit0 = baseProfit;
+    const diff = profit0 - profit1800;
+    
+    const c1 = profit1800 >= 0 ? 'var(--green)' : 'var(--red)';
+    const c2 = profit1500 >= 0 ? 'var(--green)' : 'var(--red)';
+    const c3 = profit0 >= 0 ? 'var(--green)' : 'var(--red)';
+    
+    cmpHtml += '<tr><td>' + occ + '%</td>' +
+      '<td class="r">' + base.pax.toLocaleString() + '명</td>' +
+      '<td class="r" style="color:' + c1 + '">' + fmtEok(profit1800) + (pen1800 > 0 ? ' <span style="color:var(--red);font-size:9px">(P:' + fmtEok(pen1800) + ')</span>' : '') + '</td>' +
+      '<td class="r" style="color:' + c2 + '">' + fmtEok(profit1500) + (pen1500 > 0 ? ' <span style="color:var(--amber);font-size:9px">(P:' + fmtEok(pen1500) + ')</span>' : '') + '</td>' +
+      '<td class="r" style="color:' + c3 + ';font-weight:600">' + fmtEok(profit0) + '</td>' +
+      '<td class="r" style="color:var(--green)">' + (diff > 0 ? '+' + fmtEok(diff) : '동일') + '</td></tr>';
+  });
+  
+  document.getElementById('rev-penalty-compare').innerHTML = cmpHtml;
+}
+
+function calcRevLoadTable() {
+  const feePct = (revFees.agent + revFees.card + revFees.mileage) / 100;
+  const insurance = revFees.insurance;
+  const stepEx = { inside: CONFIG.STEP_CABINS.inside, ocean: 0, balcony: CONFIG.STEP_CABINS.balcony, suite: 0 };
+  const totalCabins = { inside: CONFIG.CABINS.inside, ocean: CONFIG.CABINS.ocean, balcony: CONFIG.CABINS.balcony, suite: CONFIG.CABINS.suite };
+
+  const rSum = revPromo.r6 + revPromo.r5 + revPromo.r4;
+  let r6p, r5p, r4p, r0p;
+  if (rSum > 100) {
+    r6p = revPromo.r6 / rSum * 100;
+    r5p = revPromo.r5 / rSum * 100;
+    r4p = revPromo.r4 / rSum * 100;
+    r0p = 0;
+  } else {
+    r6p = revPromo.r6;
+    r5p = revPromo.r5;
+    r4p = revPromo.r4;
+    r0p = 100 - rSum;
+  }
+
+  function mkSegs(nights) {
+    return [
+      { ratio: r6p / 100, disc: revPromo.d6 * (nights / 5) },
+      { ratio: r5p / 100, disc: revPromo.d5 * (nights / 5) },
+      { ratio: r4p / 100, disc: revPromo.d4 * (nights / 5) },
+      { ratio: r0p / 100, disc: 0 }
+    ];
+  }
+
+  function signedEok(n) {
+    return n < 0 ? '-' + fmtEok(Math.abs(n)) : fmtEok(n);
+  }
+  function costEok(n) {
+    return n > 0 ? '-' + fmtEok(n) : fmtEok(0);
+  }
+  function amountColor(n) {
+    return n >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+
+  let html = '<tr><th>캐빈</th><th class="r">총실</th><th class="r">스텝제외</th><th class="r">가능실</th><th class="r">로드율</th><th class="r">판매실</th><th class="r">판매인원</th><th class="r">1인수익(5박)</th><th class="r">소계(5박)</th><th class="r">1인수익(6박)</th><th class="r">소계(6박)</th></tr>';
+  let totSold = 0, totPpl = 0, totSubRev5 = 0, totSubRev6 = 0;
+  let totGross5 = 0, totGross6 = 0;
+
+  REV_CABIN_TYPES.forEach(t => {
+    const tot = totalCabins[t.key];
+    const ex = stepEx[t.key];
+    const sell = SELLABLE_CABINS[t.key];
+    const ld = cabinLoads[t.key];
+    const sold = Math.round(sell * ld / 100);
+    const ppl = sold * 2;
+    const p5 = revPrices[t.key];
+    const p6 = revPrices[t.key] * 1.2;
+    const r5 = calcPersonProfit(p5, 5, true, feePct, insurance, mkSegs(5));
+    const r6 = calcPersonProfit(p6, 6, true, feePct, insurance, mkSegs(6));
+    const sub5 = r5.profit * ppl;
+    const sub6 = r6.profit * ppl;
+
+    totSold += sold;
+    totPpl += ppl;
+    totSubRev5 += sub5;
+    totSubRev6 += sub6;
+    totGross5 += r5.revenue * ppl;
+    totGross6 += r6.revenue * ppl;
+
+    const c5 = amountColor(r5.profit);
+    const c6 = amountColor(r6.profit);
+    html += '<tr><td style="color:' + t.color + '">' + t.name + '</td>' +
+      '<td class="r">' + tot + '실</td>' +
+      '<td class="r" style="color:var(--red)">' + (ex > 0 ? '-' + ex : '-') + '</td>' +
+      '<td class="r">' + sell + '실</td>' +
+      '<td class="r"><span style="color:var(--accent);font-weight:600">' + ld + '%</span></td>' +
+      '<td class="r">' + sold + '실</td>' +
+      '<td class="r">' + ppl.toLocaleString() + '명</td>' +
+      '<td class="r" style="color:' + c5 + ';font-weight:600">' + fmtMan(r5.profit) + '</td>' +
+      '<td class="r" style="color:' + c5 + '">' + signedEok(sub5) + '</td>' +
+      '<td class="r" style="color:' + c6 + ';font-weight:600">' + fmtMan(r6.profit) + '</td>' +
+      '<td class="r" style="color:' + c6 + '">' + signedEok(sub6) + '</td></tr>';
+  });
+
+  const charterCost5 = CONFIG.NPD.KRW * CONFIG.LB_100 * 5;
+  const charterCost6 = CONFIG.NPD.KRW * CONFIG.LB_100 * 6;
+  const insuranceCost = totPpl * insurance;
+  const commission5 = totGross5 * feePct;
+  const commission6 = totGross6 * feePct;
+  const pen5 = calcPenalty(totPpl, 5, penaltyThreshold);
+  const pen6 = calcPenalty(totPpl, 6, penaltyThreshold);
+  const net5 = totGross5 - charterCost5 - insuranceCost - commission5 - pen5;
+  const net6 = totGross6 - charterCost6 - insuranceCost - commission6 - pen6;
+  const wtAvgLoad = totSold > 0 ? Math.round(totSold / CONFIG.SELLABLE.total * 100) : 0;
+
+  html += '<tr class="tot"><td>합계 (판매 캐빈)</td>' +
+    '<td class="r">1,049실</td><td class="r" style="color:var(--red)">-90</td><td class="r">959실</td>' +
+    '<td class="r" style="color:var(--accent)">' + wtAvgLoad + '% 평균</td>' +
+    '<td class="r">' + totSold + '실</td><td class="r">' + totPpl.toLocaleString() + '명</td>' +
+    '<td class="r">-</td><td class="r" style="color:' + amountColor(totSubRev5) + '">' + signedEok(totSubRev5) + '</td>' +
+    '<td class="r">-</td><td class="r" style="color:' + amountColor(totSubRev6) + '">' + signedEok(totSubRev6) + '</td></tr>';
+
+  html += '<tr class="tot"><td>총 매출</td><td class="r" colspan="7"></td>' +
+    '<td class="r" style="color:var(--green);font-weight:700">' + fmtEok(totGross5) + '</td>' +
+    '<td class="r"></td><td class="r" style="color:var(--green);font-weight:700">' + fmtEok(totGross6) + '</td></tr>';
+  html += '<tr><td>차터비(고정)</td><td class="r" colspan="7" style="font-size:10px;color:var(--text-d)">CONFIG.NPD.KRW × CONFIG.LB_100 × nights</td>' +
+    '<td class="r" style="color:var(--red);font-weight:600">' + costEok(charterCost5) + '</td>' +
+    '<td class="r"></td><td class="r" style="color:var(--red);font-weight:600">' + costEok(charterCost6) + '</td></tr>';
+  html += '<tr><td>보험료</td><td class="r" colspan="7" style="font-size:10px;color:var(--text-d)">총판매인원 × revFees.insurance</td>' +
+    '<td class="r" style="color:var(--red)">' + costEok(insuranceCost) + '</td>' +
+    '<td class="r"></td><td class="r" style="color:var(--red)">' + costEok(insuranceCost) + '</td></tr>';
+  html += '<tr><td>수수료</td><td class="r" colspan="7" style="font-size:10px;color:var(--text-d)">매출 × ' + (feePct * 100).toFixed(1) + '%</td>' +
+    '<td class="r" style="color:var(--red)">' + costEok(commission5) + '</td>' +
+    '<td class="r"></td><td class="r" style="color:var(--red)">' + costEok(commission6) + '</td></tr>';
+  html += '<tr><td>패널티</td><td class="r" colspan="7" style="font-size:10px;color:var(--text-d)">' + (penaltyThreshold === 0 ? '부과 없음' : penaltyThreshold + '명 미만 부족분 × nights × ' + PENALTY_PER_PAX_NIGHT.toLocaleString()) + '</td>' +
+    '<td class="r" style="color:var(--red)">' + costEok(pen5) + '</td>' +
+    '<td class="r"></td><td class="r" style="color:var(--red)">' + costEok(pen6) + '</td></tr>';
+  html += '<tr class="tot"><td style="color:var(--accent)">순수익</td><td class="r" colspan="7"></td>' +
+    '<td class="r" style="color:' + amountColor(net5) + ';font-weight:700">' + signedEok(net5) + '</td>' +
+    '<td class="r"></td><td class="r" style="color:' + amountColor(net6) + ';font-weight:700">' + signedEok(net6) + '</td></tr>';
+
+  const el = document.getElementById('rev-load-table');
+  if (el) el.innerHTML = html;
+
+  const penLabel = penaltyThreshold === 0 ? '없음' : penaltyThreshold + '명 기준';
+  const sf = document.getElementById('rev-load-summary');
+  if (sf) sf.innerHTML =
+    '<span style="color:var(--text-m)">판매인원</span> <strong>' + totPpl.toLocaleString() + '명</strong>' +
+    ' (LB ' + (totPpl / CONFIG.LB_100 * 100).toFixed(1) + '%)&nbsp;&nbsp;|&nbsp;&nbsp;' +
+    '<span style="color:var(--text-m)">패널티 기준</span> ' + penLabel + '&nbsp;&nbsp;|&nbsp;&nbsp;' +
+    '<span style="color:var(--amber)">5박 패널티</span> ' + (pen5 > 0 ? costEok(pen5) : '없음') + '&nbsp;&nbsp;|&nbsp;&nbsp;' +
+    '<span style="color:var(--amber)">6박 패널티</span> ' + (pen6 > 0 ? costEok(pen6) : '없음') + '&nbsp;&nbsp;|&nbsp;&nbsp;' +
+    '<span style="color:' + amountColor(net5) + '">5박 순수익</span> <strong style="color:' + amountColor(net5) + '">' + signedEok(net5) + '</strong>&nbsp;&nbsp;|&nbsp;&nbsp;' +
+    '<span style="color:' + amountColor(net6) + '">6박 순수익</span> <strong style="color:' + amountColor(net6) + '">' + signedEok(net6) + '</strong>';
+}
+
+// ===== Overview (c) 3차 계약 핵심 요약 — 전부 CONFIG 참조 =====
+function initOverview(){
+  const lb90    = CONFIG.LB_90;                        // 1884.6
+  const npdCny  = CONFIG.NPD.CNY;                      // 756
+  const c2k     = CONFIG.RATES.CNY_KRW;               // 216
+  const regN    = CONFIG.NIGHTS_OP.regular;           // 40
+  const repoCny = 2016000 * CONFIG.NIGHTS_OP.repo;    // 2,016,000 × 3 = 6,048,000
+  const mktCny  = CONFIG.MARKETING.MKT_TOTAL_40N.CNY; // 2,400,000
+
+  const grossCny = Math.round(npdCny * lb90 * regN + repoCny); // 63,038,304
+  const netCny   = grossCny - mktCny;                          // 60,638,304
+  const eok = v => (Math.round(v * c2k) / 1e8).toFixed(1);
+  const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+  const lb90txt = lb90.toLocaleString() + '명';       // 1,884.6명
+
+  set('ov-lb90',        lb90txt);
+  set('ov-lb90-inline', lb90txt);
+  set('ov-lb90b',       lb90txt);
+  set('ov-npd',         '¥' + npdCny + ' / $' + CONFIG.NPD.USD);
+  set('ov-gross-cny',   '¥' + grossCny.toLocaleString());
+  set('ov-gross-krw',   '₩' + eok(grossCny) + '억');
+  set('ov-mkt-cny',     '−¥' + mktCny.toLocaleString());
+  set('ov-mkt-krw',     '−₩' + eok(mktCny) + '억');
+  set('ov-net-cny',     '¥' + netCny.toLocaleString());
+  set('ov-net-krw',     '₩' + eok(netCny) + '억');
+}
+initOverview();
+
+// ===== 비용분석 블록1 · 선사 제시 가격조건 (3통화, CONFIG 참조) =====
+function initCostAnalysis(){
+  const C2U = CONFIG.RATES.USD_CNY;   // 6.8745
+  const C2K = CONFIG.RATES.CNY_KRW;   // 216
+  const reg   = CONFIG.NPD.CNY * CONFIG.LB_90 * CONFIG.NIGHTS_OP.regular; // 56,990,304
+  const repo  = 2016000 * CONFIG.NIGHTS_OP.repo;                          // 6,048,000
+  const gross = reg + repo;                                              // 63,038,304
+  const mkt   = CONFIG.MARKETING.MKT_TOTAL_40N.CNY;                      // 2,400,000
+  const net   = gross - mkt;                                            // 60,638,304
+  const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+  const fill = (key, cny, neg) => {
+    const s = neg ? '−' : '';
+    const c = Math.round(cny), usd = Math.round(cny / C2U), krw = Math.round(cny * C2K);
+    set('co-' + key + '-c', s + '¥' + c.toLocaleString());
+    set('co-' + key + '-u', s + '$' + usd.toLocaleString());
+    set('co-' + key + '-k', s + '₩' + krw.toLocaleString() + ' (' + (krw / 1e8).toFixed(1) + '억)');
+  };
+  fill('reg', reg); fill('repo', repo); fill('gross', gross); fill('mkt', mkt, true); fill('net', net);
+}
+initCostAnalysis();
+
+calcRevLoadTable();
+calcRev();
+calcOccupancy();
+</script>
+</body>
+</html>
