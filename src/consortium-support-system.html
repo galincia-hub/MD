@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>컨소시엄 지원 시스템 — 프로토타입 v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F1F5F8;--panel:#FFFFFF;--ink:#0D2436;--ink-2:#41607A;--ink-3:#7E9AAF;
+  --line:#D3E0EA;--line-2:#B0C6D6;--blue:#15628E;--blue-lt:#E8F1F7;
+  --amber:#B8801E;--amber-bg:#FCF5E7;--now:#0E7C6B;--now-bg:#E4F3F0;
+  --pri:#C0561D;--pri-bg:#FBEDE4;--sketch:#E9EFF4;--sketch-line:#C3D3DF;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.7;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+.topbar{background:var(--ink);color:#fff;position:sticky;top:0;z-index:50}
+.tb-in{max-width:1240px;margin:0 auto;padding:0 18px}
+.tb-1{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+.logo{font-size:15px;font-weight:900}.logo span{color:#E9B44C}
+.tb-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:#8FB0C6;text-transform:uppercase}
+.tb-right{margin-left:auto;display:flex;gap:7px;align-items:center}
+.viewtag{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;padding:3px 9px;border:1px solid rgba(255,255,255,.28);color:#CBDDE9}
+.demo{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;padding:3px 9px;background:#E9B44C;color:#1B2A38;font-weight:600}
+.stages{display:flex;overflow-x:auto}
+.stage{padding:11px 15px;font-size:13px;white-space:nowrap;color:#A9C4D6;border-bottom:3px solid transparent;display:flex;align-items:center;gap:7px;transition:.15s}
+.stage:hover{color:#fff;background:rgba(255,255,255,.05)}
+.stage.on{color:#fff;border-bottom-color:#E9B44C;background:rgba(255,255,255,.07)}
+.stage .num{font-family:'IBM Plex Mono',monospace;font-size:10px;opacity:.65}
+.stage .dot{width:5px;height:5px;border-radius:50%;background:#2FBFA6}
+.stage .dot.p{background:#E9704C}
+.stage .dot.l{background:#4A90D9}
+.stage.led{border-right:1px solid rgba(255,255,255,.15);color:#E9B44C}
+.stage.led.on{border-bottom-color:#E9B44C}
+
+.shell{max-width:1240px;margin:0 auto;padding:20px 18px 70px;display:grid;grid-template-columns:236px 1fr;gap:20px;align-items:start}
+.side{background:var(--panel);border:1px solid var(--line);position:sticky;top:104px}
+.side-h{padding:13px 15px;border-bottom:1px solid var(--line);background:#FAFCFD}
+.side-h .sh-n{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--blue)}
+.side-h .sh-t{font-size:15px;font-weight:700;margin-top:1px}
+.side-h .sh-d{font-size:11.5px;color:var(--ink-3);margin-top:3px;line-height:1.55}
+.side nav{padding:6px 0}
+.side .grp{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.13em;color:var(--ink-3);text-transform:uppercase;padding:9px 15px 4px}
+.side a{display:flex;align-items:center;gap:8px;padding:7px 15px;font-size:13px;color:var(--ink-2);text-decoration:none;border-left:3px solid transparent;transition:.13s}
+.side a:hover{background:var(--blue-lt);color:var(--blue)}
+.side a.on{background:var(--blue-lt);color:var(--blue);border-left-color:var(--blue);font-weight:700}
+.side a .ix{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-3);min-width:24px}
+.side a.on .ix{color:var(--blue)}
+
+.main{min-width:0}
+.crumb{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:var(--ink-3);margin-bottom:9px}
+.crumb b{color:var(--blue);font-weight:500}
+.page-h{background:var(--panel);border:1px solid var(--line);padding:18px 20px}
+.ph-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}
+h1{font-size:22px;font-weight:700;letter-spacing:-.015em}
+.badge{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;padding:2px 8px;border:1px solid var(--line-2);color:var(--ink-2);white-space:nowrap}
+.badge.now{border-color:var(--now);color:var(--now);background:var(--now-bg)}
+.badge.pri{border-color:var(--pri);color:var(--pri);background:var(--pri-bg)}
+.badge.later{color:var(--ink-3)}
+.badge.pub{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
+.ph-purpose{font-size:14px;color:var(--ink-2);margin-top:8px;max-width:76ch;line-height:1.75}
+
+.block{background:var(--panel);border:1px solid var(--line);margin-top:14px}
+.blk-h{padding:11px 18px;border-bottom:1px solid var(--line);background:#FAFCFD;display:flex;align-items:center;gap:10px}
+.blk-h .bl{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--blue);text-transform:uppercase}
+.blk-h .bd{font-size:11.5px;color:var(--ink-3);margin-left:auto}
+.blk-b{padding:16px 18px}
+
+.sk{background:#F7FAFC;border:1px dashed var(--sketch-line);padding:14px}
+.sk-note{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--ink-3);letter-spacing:.1em;text-align:center;margin-top:10px}
+.row{display:flex;gap:9px;margin-bottom:9px}.row:last-of-type{margin-bottom:0}
+.box{background:var(--sketch);border:1px solid var(--sketch-line);padding:9px 11px;font-size:11.5px;color:var(--ink-2);flex:1;min-height:38px;display:flex;align-items:center;gap:7px;line-height:1.4}
+.box.h{background:#DCE8F1;font-weight:700;color:var(--ink)}
+.box.tall{min-height:78px;align-items:flex-start}
+.box.narrow{flex:0 0 108px}.box.wide{flex:2}
+.tok{color:var(--blue);font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;border-bottom:1px dotted var(--blue)}
+
+.svc{list-style:none;display:grid;gap:2px}
+.svc li{display:flex;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13.5px;line-height:1.65}
+.svc li:last-child{border-bottom:none}
+.svc li::before{content:"▸";color:var(--blue);flex:none;font-size:11px;line-height:1.9}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.io-c .iol{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.io-c.w .iol{color:var(--pri)}.io-c.r .iol{color:var(--blue)}
+.ent{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:3px 9px;border:1px solid var(--line-2);margin:0 4px 4px 0;background:#fff}
+.ent:hover{border-color:var(--blue);color:var(--blue)}
+.ent.w{border-color:var(--pri);color:var(--pri);background:var(--pri-bg)}
+.ent .ec{font-family:'IBM Plex Mono',monospace;font-size:9.5px;opacity:.7}
+.io-none{font-size:12px;color:var(--ink-3)}
+
+.ov-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.ov{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--blue);padding:14px 16px;cursor:pointer;transition:.15s;text-align:left;display:block;width:100%}
+.ov:hover{border-color:var(--blue);box-shadow:0 2px 10px rgba(13,36,54,.07)}
+.ov.now{border-top-color:var(--now)}.ov.now .ov-t{color:var(--now)}
+.ov.pri{border-top-color:var(--pri)}.ov.pri .ov-t{color:var(--pri)}
+.ov-n{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-3);letter-spacing:.1em}
+.ov-t{font-size:16px;font-weight:700;margin:2px 0 4px}
+.ov-d{font-size:12.5px;color:var(--ink-2);line-height:1.6}
+.ov-c{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--blue);margin-top:8px;padding-top:7px;border-top:1px dashed var(--line)}
+
+.hero{background:var(--panel);border:1px solid var(--line);padding:24px}
+.hero h2{font-size:24px;font-weight:900;letter-spacing:-.02em;line-height:1.35}
+.hero h2 b{color:var(--blue)}
+.hero p{font-size:14px;color:var(--ink-2);margin-top:9px;max-width:70ch}
+.hero .flow{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
+.hero .fi{font-family:'IBM Plex Mono',monospace;font-size:10.5px;padding:4px 9px;background:var(--blue-lt);color:var(--blue)}
+.hero .fa{color:var(--line-2);font-size:11px;align-self:center}
+.tip{background:var(--amber-bg);border-left:3px solid var(--amber);padding:11px 15px;font-size:12.5px;color:var(--ink-2);margin-top:14px;line-height:1.7}
+.tip b{color:var(--amber)}
+
+.tbl{overflow-x:auto;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;min-width:640px;background:var(--panel)}
+th{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);text-align:left;padding:10px 13px;border-bottom:1.5px solid var(--line-2);font-weight:600;white-space:nowrap;background:#F7FAFC}
+td{padding:10px 13px;border-bottom:1px solid var(--line);font-size:12.5px;vertical-align:top;line-height:1.6}
+tr:last-child td{border-bottom:none}
+td.k{font-weight:700;white-space:nowrap}
+td.m{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-2);white-space:nowrap}
+td.num{font-family:'IBM Plex Mono',monospace;text-align:right;white-space:nowrap}
+
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr}.side{position:static}
+  .side nav{display:flex;flex-wrap:wrap;padding:8px}
+  .side a{border-left:none;border:1px solid var(--line);margin:2px;padding:6px 10px}
+  .side .grp{width:100%}
+  .ov-grid,.io{grid-template-columns:1fr}
+}
+
+/* ===== 실동작 화면 (1·4단계) ===== */
+:root{--red:#B3392A;--red-bg:#FBECE9}
+.badge.live{border-color:var(--now);color:#fff;background:var(--now)}
+.lv-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:2px}
+.lv-btn{font-family:'Noto Sans KR',sans-serif;font-size:12px;padding:7px 14px;border:1px solid var(--line-2);background:var(--panel);color:var(--ink);cursor:pointer;transition:.13s}
+.lv-btn:hover{border-color:var(--blue);color:var(--blue)}
+.lv-btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}
+.lv-btn.danger{color:var(--red);border-color:var(--red)}
+.lv-btn.danger:hover{background:var(--red-bg)}
+.lv-btn.sm{padding:3px 9px;font-size:11px}
+.lv-form{display:none;grid-template-columns:repeat(4,1fr);gap:10px;padding:16px;background:#FAFCFD;border:1px solid var(--line);margin:10px 0}
+.lv-form.on{display:grid}
+.lv-form label{font-size:10.5px;color:var(--ink-3);display:block;margin-bottom:4px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em}
+.lv-form input,.lv-form select{width:100%;padding:7px 9px;border:1px solid var(--line-2);background:#fff;color:var(--ink);font-size:12.5px;font-family:'Noto Sans KR',sans-serif}
+.lv-form input:focus,.lv-form select:focus{outline:2px solid var(--blue);outline-offset:-1px}
+.lv-form .full{grid-column:1/-1}
+.lv-form .actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end}
+.lv-select{padding:6px 10px;border:1px solid var(--line-2);background:#fff;color:var(--ink);font-size:12.5px;font-family:'Noto Sans KR',sans-serif}
+.lv-num{width:64px;padding:5px 7px;border:1px solid var(--line-2);text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12px}
+.lv-empty{text-align:center;color:var(--ink-3);padding:20px !important}
+.lv-note{font-size:12px;color:var(--ink-3);margin-top:6px;line-height:1.6}
+.lv-tag{font-family:'IBM Plex Mono',monospace;font-size:9.5px;padding:1px 7px;border:1px solid var(--line-2);color:var(--ink-2);white-space:nowrap}
+.lv-tag.warn{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
+.lv-tag.ok{border-color:var(--now);color:var(--now);background:var(--now-bg)}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="tb-in">
+  <div class="tb-1">
+    <span class="logo">컨소시엄 <span>지원 시스템</span></span>
+    <span class="tb-sub">2027 Adora Charter</span>
+    <span class="tb-right"><span class="viewtag" id="viewtag">관리자 뷰</span><span class="demo">PROTOTYPE v2</span></span>
+  </div>
+  <div class="stages" id="stages"></div>
+</div></div>
+<div class="shell">
+  <aside class="side">
+    <div class="side-h"><div class="sh-n" id="shn"></div><div class="sh-t" id="sht"></div><div class="sh-d" id="shd"></div></div>
+    <nav id="submenu"></nav>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+<script>
+const DB = {"MASTER":{"biz":{"line":"아도라 크루즈","ship":"아도라 매직시티","total":8,"spring":4,"autumn":4,"consortium":["팬스타","롯데JTB","모두투어"],"agent":"동방선박"},"voyages":[{"code":"AD27-S1","name":"2027 봄 1항차","dep":"2027-05-07","nights":5,"pax":1918,"confirmed":0,"season":"봄","charter":"확인 필요"},{"code":"AD27-S2","name":"2027 봄 2항차","dep":"2027-05-12","nights":5,"pax":1918,"confirmed":0,"season":"봄","charter":"확인 필요"},{"code":"AD27-S3","name":"2027 봄 3항차","dep":"2027-05-17","nights":5,"pax":1918,"confirmed":0,"season":"봄","charter":"확인 필요"},{"code":"AD27-S4","name":"2027 봄 4항차","dep":"2027-05-22","nights":5,"pax":1918,"confirmed":0,"season":"봄","charter":"확인 필요"},{"code":"AD27-A1","name":"2027 가을 1항차","dep":"2027-10-08","nights":5,"pax":1918,"confirmed":0,"season":"가을","charter":"확인 필요"},{"code":"AD27-A2","name":"2027 가을 2항차","dep":"2027-10-13","nights":5,"pax":1918,"confirmed":0,"season":"가을","charter":"확인 필요"},{"code":"AD27-A3","name":"2027 가을 3항차","dep":"2027-10-18","nights":5,"pax":1918,"confirmed":0,"season":"가을","charter":"확인 필요"},{"code":"AD27-A4","name":"2027 가을 4항차","dep":"2027-10-23","nights":5,"pax":1918,"confirmed":0,"season":"가을","charter":"확인 필요"}],"categories":[{"code":"SU","name":"Suite","kr":"스위트","deck":"확인 필요","plan":58,"excluded":0,"sellable":58},{"code":"BA","name":"Balcony","kr":"발코니","deck":"확인 필요","plan":614,"excluded":10,"sellable":604},{"code":"OV","name":"Oceanview","kr":"오션뷰","deck":"확인 필요","plan":166,"excluded":0,"sellable":166},{"code":"IN","name":"Inside","kr":"인사이드","deck":"확인 필요","plan":211,"excluded":80,"sellable":131}],"exclusions":[{"reason":"스텝/인솔자 캐빈 (인사이드 80 · 발코니 10)","n":90}],"partners":[{"id":"pt1","name":"크루즈시티","type":"B2C","contact":"","alloc":0,"sold":0,"mix":"미정","status":"협의중"},{"id":"pt2","name":"W크루즈","type":"B2C","contact":"","alloc":0,"sold":0,"mix":"미정","status":"협의중"},{"id":"pt3","name":"레츠고크루즈","type":"B2C","contact":"","alloc":0,"sold":0,"mix":"미정","status":"협의중"},{"id":"pt4","name":"투어폰","type":"B2B","contact":"","alloc":0,"sold":0,"mix":"미정","status":"협의중"},{"id":"pt5","name":"텐스타","type":"B2B","contact":"","alloc":0,"sold":0,"mix":"미정","status":"협의중"},{"id":"pt6","name":"롯데GTB","type":"B2B","contact":"","alloc":0,"sold":0,"mix":"미정","status":"협의중"}]},"ENTITIES":[{"id":"clause","name":"계약 조항","ko":"Clause","owner":"0.조항 참조","fields":"조항번호 · 원문 · 번역 · 카테고리 · 출처 · 검색 키워드","note":"모든 조건의 최종 근거. 다른 데이터와 충돌하면 조항이 이긴다."},{"id":"issue","name":"이슈 기록","ko":"Issue","owner":"0.이슈 기록","fields":"발생일 · 상대 · 상황 · 근거 조항 · 대응 결과","note":"조항에 연결되어 누적된다."},{"id":"voyage","name":"항차","ko":"Voyage","owner":"1.항차 관리","fields":"항차 코드 · 출항일 · 기간 · 선박 · 총 정원 · 담당 차터사 · 시즌","note":"코드는 아도라 계약서 표기 그대로. 전 단계가 이 코드로 연결된다."},{"id":"category","name":"객실 카테고리","ko":"Category","owner":"1.객실 분류 · 실사","fields":"카테고리 코드 · 명칭 · 데크 · 도면 객실수 · 실사 제외 · 판매 가능","note":"코드는 아도라 표기 그대로."},{"id":"cabin","name":"객실","ko":"Cabin","owner":"1.객실 분류 · 실사","fields":"객실번호 · 데크 · 카테고리 · 정원 · 위치 · 판매가능 여부 · 제외 사유 · 특이사항","note":"덱플랜 분류 후 실사로 확정. 판매 가능 객실만 재고가 된다."},{"id":"alloc","name":"배정","ko":"Allocation","owner":"1.배분 현황","fields":"항차 · 카테고리 · 파트너 · 배정 수량 · 조정 이력","note":"잔여는 저장하지 않고 배정−판매로 산출한다."},{"id":"partner","name":"파트너","ko":"Partner","owner":"4.파트너 목록","fields":"상호 · 유형(B2C/B2B) · 담당자 · 계약 조건 · 계약 상태 · 로고 · 연락처","note":"유형에 따라 제안 자료와 표시 요금이 갈린다."},{"id":"booking","name":"예약","ko":"Booking","owner":"4.예약·명단 입력","fields":"예약번호 · 항차 · 파트너 · 객실 카테고리 · 인원 · 결제 상태 · 배정 객실","note":"표준 폼으로만 생성. 이 데이터가 곧 제출 원본이다."},{"id":"pax","name":"승객","ko":"Passenger","owner":"4.예약·명단 입력","fields":"영문 성명 · 생년월일 · 성별 · 국적 · 여권번호 · 여권 만료일","note":"항목과 형식은 아도라 제출 기준을 그대로 따른다."},{"id":"service","name":"부가서비스","ko":"Service","owner":"4.부가서비스 신청","fields":"예약번호 · 서비스 코드 · 수량 · 특별 요청 · 마감일","note":"코드 체계는 아도라 기준."},{"id":"asset","name":"상품 자료","ko":"Asset","owner":"2.상품 자료실","fields":"분류 · 원문 · 번역 · 이미지 · 항차 태그 · 버전 · 수신일","note":"제안서에 필요한 항목부터 역산해 수집한다."},{"id":"output","name":"배포 자료","ko":"Output","owner":"3.자료 배포함","fields":"유형 · 항차 · 파일/링크 · 버전 · 설명 · 공개 범위 · 등록일","note":"제작은 외부에서 하고 여기에는 완성본만 등록한다. 기획 노트가 제작 전 단계로 연결된다."},{"id":"change","name":"변경 요청","ko":"Change","owner":"5.변경·결과관리","fields":"요청일 · 요청자 · 예약번호 · 변경 전 · 변경 요청 · 선사 전달일 · 처리 상태 · 처리 결과 · 완료일 · 파트너 통보","note":"10개 항목이 남아야 사이클이 닫힌다."},{"id":"submit","name":"제출 이력","ko":"Submission","owner":"5.선사 제출","fields":"제출일 · 대상 · 항차 · 건수 · 제출본 · 접수 여부","note":"보낸 내용 그대로 보관한다."},{"id":"request","name":"선사 요청","ko":"Request","owner":"7.요청 체크리스트","fields":"카테고리 · 요청 사항 · 요청 대상 · 요청일 · 상태 · 마감 · 결과","note":"선사와 포트 에이전시를 같은 대장에서 관리한다."}],"stages":[{"id":0,"name":"계약 관리","now":true,"desc":"계약 조항을 이슈 유형별로 정리해 분쟁 시 근거를 즉시 찾는다","pages":[{"t":"계약 개요","st":"now","u":"관리자","p":"계약의 기본 정보와 원본 문서 위치를 한 화면에 모아, 어떤 상황에서도 여기서 출발하면 되는 시작점을 만든다.","sk":[["h:계약 기본정보 — 선사 · 계약일 · 버전"],["항차 8개 요약","봄 4 / 가을 4"],["h:원본 문서 바로가기"],["최종 계약서","부속서류(Appendix)","가격표"]],"s":["계약 기본 정보 표시 — 선사, 계약 당사자, 총 항차, 계약일, 계약서 버전","원본 문서 링크 — 최종 계약서·부속서류·가격표·합의서 (외부 저장소 연결, 파일 업로드 안 함)","항차 목록 요약 — 봄 4항차 / 가을 4항차, 각 항차 코드는 계약서 표기 그대로 사용","최근 갱신 이력 — 계약서 버전이 바뀐 시점 기록"],"w":[],"r":["clause","voyage"]},{"t":"조항 참조","st":"now","u":"관리자","p":"이 시스템의 핵심 화면. 계약 조항을 이슈 유형별로 나눠 원문 그대로 수록하고, 브라우저 Ctrl+F 한 번으로 근거를 찾게 한다.","sk":[["narrow:카테고리 목차","wide:h:조항 원문 영역"],["narrow:객실 / Suite","wide:검색 키워드 — Suite / 스위트 / 객실 / Cabin Category"],["narrow:요금 / 인원보증","wide:tall:계약 원문 (영문 그대로) + 한국어 번역"],["narrow:취소 / 판매조건","wide:출처 — Clause 3.2, Page 12 · [원본 열기]"]],"s":["카테고리별 조항 정리 — 객실, 스위트, 요금, 인원보증, 계약금·결제, 취소·환불, 판매조건, 리포지션, 마케팅, 일정, 운영","조항 항목 구성 — 조항 번호 · 영문 원문 · 한국어 번역 · 출처(조항·페이지) · 원본 링크","검색 키워드 노출 — 항목마다 동의어를 함께 표기해 어떤 단어로 찾아도 걸리게 함 (예: Reposition / Repo / 리포지션 / 판매제한)","좌측 목차 클릭 시 해당 조항 위치로 이동","내부 메모 — 원문과 시각적으로 구분해 표시","검색은 브라우저 Ctrl+F를 사용 (검색 기능 개발하지 않음)"],"w":["clause"],"r":[]},{"t":"이슈 기록","st":"now","u":"관리자","p":"계약과 다른 상황이 발생했을 때 근거 조항과 함께 한 줄로 남긴다. 같은 문제가 반복될 때 지난 대응을 그대로 꺼내 쓰기 위한 기록.","sk":[["h:이슈 목록"],["narrow:2026-11-04","스위트 객실 배정 조건 상이","narrow:객실 5.1"],["narrow:2026-12-12","리포지션 항차 판매 확인","narrow:판매조건 3.2"],["h:이슈 상세 — 상황 · 근거 조항 · 대응 결과"]],"s":["이슈 등록 — 발생일, 상대, 상황 요약, 근거 조항 연결, 대응 결과","조항별 이슈 이력 — 특정 조항에서 몇 번 문제가 있었는지 누적 확인","반복 위반 확인 — 같은 유형이 쌓이면 차기 협상 근거로 사용","대응은 이메일·단톡방에서 진행하고, 여기에는 결과만 기록"],"w":["issue"],"r":["clause"]},{"t":"원본 자료실","st":"now","u":"관리자","p":"계약서 외 문서를 같은 카테고리 체계로 묶어 어디에 무엇이 있는지 잊지 않게 한다.","sk":[["h:문서 목록 — 카테고리 태그"],["최종 계약서 v3","narrow:계약"],["아도라 공지 — 요금 안내","narrow:요금"],["항차별 일정 확정본","narrow:일정"]],"s":["문서 목록 — 계약서, 부속서류, 아도라 공지, 요금표, 일정 확정본","카테고리 태그 — 조항 참조와 동일한 분류 사용","원본 저장소 링크 연결 (시스템에 파일을 보관하지 않음)","수신일·버전 기록"],"w":[],"r":["clause","asset"]}]},{"id":1,"name":"재고 관리","live":true,"desc":"덱플랜 분류 → 실사 확정 → 배분 → 배치 연동","pages":[{"t":"항차 관리","st":"later","u":"관리자","p":"8개 항차의 기본 정보를 등록하고, 이후 모든 단계가 참조하는 기준 코드를 확정한다.","sk":[["h:항차 목록"],["narrow:{v1.name}","출항일 · 기간 · 선박","narrow:{v1.pax}석"],["narrow:{v2.name}","출항일 · 기간 · 선박","narrow:{v1.pax}석"],["h:항차 상세 — 일정 · 총 정원 · 담당 차터사"]],"s":["항차 등록 — 항차 코드, 출항일, 기간, 선박, 총 정원","항차 코드는 아도라 계약서 표기를 그대로 사용 (이후 선사 연동 시 변환 작업 방지)","담당 차터사 지정 — 팬스타 / 롯데JTB / 모두투어","봄·가을 구분 및 판매 상태 관리"],"w":["voyage"],"r":["clause"]},{"t":"객실 분류 · 실사","st":"later","u":"관리자","p":"덱플랜 기준으로 객실을 분류한 뒤, 실사를 거쳐 실제 판매 가능한 객실만 추려낸다. 도면상 사용 가능 객실과 실제 판매 가능 객실은 다르며, 이 차이를 확정하는 것이 재고 관리의 출발점이다.","sk":[["h:1단계 — 덱플랜 기준 분류"],["narrow:Deck 12","Suite {cat.SU.plan}실","narrow:도면 확인"],["narrow:Deck 9-11","Balcony {cat.BA.plan}실","narrow:도면 확인"],["h:2단계 — 실사 검증 → 판매 가능 객실 확정"],["narrow:제외 사유","{excl.list}","narrow:제외 {cab.excluded}실"],["h:확정 재고 — 판매 가능 {cab.sellable}실"]],"s":["덱플랜 등록 — 선사 제공 도면을 데크별로 보관","덱플랜 기준 1차 분류 — 데크, 카테고리, 객실 번호, 정원, 위치","카테고리 코드는 아도라 표기를 그대로 사용","실사 검증 — 도면상 객실을 실제 조건으로 확인","제외 처리 및 사유 기록 — 시야 차단, 소음, 승무원 전용, 접근성 제약, 미완성","판매 가능 객실 확정 — 이 숫자가 모든 배분·판매의 기준값","객실별 특이사항 기록 — 인접 객실, 커넥팅룸, 장애인 객실, 흡연 구역 인접","확정 재고와 계약 재고 대조 — 차이 발생 시 계약 관리로 이슈 연결"],"w":["cabin","category"],"r":["voyage","clause"]},{"t":"배분 현황","st":"later","u":"관리자","p":"확정된 판매 가능 객실을 각 회사에 나눈다. 숫자만이 아니라 덱플랜 위에서 어느 구역이 누구 몫인지 눈으로 확인할 수 있어야 한다.","sk":[["h:배분 매트릭스 — 항차 × 카테고리 × 파트너"],["narrow:{p1.name}","배정 {p1.alloc}","판매 {p1.sold}","narrow:잔여 {p1.left}"],["narrow:{p2.name}","배정 {p2.alloc}","판매 {p2.sold}","narrow:잔여 {p2.left}"],["h:덱플랜 뷰 — 구역별 배분 색상 표시"],["narrow:Deck 11","tall:객실 블록 시각화 — 파트너별 색상 구분"]],"s":["하드블럭 배정 등록 — 파트너별 항차·카테고리·수량","배정 / 판매 / 잔여 / 회수 실시간 산출","덱플랜 시각화 — 도면 위에 파트너별 배분 구역을 색상으로 표시","구역 단위 배분 — 같은 파트너 물량을 인접 배치해 단체 운영 편의 확보","차터사 직판 물량과 하드블럭 물량 구분 관리","배정 조정 이력 기록","모든 수량 정보의 단일 출처 — 다른 화면은 이 값을 읽기만 함"],"w":["alloc"],"r":["cabin","category","voyage","partner","booking"]},{"t":"객실 배정 연동","st":"later","u":"관리자","p":"재고 관리의 최종 완성 단계. 예약 입력으로 확정된 승객이 덱플랜 위 실제 객실에 배치되어, 도면 하나로 전체 배치 현황을 파악한다.","sk":[["h:덱플랜 배치 현황 — {v1.name}"],["narrow:Deck 11","tall:객실별 배정 상태 — 확정 · 가배정 · 미배정"],["narrow:배치 정보","예약번호 · 승객 · 파트너 · 인원"],["h:잔여 · 회수 관리 — 판매율 · 회수 기한"]],"s":["예약 데이터와 객실 배정 연동 — 확정 승객을 실제 객실 번호에 배치","덱플랜 위 배치 현황 시각화 — 확정 / 가배정 / 미배정 상태 구분","객실 클릭 시 예약 정보 확인 — 예약번호, 승객, 파트너, 인원","단체 인접 배치 지원 — 같은 단체를 붙여서 배정","특수 요청 반영 — 커넥팅룸, 장애인 객실, 저층 선호","파트너별 판매율 및 잔여 확인","회수 기한 관리 및 임박 알림 — 회수 후 재배분 또는 직판 전환","배치 확정본을 선사 제출용 객실 배정표로 출력"],"w":["cabin"],"r":["booking","pax","alloc","cabin"]}]},{"id":2,"name":"상품 자료실","desc":"제안서에 필요한 항목부터 역산해 수집하는 원천 정보 보관소","pages":[{"t":"선사 · 선박 정보","st":"later","u":"관리자","p":"아도라 크루즈와 선박에 대한 기초 자료를 정리한다. 고객이 처음 묻는 질문에 답하는 재료.","sk":[["h:선사 소개 · 선박 제원"],["narrow:이미지","선박 외관 · 시설 · 데크 플랜"],["tall:선사 소개문 (원문 / 번역)"],["시설 목록 — 레스토랑 · 극장 · 수영장 · 스파"]],"s":["선사 소개 — 아도라 크루즈 개요, 운항 이력, 특징","선박 제원 — 톤수, 정원, 데크 수, 취항 연도","선내 시설 — 레스토랑, 바, 극장, 수영장, 스파, 키즈클럽","데크 플랜 이미지","원문·번역본 함께 보관","수집 우선순위는 제안서 필요 항목이 결정 — 자료를 다 모은 뒤 제안서를 만드는 것이 아니라, 제안서에 필요한 항목을 먼저 정하고 그 항목만 아도라에 요청","아도라 자료 요청 목록 관리 — 요청일, 수신 여부, 미수신 항목 표시"],"w":["asset"],"r":[]},{"t":"일정 정보","st":"later","u":"관리자","p":"항차별 일자 일정을 원본 그대로 보관한다. 판매자료와 판매 사이트가 모두 이 데이터를 참조한다.","sk":[["h:항차별 일정"],["narrow:Day 1","부산 출항 17:00"],["narrow:Day 2","종일 항해 — 선상 프로그램"],["narrow:Day 3","나가사키 08:00 - 17:00"]],"s":["일자별 일정 — 기항지, 도착·출발 시각, 항해일 구분","선상 프로그램 — 공연, 이벤트, 특별 행사","항차별 일정 차이 관리 (봄·가을 노선 상이)","일정 변경 시 버전 기록 — 판매자료·사이트에 자동 반영"],"w":["asset"],"r":["voyage"]},{"t":"기항지 정보","st":"later","u":"관리자","p":"기항지별 소개 자료를 축적한다. 판매 시점과 여행 시점에 모두 쓰이는 자산.","sk":[["h:기항지 목록"],["narrow:나가사키","소개문 · 볼거리 · 선택관광","narrow:이미지 6"],["narrow:후쿠오카","소개문 · 볼거리 · 선택관광","narrow:이미지 4"],["h:기항지 상세 — 설명서 원고"]],"s":["기항지 소개문 — 도시 개요, 대표 명소, 특징","선택 관광 목록 — 코스, 소요 시간, 요금","이미지 자산 — 판매자료 및 사이트 공용","유의사항 — 정박 시간, 이동 거리, 준비물","기항지 설명서 원고로 그대로 출력 가능한 형태로 관리"],"w":["asset"],"r":["voyage"]},{"t":"약관 · 규정","st":"later","u":"관리자","p":"취소 규정, 여권 요건, 승선 조건 등 판매 시 반드시 고지해야 하는 내용을 한곳에 둔다.","sk":[["h:규정 목록"],["취소·환불 규정","narrow:계약 8.1"],["여권 · 비자 요건","narrow:운영"],["승선 조건 · 연령 제한","narrow:운영"]],"s":["취소·환불 규정 — 시점별 위약금","여권·비자 요건, 유효기간 조건","승선 조건 — 연령, 임신, 건강 관련 제한","각 규정의 근거 계약 조항 연결","판매 사이트 약관 페이지로 그대로 출력"],"w":["asset"],"r":["clause"]}]},{"id":3,"name":"판매자료 배포","pri":true,"desc":"완성된 자료를 파트너에게 전달하는 배포처. 여기서 제작하지 않는다","pages":[{"t":"제작 기획 노트","st":"pri","u":"관리자","p":"자료를 만들기 전에 무엇을 어떻게 만들지 적어두는 곳. 실제 제작은 전문가나 별도 시스템에서 하며, 이 노트가 제작 의뢰서이자 참고 자료가 된다.","sk":[["h:기획 노트 목록"],["narrow:선사 설명서","구성안 · 필요 요소 · 소구 포인트","narrow:작성 완료"],["narrow:{v1.name} 기획전","구성안 · 참고 자료 · 요청 사항","narrow:작성 중"],["h:노트 상세 — 목차 · 필요 자료 · 톤 · 분량 · 마감"]],"s":["자료별 구성안 기록 — 목차, 포함할 내용, 순서, 분량","필요 요소 정리 — 어떤 자료실 항목과 이미지가 들어가야 하는지","소구 포인트 기록 — B2C 판매사용 / B2B 판매사용 강조점 구분","제작 방식 메모 — 외부 전문가 의뢰 / 별도 시스템 제작 / 사내 작업","참고 자료 링크 — 이전 항차 자료, 경쟁사 사례, 선사 제공 원본","마감일과 담당 기록","완성 후 배포함 항목으로 연결 — 기획 노트가 그대로 자료 설명이 된다","이 화면은 노트일 뿐 제작 도구가 아니다"],"w":["output"],"r":["asset","voyage","category","partner"]},{"t":"자료 배포함","st":"pri","u":"관리자","p":"완성된 자료를 올려두는 곳. 파일을 만들지 않고 등록하고 정리한다. 파트너가 필요한 자료를 빠르게 찾는 것이 유일한 목표다.","sk":[["h:배포 자료 목록 — 항차 · 유형 필터"],["narrow:선사 설명서","PDF · 12p · v2","narrow:최신"],["narrow:{v1.name} 기획전","이미지 · 웹링크","narrow:최신"],["narrow:상품 설명서","PDF · 20p · v3","narrow:최신"],["narrow:제안 PPT","PPTX · 18매 · v1","narrow:구버전 v0 보관"],["h:자료 상세 — 설명 · 용도 · 버전 이력 · 다운로드"]],"s":["완성 파일 등록 — PDF, PPT, 이미지, 웹링크 (제작은 외부에서, 여기는 등록만)","유형 분류 — 선사 설명서, 상품 설명서, 기획전, 프레젠테이션, 공유 이미지, 일정표, 기항지 안내","항차별·시즌별 분류 및 필터","버전 관리 — 최신본 자동 표시, 구버전은 보관하되 다운로드 목록에서 내림","자료 설명 — 무엇에 쓰는 자료인지, 누구에게 보내는 자료인지 한 줄 안내","카톡·밴드 공유용 링크 생성 — 파일을 주고받지 않고 링크로 전달","대용량 파일은 외부 저장소 링크 연결 (시스템이 저장소를 대신하지 않음)"],"w":["output"],"r":["voyage","asset"]},{"t":"파트너 접근 관리","st":"pri","u":"관리자","p":"어느 파트너가 어떤 자료를 받을 수 있는지 정하고, 실제로 받아 갔는지 확인한다. 자료를 만들어두고 전달이 안 되는 상황을 막는 화면.","sk":[["h:접근 권한 · 다운로드 현황"],["narrow:{p1.name}","공개 자료 8 · 다운로드 6","narrow:미확인 2"],["narrow:{p2.name}","공개 자료 8 · 다운로드 8","narrow:완료"],["narrow:{p5.name}","제안 자료만 3","narrow:계약 전"],["h:신규 자료 등록 시 대상 파트너 알림"]],"s":["파트너별 공개 범위 설정 — 계약 전 후보사에는 제안 자료만, 계약사에는 판매 자료 전체","신규 자료 등록 시 대상 파트너 알림","다운로드 현황 확인 — 누가 무엇을 받아 갔는지","미확인 파트너 표시 — 최신본으로 갱신됐는데 아직 안 받은 곳","구버전 사용 방지 — 갱신 시 이전 버전 다운로드 차단 및 안내","파트너 콘솔 자료 목록과 연동"],"w":[],"r":["partner","output","alloc"]},{"t":"하드블럭 제안 킷","st":"pri","u":"관리자","p":"배포함의 자료를 묶어 후보사에 보내는 꾸러미. 그들이 자기 고객 반응을 확인해야 계약 의지가 생기므로, 지금 시점 가장 중요한 산출물이다.","sk":[["h:제안 킷 구성"],["narrow:공통부","선사 설명서 · 상품 설명서 · 일정표 · 기항지 안내"],["narrow:B2C사용","기획전 · 고객 제안용 자료 · 판매 포인트"],["narrow:B2B사용","공통부 + 요금대 조건 · 단체 조건 · 커미션"],["h:대상사 선택 → 킷 링크 생성 → 발송 이력"]],"s":["배포함 자료를 선택해 꾸러미 구성 (새로 만들지 않고 골라 담는 방식)","공통부 + 대상별 조건부 구조 — 상품 설명은 공용, 뒤에 붙는 조건만 분기","B2C 판매사용 — 상품·선사 퀄리티 소구, 고객에게 바로 보여줄 수 있는 자료","B2B 판매사용 — 공통부에 목표 요금대 진입 조건, 단체 조건, 커미션 구조 추가","킷 단위 링크 생성 — 파일 여러 개를 보내지 않고 링크 하나로 전달","대상사별 발송 이력 및 열람 여부 확인","질의 대응 기록 — 후보사 질문과 답변 축적, 반복 질문은 재사용","자료 갱신 시 킷 링크는 그대로 두고 내용만 최신화"],"w":["output"],"r":["output","partner","voyage","category","clause"]}]},{"id":4,"name":"파트너 관리","live":true,"desc":"재고 공급과 명단 회수. B2B 유통의 중심","pages":[{"t":"파트너 목록","st":"later","u":"관리자","p":"하드블럭 계약사의 계약 조건과 진행 상태를 한눈에 관리한다.","sk":[["h:파트너 목록"],["narrow:{p1.name}","계약 {p1.alloc}석 · 계약금 완료","narrow:판매중"],["narrow:{p2.name}","계약 {p2.alloc}석 · 계약금 완료","narrow:판매중"],["narrow:{p5.name}","계약 {p5.alloc}석 · 계약금 대기","narrow:협의중"]],"s":["파트너 등록 — 상호, 담당자, 연락처, 계약 조건","계약 상태 — 협의 / 계약 / 계약금 완료 / 판매중 / 종료","계약 수량 및 조건 기록","파트너별 계정 발급 — 콘솔 접근 권한"],"w":["partner"],"r":["clause"]},{"t":"재고 배정","st":"later","u":"관리자","p":"계약 수량을 실제 객실 등급으로 나눠 배정한다.","sk":[["h:배정 관리"],["narrow:{p1.name}","{p1.mix}"],["narrow:조정 이력","2026-10-02 Balcony +20"],["h:배정 확정 → 파트너 콘솔 반영"]],"s":["파트너별 카테고리 배정 입력","배정 즉시 파트너 콘솔에 반영","추가 요청·반납 처리","조정 이력 기록 — 분쟁 시 근거","총 배정량이 재고를 초과하지 않도록 검증"],"w":["alloc"],"r":["partner","category","voyage","cabin"]},{"t":"예약·명단 입력","st":"later","u":"관리자 · 파트너","p":"선사 제출 기준에 맞춘 표준 폼으로만 입력받는다. 여기에 입력된 것이 그대로 제출 가능한 원본 데이터가 되어, 이후 표준화 작업이 필요 없다.","sk":[["h:표준 입력 폼 — 아도라 제출 항목 기준"],["narrow:영문 성명","생년월일 · 성별 · 국적"],["narrow:여권번호","여권 만료일","narrow:필수"],["narrow:객실 카테고리","예약 정보 · 부가 요청"],["h:입력 현황 — {p1.name} {p1.sold} / {p1.alloc} · 누락 4건"]],"s":["표준 입력 폼 제공 — 항목·순서·형식이 아도라 제출 기준과 동일","입력 항목 — 영문 성명, 생년월일, 성별, 국적, 여권번호, 여권 만료일, 객실 카테고리, 예약 정보","자유 양식 접수 안 함 — 표준 폼 외 제출은 받지 않는다 (표준화 작업을 없애는 핵심 원칙)","엑셀 업로드는 시스템이 제공하는 표준 템플릿만 허용","입력 시점 즉시 검증 — 필수값 누락, 여권 만료, 영문명 형식 오류","파트너별 입력 현황 및 미비 항목 표시","입력 완료분은 가공 없이 5단계 선사 제출로 전달"],"w":["booking","pax"],"r":["alloc","category","voyage","partner"]},{"t":"부가서비스 신청","st":"later","u":"관리자","p":"선택 관광, 식음, 특별 요청을 접수하고 집계한다.","sk":[["h:신청 집계"],["narrow:선택관광","나가사키 A코스 84명 · B코스 42명"],["narrow:식음","특식 신청 18건"],["narrow:특별요청","휠체어 4 · 알러지 7 · 기념일 12"]],"s":["표준 신청 폼 — 아도라 부가서비스 코드 체계 기준","선택 관광 신청 접수 및 코스별 집계","식음 관련 요청 — 특식, 알러지, 종교식","특별 요청 — 거동 불편, 기념일, 인접 객실 희망","마감 기한 관리 및 알림","집계 결과를 가공 없이 선사 제출로 전달"],"w":["service"],"r":["booking","voyage"]},{"t":"정산 기초자료","st":"later","u":"관리자","p":"파트너별 판매·입금·환불 내역을 정리해 정산 근거를 만든다.","sk":[["h:정산 현황"],["narrow:{p1.name}","판매액 · 입금 · 미수","narrow:정산서"],["narrow:{p2.name}","판매액 · 입금 · 미수","narrow:정산서"],["h:정산서 생성 → 다운로드"]],"s":["파트너별 판매 건수·금액 집계","계약금·중도금·잔금 입금 현황","취소·환불 내역 반영","정산서 자동 생성","재고 원장에서 직접 파생 — 별도 입력 없음"],"w":[],"r":["booking","alloc","partner","change"]},{"t":"파트너 콘솔","st":"later","u":"파트너","p":"하드블럭사가 직접 사용하는 화면. 잔여 확인을 위해 전화하지 않아도 되는 상태가 목표.","sk":[["h:파트너 콘솔 — {p1.name}"],["narrow:내 재고","배정 {p1.alloc} · 판매 {p1.sold} · 잔여 {p1.left}"],["narrow:예약 등록","명단 입력 · 엑셀 업로드"],["narrow:자료 다운로드","PDF · PPT · 공유 이미지"],["narrow:내 판매 사이트","링크 · 노출 설정"]],"s":["내 재고 — 배정·판매·잔여 실시간 확인","예약·명단 입력 — 표준 폼 직접 입력 또는 표준 엑셀 템플릿 업로드","입력 즉시 오류·누락 표시 — 별도 확인 요청 없이 파트너가 스스로 수정","부가서비스 신청 — 표준 신청 폼","판매자료 다운로드 — 자사 브랜딩 적용본","내 판매 사이트 관리 — 링크 확인, 노출 상품 선택","공지 확인 — 일정 변경, 마감 임박 안내"],"w":["booking","pax","service"],"r":["alloc","output","voyage"]}]},{"id":5,"name":"선사 연동","desc":"표준 폼으로 수집된 데이터를 정확히 전달하고 결과 통보까지 완결","pages":[{"t":"연동 기준","st":"later","u":"관리자","p":"아도라 시스템을 연구해 표준 폼을 확정한다. 목적은 시스템을 이해하는 것이 아니라 4단계 파트너센터의 입력 양식을 무엇으로 만들지 결정하는 것이며, 표준 폼이 확정되면 이 작업은 종료된다.","sk":[["h:연동 기준 확인 항목"],["narrow:입력 항목","예약 · 명단 필수값 · 형식 규칙"],["narrow:코드 체계","항차 · 객실 · 부가서비스 코드"],["narrow:절차","변경 가능 항목 · 발권 절차 · 티켓 형식"],["h:테스트 제출 → 표준 폼 확정 → 4단계 반영"]],"s":["아도라 자료 요청 및 시스템 조사","확인 대상 — 예약 입력 항목, 승객 명단 형식, 필수값, 객실 코드, 항차 코드, 부가서비스 코드","확인 대상 — 변경 가능 항목, 발권 절차, 티켓 형식, 파일·API 연계 가능 여부","가상 예약 건으로 테스트 제출 및 검증","산출물 = 표준 입력 폼 정의 → 4단계 파트너센터에 적용","종료 조건 — 표준 폼 확정 시점 (연구를 무한정 이어가지 않음)","항차·객실 코드는 계약서 표기와 일치하는지 대조"],"w":[],"r":["voyage","category","booking","pax"]},{"t":"선사 제출","st":"later","u":"관리자","p":"표준 폼으로 이미 정리된 데이터를 가공 없이 그대로 전달한다. 변환 작업이 없으므로 관리 항목이 단순하다.","sk":[["h:제출 관리"],["narrow:대상 항차","{v1.name} — 승객 {v1.confirmed}명"],["narrow:제출 전 확인","필수값 미입력 6건"],["narrow:제출 대상","아도라 · 차터운영사"],["h:제출일 · 접수 여부 기록"]],"s":["제출 전 필수값 확인 — 미입력·오류 건 표시","제출 대상 선택 — 아도라 / 차터운영사","제출 파일 생성 (표준 폼 데이터를 변환 없이 출력)","제출일 및 제출 완료 여부 기록","선사 접수 여부 확인","예약·명단·부가서비스 구분 제출"],"w":["submit"],"r":["booking","pax","service","voyage"]},{"t":"티켓·발권","st":"later","u":"관리자 · 파트너","p":"예약 확정부터 티켓 출력까지 연결한다. 선사 시스템 허용 범위에 종속되므로 '연동 가능하면 구현'으로 둔다.","sk":[["h:발권 관리"],["narrow:예약 확정","잔금 완납 확인"],["narrow:발권","티켓 파일 수신 · 고객별 연결"],["narrow:전달","출력 · 파트너 다운로드 · 고객 조회"],["h:항차별 발권 현황"]],"s":["예약 확정 → 발권 → 크루즈 티켓 → 출력·전달 연결","티켓 파일 수신 및 고객별 연결","파트너 다운로드 및 고객 조회 페이지 연동","항차별 발권 현황 확인","구현 범위는 선사 연동 가능 수준에 따라 결정 — 자동 발권 / 파일 수신 / 수동 등록"],"w":[],"r":["booking","pax","submit"]},{"t":"변경·결과관리","st":"later","u":"관리자","p":"5단계의 핵심 화면. 예약은 한 번 넣고 끝나지 않고 이후 변경이 계속 발생한다. 요청 접수부터 파트너 결과 통보까지 하나의 사이클을 닫는다.","sk":[["h:변경 요청 대장"],["narrow:2027-02-14","{p1.name} · 예약 A2041 · 승객 취소","narrow:처리 완료"],["narrow:2027-02-15","{p2.name} · 예약 B1187 · 영문명 수정","narrow:선사 확인중"],["h:요청일 · 요청자 · 변경 전 · 변경 요청 · 전달일 · 상태 · 결과 · 완료일 · 통보"]],"s":["관리 항목 10개 — 요청일 · 요청자 · 예약번호 · 변경 전 내용 · 변경 요청 내용 · 선사 전달일 · 처리 상태 · 처리 결과 · 완료일 · 파트너 통보 여부","변경 유형 — 취소, 추가, 명단 수정, 객실 변경, 부가서비스 변경","처리 흐름 — 파트너 요청 → 접수 → 선사·차터사 전달 → 처리 → 결과 수신 → 상태 변경 → 파트너 통보","미통보 건 표시 — 결과를 받고도 전달하지 않은 건을 놓치지 않게","예약별 변경 이력 누적 — 누가 언제 무엇을 바꿨는지 끝까지 추적","성공 기준은 제출 완료가 아니라 결과 통보까지 사이클이 닫히는 것"],"w":["change"],"r":["booking","pax","partner","submit"]}]},{"id":6,"name":"온라인 판매","desc":"파트너에게 판매 채널을 공급하고 소비자 예약까지 처리","pages":[{"t":"판매 사이트 · 기획전","st":"later","u":"공개","p":"소비자가 처음 만나는 화면. 파트너별 주소로 열리며, 상품 내용은 중앙에서 관리하고 상호·연락처만 파트너별로 달라진다.","sk":[["h:상단 — 파트너 상호 · 로고 · 문의 연락처"],["h:메인 비주얼 — 항차 대표 이미지 · 헤드라인"],["narrow:일정 요약","narrow:객실·요금","narrow:예약 신청"],["tall:상품 소개 — 선박 · 일정 · 기항지 · 판매 조건"]],"s":["항차별 기획전 노출 — 3단계에서 제작한 내용 그대로","파트너별 브랜딩 — 상호, 로고, 문의처, 표시 요금","중앙에서 상품 내용 수정 시 모든 파트너 페이지 동시 반영","잔여 상황 연동 — 마감 항차 자동 표시","모바일 대응 — 카톡 공유 링크로 유입되는 경로가 주력"],"w":[],"r":["output","voyage","alloc","partner"]},{"t":"일정표","st":"later","u":"공개","p":"고객이 가장 많이 확인하는 페이지. 자료실 데이터를 그대로 보여준다.","sk":[["h:항차 일정"],["narrow:Day 1","부산 출항 17:00"],["narrow:Day 2","종일 항해 · 선상 프로그램"],["narrow:Day 3","나가사키 08:00 - 17:00 · 선택관광 안내"]],"s":["일자별 일정 표시 — 기항지, 도착·출발 시각","선상 프로그램 안내","기항지별 상세 페이지 연결","일정 변경 시 자동 갱신 — 파트너가 따로 고칠 필요 없음","인쇄·PDF 저장 가능"],"w":[],"r":["asset","voyage"]},{"t":"기항지 설명서","st":"later","u":"공개","p":"판매 시점에는 구매 결정을 돕고, 출발 후에는 여행 안내서로 쓰인다.","sk":[["h:기항지 목록"],["narrow:이미지","나가사키 — 소개 · 볼거리"],["narrow:이미지","후쿠오카 — 소개 · 볼거리"],["h:기항지 상세 — 선택관광 · 유의사항"]],"s":["기항지별 소개 — 도시 개요, 대표 명소","선택 관광 안내 — 코스, 소요 시간, 요금","정박 시간 및 유의사항","이미지 갤러리","PDF 다운로드 — 출발 전 고객 배포용"],"w":[],"r":["asset","voyage"]},{"t":"객실 안내","st":"later","u":"공개","p":"객실 등급별 차이를 이해시켜 상위 등급 판매로 연결한다.","sk":[["h:객실 카테고리"],["narrow:이미지","Suite — 설명 · 정원 · 요금","narrow:잔여 {cat.SU.sellable}"],["narrow:이미지","Balcony — 설명 · 정원 · 요금","narrow:잔여 {p1.left}"],["h:카테고리 비교표"]],"s":["카테고리별 사진·설명·정원·요금","등급 비교표 — 차이를 한눈에","데크 위치 안내","실시간 잔여 표시 (마감 시 자동 처리)","표시 요금은 파트너 설정값 적용"],"w":[],"r":["category","asset","alloc"]},{"t":"예약 신청","st":"later","u":"공개","p":"고객이 직접 신청하는 창구. 신청은 곧바로 파트너 콘솔의 예약 등록으로 연결된다.","sk":[["h:예약 신청"],["narrow:항차·객실 선택","인원 · 요금 확인"],["narrow:승객 정보 입력","영문명 · 여권 · 생년월일"],["narrow:부가서비스","선택관광 · 특별요청"],["h:결제 → 신청 완료 → 파트너 통보"]],"s":["항차·객실 선택 및 인원 입력","승객 정보 입력 — 영문명, 여권번호, 생년월일 (선사 제출 항목 기준)","부가서비스 신청 — 선택 관광, 특별 요청","결제 처리 — 계약금·잔금 구분","신청 즉시 담당 파트너에게 통보","재고 연동 — 신청과 동시에 잔여 반영"],"w":["booking","pax","service"],"r":["alloc","category","voyage","partner"]},{"t":"내 예약 조회","st":"later","u":"공개","p":"고객이 예약 내용과 서류를 스스로 확인한다. 파트너에게 걸려오는 문의를 줄이는 화면.","sk":[["h:예약 조회 — 예약번호 · 성명"],["narrow:예약 정보","항차 · 객실 · 인원 · 결제 상태"],["narrow:서류","예약확인서 · 크루즈 티켓"],["h:변경 · 취소 신청"]],"s":["예약번호로 조회","예약 내용 확인 — 항차, 객실, 인원, 결제 상태, 잔금 기한","서류 열람·출력 — 예약확인서, 크루즈 티켓","변경·취소 신청 접수 (처리는 파트너·관리자 승인)","일정·기항지 안내 재확인"],"w":["change"],"r":["booking","pax","service"]},{"t":"발행 문서","st":"later","u":"관리자 · 파트너","p":"예약 데이터 하나에서 필요한 서류가 전부 파생된다. 파트너가 양식을 만들거나 채울 일이 없다.","sk":[["h:문서 발행 관리"],["예약확인서","narrow:예약 확정 시"],["크루즈 티켓","narrow:잔금 완납 후"],["일정표 · 기항지 설명서","narrow:상시"],["h:변경 발생 시 관련 문서 일괄 재발행"]],"s":["예약확인서 — 예약번호, 승객, 객실, 요금, 결제 상태, 취소 규정","크루즈 티켓 — 승선 정보, 집합 시간, 터미널, 코드, 주의사항","일정표·기항지 설명서 — 고객 배포용","부가서비스 신청서","파트너 브랜딩 자동 적용","승객명 수정·객실 변경 시 관련 문서 전체 자동 갱신"],"w":[],"r":["booking","pax","asset","partner","voyage"]},{"t":"파트너 사이트 설정","st":"later","u":"파트너","p":"파트너가 자기 판매 페이지를 관리하는 화면. 준비 부담 없이 판매만 하게 하는 것이 목적.","sk":[["h:내 판매 사이트"],["narrow:사이트 주소","cruise-site.com/partner/cruisecity"],["narrow:노출 설정","항차 선택 · 표시 요금 · 공개 여부"],["narrow:브랜딩","상호 · 로고 · 문의 연락처"],["h:유입 · 신청 현황"]],"s":["전용 사이트 주소 발급 및 확인","노출 항차 선택 — 자사 배정 물량만 표시","표시 요금 설정 — 계약 조건 범위 내","브랜딩 설정 — 상호, 로고, 문의 연락처","공개·비공개 전환","유입 및 신청 건수 확인","들어온 신청을 예약 등록으로 연결"],"w":["partner"],"r":["alloc","output","voyage"]}]},{"id":7,"name":"선사 요청","desc":"선내·항만 운영을 위한 외부 요청사항 체크리스트","pages":[{"t":"요청 체크리스트","st":"later","u":"관리자","p":"선사와 포트 에이전시에 요청해야 할 사항을 카테고리별로 관리한다. 온보드 미팅에서 다루던 내용을 미리 목록화해 누락을 막는 것이 목적이며, 복잡한 업무 관리 시스템이 아니라 체크리스트 하나면 충분하다.","sk":[["h:카테고리 필터 — 공연 · 식음료 · 선내공간 · VIP · 승객운영 · 포트/카고"],["narrow:공연","극장 사용 · 아도라 · 5/10","narrow:확인중"],["narrow:공연","리허설 16:00 · 아도라 · 5/10","narrow:확정"],["narrow:식음료","VIP 디너 20명 · 아도라 · 5/12","narrow:확정"],["narrow:포트/카고","행사물품 반입 · {agent} · 5/15","narrow:준비중"]],"s":["카테고리 6개 — ① 공연·행사 ② 식음료 ③ 선내 공간 ④ VIP·특별 요청 ⑤ 승객 운영 ⑥ 포트·카고","① 공연·행사 — 공연장 사용, 리허설 시간, 음향, 조명, 마이크, 무대 세팅, 행사 시간, 선내 방송, 촬영","② 식음료 — 레스토랑 예약, 좌석 배치, 테이블 세팅, 메뉴, 단체 식사, VIP 식사, 음료, 프라이빗 베뉴","③ 선내 공간 — 라운지, 극장, 회의실, 창고, 안내데스크, 행사 장소","④ VIP·특별 요청 — VIP 객실, 웰컴 서비스, 특별 어메니티, 우선 처리, 에스코트, 공식 행사","⑤ 승객 운영 — 식사조 배정, 단체 관리, 집합 장소, 안내 방송, 승하선, 특별 지원","⑥ 포트·카고 — 카고 반입, 물품 하역, 차량, 작업 시간, 선적, 통관, 포트 패스, 반입 업체, 장비, 창고, 현장 담당자","항목 관리 — 카테고리 · 요청 사항 · 요청 대상 · 요청일 · 상태 · 마감 · 결과","요청 대상에 선사와 포트 에이전시({agent} 등)를 함께 관리 — 분리하면 누락 발생","상태 — 요청 전 / 요청 / 확인 대기 / 확정","마감 임박 항목 표시","항차별 체크리스트 분리 운영"],"w":["request"],"r":["voyage"]},{"t":"템플릿 관리","st":"later","u":"관리자","p":"이전 차터에서 사용한 체크리스트를 복제해 새 항차용으로 만든다. 8항차를 반복하는 구조에서 가장 실용적이며, 반복될수록 체크리스트가 정교해진다.","sk":[["h:템플릿 목록"],["2026 코스타 운영 체크리스트","narrow:48개 항목"],["2027 아도라 봄 1차","narrow:복제 생성"],["h:복제 → 항차 지정 → 일정 자동 조정"]],"s":["체크리스트 템플릿 저장 — 완료된 항차의 요청 목록을 원형으로 보관","복제 생성 — 템플릿 선택 후 새 항차에 적용","복제 시 일자 자동 조정 — 출항일 기준 상대 일정으로 재계산","항차별 차이 항목만 수정","운영 후 개선 사항 반영 — 다음 항차 템플릿이 계속 정교해지는 구조","선사·포트 에이전시별 표준 요청 문구 보관"],"w":["request"],"r":[]}]}]};
+const M = DB.MASTER, E = DB.ENTITIES, S = DB.stages;
+const ENT = {}; E.forEach(e=>ENT[e.id]=e);
+
+/* ===== 원장 토큰 해석 — 모든 화면의 숫자는 여기서만 나온다 ===== */
+function tok(str){
+  return str.replace(/\{([^}]+)\}/g, (m,k)=>{
+    const p = k.split('.');
+    let val = null;
+    if(p[0]==='agent') val = M.biz.agent;
+    else if(p[0]==='excl' && p[1]==='list') val = M.exclusions.map(x=>x.reason+' '+x.n).join(' · ');
+    else if(/^v\d+$/.test(p[0])){
+      const v = M.voyages[+p[0].slice(1)-1]; if(v) val = v[p[1]];
+      if(p[1]==='pax'&&val) val = val.toLocaleString();
+      if(p[1]==='confirmed'&&val) val = val.toLocaleString();
+    }
+    else if(/^p\d+$/.test(p[0])){
+      const x = M.partners[+p[0].slice(1)-1];
+      if(x){ if(p[1]==='left') val = x.alloc - x.sold;
+             else if(p[1]==='rate') val = x.alloc? Math.round(x.sold/x.alloc*100) : 0;
+             else val = x[p[1]]; }
+    }
+    else if(p[0]==='cat'){
+      const c = M.categories.find(c=>c.code===p[1]); if(c) val = c[p[2]];
+    }
+    else if(p[0]==='cab'){
+      if(p[1]==='sellable') val = M.categories.reduce((a,c)=>a+c.sellable,0).toLocaleString();
+      if(p[1]==='excluded') val = M.categories.reduce((a,c)=>a+c.excluded,0);
+      if(p[1]==='plan') val = M.categories.reduce((a,c)=>a+c.plan,0).toLocaleString();
+    }
+    return val===null||val===undefined ? m : '<span class="tok">'+val+'</span>';
+  });
+}
+function esc(x){return String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function sketch(rows){
+  return '<div class="sk">' + rows.map(r=>'<div class="row">' + r.map(c=>{
+    let cls='box', t=c;
+    if(t.startsWith('h:')){cls+=' h';t=t.slice(2)}
+    if(t.startsWith('narrow:')){cls+=' narrow';t=t.slice(7)}
+    if(t.startsWith('wide:')){cls+=' wide';t=t.slice(5)}
+    if(t.startsWith('h:')){cls+=' h';t=t.slice(2)}
+    if(t.startsWith('tall:')){cls+=' tall';t=t.slice(5)}
+    return '<div class="'+cls+'">'+tok(esc(t))+'</div>';
+  }).join('') + '</div>').join('') +
+  '<div class="sk-note">화면 배치 스케치 — <span class="tok">파란 값</span>은 데이터 원장에서 불러온 것</div></div>';
+}
+
+/* ===================== 실동작 모듈 (1·4단계) ===================== */
+const CSS_LS_KEY = 'consortiumMasterData_v1';
+M.allocations = M.allocations || [];
+M.bookings = M.bookings || [];
+M.services = M.services || [];
+M.exclusionLog = M.exclusionLog || [];
+
+function persistMaster(){
+  syncPartnerTotals();
+  try{
+    localStorage.setItem(CSS_LS_KEY, JSON.stringify({
+      voyageCharter: M.voyages.map(v=>({code:v.code, charter:v.charter})),
+      catExcluded: M.categories.map(c=>({code:c.code, excluded:c.excluded})),
+      exclusionLog: M.exclusionLog,
+      partners: M.partners,
+      allocations: M.allocations,
+      bookings: M.bookings,
+      services: M.services
+    }));
+  }catch(e){}
+}
+function restoreMaster(){
+  try{
+    const raw = localStorage.getItem(CSS_LS_KEY);
+    if(!raw) return;
+    const d = JSON.parse(raw);
+    (d.voyageCharter||[]).forEach(o=>{ const v=M.voyages.find(x=>x.code===o.code); if(v) v.charter=o.charter; });
+    (d.catExcluded||[]).forEach(o=>{ const c=M.categories.find(x=>x.code===o.code); if(c) c.excluded=o.excluded; });
+    if(d.exclusionLog) M.exclusionLog = d.exclusionLog;
+    if(d.partners) M.partners = d.partners;
+    if(d.allocations) M.allocations = d.allocations;
+    if(d.bookings) M.bookings = d.bookings;
+    if(d.services) M.services = d.services;
+  }catch(e){}
+}
+function recalcCategories(){ M.categories.forEach(c=>{ c.sellable = c.plan - c.excluded; }); }
+function syncPartnerTotals(){ M.partners.forEach(p=>{ p.alloc = partnerAllocTotal(p.id); p.sold = partnerSoldTotal(p.id); }); }
+
+function uid(p){ return p + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function fmtN(n){ return (n||0).toLocaleString(); }
+function catByCode(code){ return M.categories.find(c=>c.code===code); }
+function voyByCode(code){ return M.voyages.find(v=>v.code===code); }
+function partnerById(id){ return M.partners.find(p=>p.id===id); }
+function activeBookings(){ return M.bookings.filter(b=>b.status!=='취소'); }
+
+function allocQty(voy,cat,pid){ const a=M.allocations.find(x=>x.voyageCode===voy&&x.catCode===cat&&x.partnerId===pid); return a?a.qty:0; }
+function setAllocQty(voy,cat,pid,qty){
+  qty = Math.max(0, parseInt(qty)||0);
+  let a = M.allocations.find(x=>x.voyageCode===voy&&x.catCode===cat&&x.partnerId===pid);
+  if(!a){ a={voyageCode:voy,catCode:cat,partnerId:pid,qty:0}; M.allocations.push(a); }
+  a.qty = qty;
+  persistMaster();
+}
+function soldQty(voy,cat,pid){
+  return activeBookings().filter(b=>b.voyageCode===voy&&b.catCode===cat&&(!pid||b.partnerId===pid)).reduce((s,b)=>s+(b.pax||0),0);
+}
+function partnerAllocTotal(pid){ return M.allocations.filter(a=>a.partnerId===pid).reduce((s,a)=>s+a.qty,0); }
+function partnerSoldTotal(pid){ return activeBookings().filter(b=>b.partnerId===pid).reduce((s,b)=>s+(b.pax||0),0); }
+
+restoreMaster();
+recalcCategories();
+syncPartnerTotals();
+let UI = { allocVoy: M.voyages[0].code, assignVoy: M.voyages[0].code, consolePartner: (M.partners[0]&&M.partners[0].id)||null, focusBookingId: null };
+
+function toggleForm(id, show){
+  const f = document.getElementById(id); if(!f) return;
+  const willShow = show===undefined ? !f.classList.contains('on') : show;
+  f.classList.toggle('on', willShow);
+}
+
+/* ---- 1.1 항차 관리 ---- */
+function renderLiveVoyages(){
+  const options = ['확인 필요','팬스타','롯데JTB','모두투어'];
+  const rows = M.voyages.map(v=>'<tr><td class="m">'+v.code+'</td><td class="k">'+v.name+'</td><td class="m">'+v.dep+'</td>'+
+    '<td class="num">'+v.nights+'</td><td class="num">'+fmtN(v.pax)+'</td><td>'+v.season+'</td>'+
+    '<td><select class="lv-select" onchange="updateVoyageCharter(\''+v.code+'\',this.value)">'+
+    options.map(o=>'<option value="'+esc(o)+'" '+(o===v.charter?'selected':'')+'>'+esc(o)+'</option>').join('')+
+    '</select></td></tr>').join('');
+  return '<div class="crumb"><b>STAGE 1</b> · 재고 관리 · 항차 관리</div>'+
+  '<div class="page-h"><div class="ph-top"><h1>항차 관리</h1><span class="badge live">실동작</span></div>'+
+  '<div class="ph-purpose">8개 항차의 실제 계약 기준 일정입니다. 담당 차터사는 컨소시엄 내부에서 아직 확정되지 않아 직접 지정할 수 있게 열어두었습니다.</div></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Voyage</span><span class="bd">항차 '+M.voyages.length+'개 · 항차당 판매가능 '+fmtN(M.voyages[0].pax)+'명</span></div>'+
+  '<div class="blk-b"><div class="tbl"><table><thead><tr><th>코드</th><th>항차</th><th>출항일</th><th>박</th><th>판매가능인원</th><th>시즌</th><th>담당 차터사</th></tr></thead>'+
+  '<tbody>'+rows+'</tbody></table></div>'+
+  '<div class="lv-note">항차 코드(AD27-Sx/Ax)는 계약서 최종 표기가 확정되면 그대로 교체해야 합니다. 판매가능인원 1,918명/항차는 계약 캐빈(1,049실) − 스텝/인솔자 제외(90실) = 판매 가능 959실 × 2명 기준.</div>'+
+  '</div></div>';
+}
+function updateVoyageCharter(code, val){ const v=voyByCode(code); if(v){ v.charter=val; persistMaster(); } go(1,0); }
+
+/* ---- 1.2 객실 분류·실사 ---- */
+function renderLiveCabin(){
+  const cat = M.categories;
+  const tp=cat.reduce((a,c)=>a+c.plan,0), te=cat.reduce((a,c)=>a+c.excluded,0), ts=cat.reduce((a,c)=>a+c.sellable,0);
+  const rows = cat.map(c=>'<tr><td class="m">'+c.code+'</td><td class="k">'+c.name+' <span style="color:var(--ink-3);font-weight:400">'+c.kr+'</span></td>'+
+    '<td class="num">'+fmtN(c.plan)+'</td><td class="num">'+fmtN(c.excluded)+'</td><td class="num">'+fmtN(c.sellable)+'</td></tr>').join('');
+  const logRows = M.exclusionLog.length ? M.exclusionLog.slice().reverse().map(x=>{
+    const c=catByCode(x.catCode);
+    return '<tr><td class="m">'+x.at+'</td><td>'+(c?c.kr:x.catCode)+'</td><td>'+esc(x.reason)+'</td><td class="num">'+x.n+'</td></tr>';
+  }).join('') : '<tr><td colspan="4" class="lv-empty">추가 실사 제외 기록 없음</td></tr>';
+  return '<div class="crumb"><b>STAGE 1</b> · 재고 관리 · 객실 분류·실사</div>'+
+  '<div class="page-h"><div class="ph-top"><h1>객실 분류 · 실사</h1><span class="badge live">실동작</span></div>'+
+  '<div class="ph-purpose">계약 기준 캐빈 구성과 확정된 스텝/인솔자 캐빈 제외분입니다. 시야 차단·소음 등 개별 실사는 아직 진행 전이라 반영되지 않았습니다 — 실사 완료 시 아래에서 사유를 추가하세요.</div></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Cabin</span><span class="bd">계약 '+fmtN(tp)+'실 → 제외 '+fmtN(te)+' → 판매 가능 '+fmtN(ts)+'실</span></div>'+
+  '<div class="blk-b"><div class="tbl"><table><thead><tr><th>코드</th><th>카테고리</th><th>계약 캐빈</th><th>제외</th><th>판매 가능</th></tr></thead><tbody>'+
+  rows+'<tr class="tot"><td></td><td class="k">합계</td><td class="num">'+fmtN(tp)+'</td><td class="num">'+fmtN(te)+'</td><td class="num">'+fmtN(ts)+'</td></tr>'+
+  '</tbody></table></div>'+
+  '<div class="tip"><b>확정 제외 —</b> '+M.exclusions.map(x=>esc(x.reason)+' '+x.n+'실').join(' · ')+'. 시야 차단·소음·접근성 등 개별 객실 실사는 아직 미실시(확인 필요).</div>'+
+  '</div></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Inspection Log</span><span class="bd">추가 실사 제외 등록</span></div>'+
+  '<div class="blk-b"><div class="lv-toolbar"><button class="lv-btn pri" onclick="toggleForm(\'excl-form\')">+ 실사 제외 등록</button></div>'+
+  '<div class="lv-form" id="excl-form">'+
+  '<div><label>카테고리</label><select id="excl-cat">'+cat.map(c=>'<option value="'+c.code+'">'+c.kr+'</option>').join('')+'</select></div>'+
+  '<div><label>제외 사유</label><input type="text" id="excl-reason" placeholder="예: 시야 차단"></div>'+
+  '<div><label>제외 실수</label><input type="number" id="excl-n" min="1" value="1"></div>'+
+  '<div class="actions"><button type="button" class="lv-btn" onclick="toggleForm(\'excl-form\',false)">취소</button><button type="button" class="lv-btn pri" onclick="submitExclusion()">등록</button></div>'+
+  '</div><div class="tbl"><table><thead><tr><th>등록일</th><th>카테고리</th><th>사유</th><th class="num">실수</th></tr></thead><tbody>'+logRows+'</tbody></table></div>'+
+  '</div></div>';
+}
+function addExclusion(catCode, reason, n){
+  n = parseInt(n)||0;
+  if(n<=0||!reason.trim()){ alert('사유와 실수를 입력하세요.'); return; }
+  const c = catByCode(catCode); if(!c) return;
+  c.excluded += n;
+  M.exclusionLog.push({catCode, reason:reason.trim(), n, at:new Date().toISOString().slice(0,10)});
+  recalcCategories(); persistMaster(); go(1,1);
+}
+function submitExclusion(){ addExclusion(document.getElementById('excl-cat').value, document.getElementById('excl-reason').value, document.getElementById('excl-n').value); }
+
+/* ---- 1.3 배분 현황 ---- */
+function renderLiveAlloc(){
+  const voy = UI.allocVoy, cats = M.categories, partners = M.partners;
+  const voyOpts = M.voyages.map(v=>'<option value="'+v.code+'" '+(v.code===voy?'selected':'')+'>'+v.name+'</option>').join('');
+  const rows = cats.map(c=>{
+    const paxCap = c.sellable*2;
+    const cells = partners.map(p=>'<td><input class="lv-num" type="number" min="0" value="'+allocQty(voy,c.code,p.id)+'" onchange="updateAlloc(\''+voy+'\',\''+c.code+'\',\''+p.id+'\',this.value)"></td>').join('');
+    const allocSum = partners.reduce((s,p)=>s+allocQty(voy,c.code,p.id),0);
+    const soldSum = soldQty(voy,c.code,null);
+    const unalloc = paxCap-allocSum;
+    return '<tr><td class="k">'+c.kr+'<div style="font-size:10px;color:var(--ink-3);font-weight:400">판매가능(인원) '+fmtN(paxCap)+'</div></td>'+cells+
+      '<td class="num">'+fmtN(allocSum)+'</td><td class="num">'+fmtN(soldSum)+'</td>'+
+      '<td class="num" style="'+(unalloc<0?'color:var(--red);font-weight:700':'')+'">'+fmtN(unalloc)+'</td></tr>';
+  }).join('');
+  const grandSellable = cats.reduce((a,c)=>a+c.sellable*2,0);
+  const grandAlloc = partners.reduce((s,p)=>s+cats.reduce((a,c)=>a+allocQty(voy,c.code,p.id),0),0);
+  const grandSold = cats.reduce((a,c)=>a+soldQty(voy,c.code,null),0);
+  const partnerSummary = partners.map(p=>{
+    const a = cats.reduce((s,c)=>s+allocQty(voy,c.code,p.id),0);
+    const s = activeBookings().filter(b=>b.voyageCode===voy&&b.partnerId===p.id).reduce((x,b)=>x+b.pax,0);
+    return '<tr><td class="k">'+esc(p.name)+'</td><td class="num">'+fmtN(a)+'</td><td class="num">'+fmtN(s)+'</td><td class="num">'+fmtN(a-s)+'</td></tr>';
+  }).join('');
+  return '<div class="crumb"><b>STAGE 1</b> · 재고 관리 · 배분 현황</div>'+
+  '<div class="page-h"><div class="ph-top"><h1>배분 현황</h1><span class="badge live">실동작</span></div>'+
+  '<div class="ph-purpose">배정 수량은 인원(명) 기준입니다. 항차·카테고리·파트너별 배정 인원을 입력하면 판매(예약)·잔여가 자동 계산됩니다. 배정 합이 판매 가능 인원을 넘으면 미배정 칸이 빨간색으로 표시됩니다.</div></div>'+
+  '<div class="lv-toolbar">항차 선택 <select class="lv-select" onchange="UI.allocVoy=this.value; go(1,2)">'+voyOpts+'</select></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Allocation</span><span class="bd">'+voyByCode(voy).name+' · 판매가능 '+fmtN(grandSellable)+'명 · 배정 '+fmtN(grandAlloc)+' · 판매 '+fmtN(grandSold)+'</span></div>'+
+  '<div class="blk-b"><div class="tbl"><table><thead><tr><th>카테고리</th>'+partners.map(p=>'<th>'+esc(p.name)+'</th>').join('')+'<th>배정 합</th><th>판매</th><th>미배정</th></tr></thead><tbody>'+
+  rows+'</tbody></table></div>'+
+  '<div class="lv-note">판매(예약)는 4단계 "예약·명단 입력"에서 등록한 확정/대기 건에서 자동 집계됩니다.</div>'+
+  '</div></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Partner Summary</span><span class="bd">'+voyByCode(voy).name+' · 파트너별 배정-판매-잔여</span></div>'+
+  '<div class="blk-b"><div class="tbl"><table><thead><tr><th>파트너</th><th class="num">배정</th><th class="num">판매</th><th class="num">잔여</th></tr></thead><tbody>'+
+  (partnerSummary||'<tr><td colspan="4" class="lv-empty">등록된 파트너가 없습니다.</td></tr>')+'</tbody></table></div></div></div>';
+}
+function updateAlloc(voy,cat,pid,val){ setAllocQty(voy,cat,pid,val); go(1,2); }
+
+/* ---- 1.4 객실 배정 연동 (간이) ---- */
+function renderLiveCabinAssign(){
+  const voy = UI.assignVoy;
+  const voyOpts = M.voyages.map(v=>'<option value="'+v.code+'" '+(v.code===voy?'selected':'')+'>'+v.name+'</option>').join('');
+  const list = M.bookings.filter(b=>b.voyageCode===voy);
+  const rows = list.length ? list.map(b=>{
+    const c=catByCode(b.catCode), p=partnerById(b.partnerId);
+    const stTag = b.status==='확정' ? '<span class="lv-tag ok">확정</span>' : b.status==='대기' ? '<span class="lv-tag warn">가배정</span>' : '<span class="lv-tag">취소</span>';
+    return '<tr><td class="m">'+b.id+'</td><td>'+(c?c.kr:b.catCode)+'</td><td>'+(p?esc(p.name):'-')+'</td><td class="num">'+b.pax+'</td><td>'+stTag+'</td><td class="m">확인 필요</td></tr>';
+  }).join('') : '<tr><td colspan="6" class="lv-empty">이 항차에 등록된 예약이 없습니다.</td></tr>';
+  return '<div class="crumb"><b>STAGE 1</b> · 재고 관리 · 객실 배정 연동</div>'+
+  '<div class="page-h"><div class="ph-top"><h1>객실 배정 연동</h1><span class="badge live">실동작(일부)</span></div>'+
+  '<div class="ph-purpose">예약과 연동한 배치 현황입니다. 개별 객실 번호 배치(덱플랜 시각화)는 선사로부터 룸리스트·덱플랜을 수령한 뒤 가능합니다 — 현재는 카테고리 단위 배치만 확인할 수 있습니다.</div></div>'+
+  '<div class="lv-toolbar">항차 선택 <select class="lv-select" onchange="UI.assignVoy=this.value; go(1,3)">'+voyOpts+'</select></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Assignment</span><span class="bd">'+voyByCode(voy).name+' · 예약 '+list.length+'건</span></div>'+
+  '<div class="blk-b"><div class="tbl"><table><thead><tr><th>예약번호</th><th>카테고리</th><th>파트너</th><th class="num">인원</th><th>상태</th><th>객실번호</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+  '<div class="tip"><b>확인 필요 —</b> 개별 객실 번호 배정은 아도라 룸리스트 수령 후 진행 (DECISIONS.md: "3차 룸리스트 미수령").</div>'+
+  '</div></div>';
+}
+
+/* ---- 4.1 파트너 목록 ---- */
+function renderLivePartners(){
+  syncPartnerTotals();
+  const rows = M.partners.map(p=>'<tr><td class="k">'+esc(p.name)+'</td><td class="m">'+p.type+'</td><td>'+esc(p.contact||'-')+'</td>'+
+    '<td class="num">'+fmtN(p.alloc)+'</td><td class="num">'+fmtN(p.sold)+'</td><td class="num">'+fmtN(p.alloc-p.sold)+'</td><td>'+esc(p.status)+'</td>'+
+    '<td><button class="lv-btn sm" onclick="editPartner(\''+p.id+'\')">수정</button> <button class="lv-btn sm danger" onclick="deletePartner(\''+p.id+'\')">삭제</button></td></tr>').join('');
+  return '<div class="crumb"><b>STAGE 4</b> · 파트너 관리 · 파트너 목록</div>'+
+  '<div class="page-h"><div class="ph-top"><h1>파트너 목록</h1><span class="badge live">실동작</span></div>'+
+  '<div class="ph-purpose">하드블럭 협의 대상 6개사 실명 기준입니다. 배정·판매 열은 1단계 배분 현황·4단계 예약 입력에서 자동 집계됩니다.</div></div>'+
+  '<div class="lv-toolbar"><button class="lv-btn pri" onclick="newPartner()">+ 파트너 등록</button></div>'+
+  '<div class="lv-form" id="partner-form"><input type="hidden" id="pt-id">'+
+  '<div><label>상호</label><input type="text" id="pt-name"></div>'+
+  '<div><label>유형</label><select id="pt-type"><option value="B2C">B2C</option><option value="B2B">B2B</option></select></div>'+
+  '<div><label>담당자·연락처</label><input type="text" id="pt-contact"></div>'+
+  '<div><label>계약 상태</label><select id="pt-status"><option>협의중</option><option>계약금 대기</option><option>계약 완료</option><option>판매중</option><option>종료</option></select></div>'+
+  '<div class="actions"><button type="button" class="lv-btn" onclick="toggleForm(\'partner-form\',false)">취소</button><button type="button" class="lv-btn pri" onclick="savePartner()">저장</button></div></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Partner</span><span class="bd">'+M.partners.length+'개사</span></div>'+
+  '<div class="blk-b"><div class="tbl"><table><thead><tr><th>상호</th><th>유형</th><th>담당자</th><th class="num">배정</th><th class="num">판매</th><th class="num">잔여</th><th>상태</th><th></th></tr></thead><tbody>'+
+  (rows||'<tr><td colspan="8" class="lv-empty">등록된 파트너가 없습니다.</td></tr>')+'</tbody></table></div></div></div>';
+}
+function newPartner(){
+  document.getElementById('pt-id').value='';
+  document.getElementById('pt-name').value=''; document.getElementById('pt-contact').value='';
+  document.getElementById('pt-type').value='B2C'; document.getElementById('pt-status').value='협의중';
+  toggleForm('partner-form', true);
+}
+function editPartner(id){
+  const p = partnerById(id); if(!p) return;
+  document.getElementById('pt-id').value=p.id;
+  document.getElementById('pt-name').value=p.name;
+  document.getElementById('pt-contact').value=p.contact||'';
+  document.getElementById('pt-type').value=p.type;
+  document.getElementById('pt-status').value=p.status;
+  toggleForm('partner-form', true);
+}
+function savePartner(){
+  const id = document.getElementById('pt-id').value;
+  const name = document.getElementById('pt-name').value.trim();
+  if(!name){ alert('상호를 입력하세요.'); return; }
+  if(id){
+    const p = partnerById(id);
+    Object.assign(p, {name, type:document.getElementById('pt-type').value, contact:document.getElementById('pt-contact').value.trim(), status:document.getElementById('pt-status').value});
+  } else {
+    M.partners.push({id:uid('pt'), name, type:document.getElementById('pt-type').value, contact:document.getElementById('pt-contact').value.trim(), status:document.getElementById('pt-status').value, alloc:0, sold:0, mix:'미정'});
+  }
+  persistMaster(); toggleForm('partner-form',false); go(4,0);
+}
+function deletePartner(id){
+  if(!confirm('이 파트너를 삭제할까요? 연결된 배정·예약 기록은 남지만 파트너명이 표시되지 않습니다.')) return;
+  M.partners = M.partners.filter(p=>p.id!==id);
+  persistMaster(); go(4,0);
+}
+
+/* ---- 4.2 재고 배정 (파트너 기준 조회) ---- */
+function renderLiveAllocByPartner(){
+  const pid = UI.consolePartner || (M.partners[0]&&M.partners[0].id);
+  const opts = M.partners.map(p=>'<option value="'+p.id+'" '+(p.id===pid?'selected':'')+'>'+esc(p.name)+'</option>').join('');
+  const rows = M.voyages.map(v=>{
+    const cells = M.categories.map(c=>allocQty(v.code,c.code,pid));
+    const rowTotal = cells.reduce((a,b)=>a+b,0);
+    const sold = activeBookings().filter(b=>b.voyageCode===v.code&&b.partnerId===pid).reduce((s,b)=>s+b.pax,0);
+    if(rowTotal===0 && sold===0) return '';
+    return '<tr><td class="k">'+v.name+'</td>'+cells.map(n=>'<td class="num">'+fmtN(n)+'</td>').join('')+
+      '<td class="num">'+fmtN(rowTotal)+'</td><td class="num">'+fmtN(sold)+'</td><td class="num">'+fmtN(rowTotal-sold)+'</td></tr>';
+  }).join('');
+  return '<div class="crumb"><b>STAGE 4</b> · 파트너 관리 · 재고 배정</div>'+
+  '<div class="page-h"><div class="ph-top"><h1>재고 배정</h1><span class="badge live">실동작(조회)</span></div>'+
+  '<div class="ph-purpose">배정 입력은 1단계 "배분 현황"에서 하며, 이 화면은 같은 데이터를 파트너 기준으로 다시 모아 보여줍니다 (엔티티마다 생성 화면은 하나).</div></div>'+
+  '<div class="lv-toolbar">파트너 선택 <select class="lv-select" onchange="UI.consolePartner=this.value; go(4,1)">'+opts+'</select></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Allocation</span><span class="bd">'+M.categories.map(c=>c.kr).join(' · ')+'</span></div>'+
+  '<div class="blk-b"><div class="tbl"><table><thead><tr><th>항차</th>'+M.categories.map(c=>'<th>'+c.kr+'</th>').join('')+'<th>배정 합</th><th>판매</th><th>잔여</th></tr></thead><tbody>'+
+  (rows||'<tr><td colspan="'+(M.categories.length+4)+'" class="lv-empty">아직 이 파트너에 배정된 재고가 없습니다.</td></tr>')+'</tbody></table></div>'+
+  '<div class="lv-note">배정 수량 수정은 <a href="#" onclick="go(1,2);return false" style="color:var(--blue)">1단계 배분 현황</a>에서 진행하세요.</div>'+
+  '</div></div>';
+}
+
+/* ---- 4.3 예약·명단 입력 ---- */
+function renderLiveBooking(){
+  const voyOpts = M.voyages.map(v=>'<option value="'+v.code+'">'+v.name+'</option>').join('');
+  const ptOpts = M.partners.map(p=>'<option value="'+p.id+'">'+esc(p.name)+'</option>').join('');
+  const catOpts = M.categories.map(c=>'<option value="'+c.code+'">'+c.kr+'</option>').join('');
+  const rows = M.bookings.length ? M.bookings.map(b=>{
+    const v=voyByCode(b.voyageCode), p=partnerById(b.partnerId), c=catByCode(b.catCode);
+    const payCls = {'완납':'ok','부분입금':'warn','미입금':''}[b.payStatus]||'';
+    return '<tr><td class="m">'+b.id+'</td><td>'+(v?v.name:b.voyageCode)+'</td><td>'+(p?esc(p.name):'-')+'</td><td>'+(c?c.kr:b.catCode)+'</td>'+
+      '<td class="num">'+b.pax+'</td><td class="num">'+(b.unitPrice?fmtN(b.unitPrice)+'원':'미입력')+'</td>'+
+      '<td><span class="lv-tag '+payCls+'">'+b.payStatus+'</span></td><td>'+b.status+'</td>'+
+      '<td class="num">'+(b.passengers||[]).length+'/'+b.pax+'</td>'+
+      '<td><button class="lv-btn sm" onclick="focusBooking(\''+b.id+'\')">명단</button> <button class="lv-btn sm" onclick="editBooking2(\''+b.id+'\')">수정</button> <button class="lv-btn sm danger" onclick="deleteBooking2(\''+b.id+'\')">삭제</button></td></tr>';
+  }).join('') : '<tr><td colspan="10" class="lv-empty">등록된 예약이 없습니다.</td></tr>';
+  const focus = UI.focusBookingId ? renderPassengerPanel(UI.focusBookingId) : '';
+  return '<div class="crumb"><b>STAGE 4</b> · 파트너 관리 · 예약·명단 입력</div>'+
+  '<div class="page-h"><div class="ph-top"><h1>예약·명단 입력</h1><span class="badge live">실동작</span></div>'+
+  '<div class="ph-purpose">아도라 제출 기준 표준 항목(영문성명·생년월일·성별·국적·여권번호·여권만료일)으로만 승객 명단을 받습니다. 자유 양식은 접수하지 않습니다.</div></div>'+
+  '<div class="lv-toolbar"><button class="lv-btn pri" onclick="newBooking()">+ 예약 등록</button></div>'+
+  '<div class="lv-form" id="booking-form"><input type="hidden" id="bk-id">'+
+  '<div><label>항차</label><select id="bk-voy">'+voyOpts+'</select></div>'+
+  '<div><label>파트너</label><select id="bk-pt">'+(ptOpts||'<option value="">등록된 파트너 없음</option>')+'</select></div>'+
+  '<div><label>객실 카테고리</label><select id="bk-cat">'+catOpts+'</select></div>'+
+  '<div><label>인원</label><input type="number" id="bk-pax" min="1" value="1"></div>'+
+  '<div><label>단가(원, 선택)</label><input type="number" id="bk-price" min="0" placeholder="확정 요금 없으면 비워둠"></div>'+
+  '<div><label>결제 상태</label><select id="bk-pay"><option>미입금</option><option>부분입금</option><option>완납</option></select></div>'+
+  '<div><label>예약 상태</label><select id="bk-status"><option>대기</option><option>확정</option><option>취소</option></select></div>'+
+  '<div class="actions"><button type="button" class="lv-btn" onclick="toggleForm(\'booking-form\',false)">취소</button><button type="button" class="lv-btn pri" onclick="saveBooking2()">저장</button></div></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Booking</span><span class="bd">'+M.bookings.length+'건</span></div>'+
+  '<div class="blk-b"><div class="tbl"><table><thead><tr><th>예약번호</th><th>항차</th><th>파트너</th><th>카테고리</th><th class="num">인원</th><th class="num">단가</th><th>결제</th><th>상태</th><th>명단</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div></div></div>'+
+  focus;
+}
+function newBooking(){
+  document.getElementById('bk-id').value='';
+  document.getElementById('bk-pax').value=1; document.getElementById('bk-price').value='';
+  toggleForm('booking-form', true);
+}
+function editBooking2(id){
+  const b = M.bookings.find(x=>x.id===id); if(!b) return;
+  document.getElementById('bk-id').value=b.id;
+  document.getElementById('bk-voy').value=b.voyageCode;
+  document.getElementById('bk-pt').value=b.partnerId;
+  document.getElementById('bk-cat').value=b.catCode;
+  document.getElementById('bk-pax').value=b.pax;
+  document.getElementById('bk-price').value=b.unitPrice||'';
+  document.getElementById('bk-pay').value=b.payStatus;
+  document.getElementById('bk-status').value=b.status;
+  toggleForm('booking-form', true);
+}
+function saveBooking2(){
+  const id = document.getElementById('bk-id').value;
+  const pax = Math.max(1, parseInt(document.getElementById('bk-pax').value)||1);
+  const priceRaw = document.getElementById('bk-price').value;
+  const partnerId = document.getElementById('bk-pt').value;
+  if(!partnerId){ alert('파트너를 먼저 등록하세요.'); return; }
+  const data = {
+    voyageCode: document.getElementById('bk-voy').value, partnerId, catCode: document.getElementById('bk-cat').value, pax,
+    unitPrice: priceRaw ? parseInt(priceRaw) : null,
+    payStatus: document.getElementById('bk-pay').value, status: document.getElementById('bk-status').value
+  };
+  if(id){ Object.assign(M.bookings.find(x=>x.id===id), data); }
+  else { M.bookings.push(Object.assign({id:uid('BK-'), passengers:[]}, data)); }
+  persistMaster(); toggleForm('booking-form',false); go(4,2);
+}
+function deleteBooking2(id){
+  if(!confirm('이 예약을 삭제할까요? 등록된 명단도 함께 삭제됩니다.')) return;
+  M.bookings = M.bookings.filter(x=>x.id!==id);
+  if(UI.focusBookingId===id) UI.focusBookingId=null;
+  persistMaster(); go(4,2);
+}
+function focusBooking(id){ UI.focusBookingId = id; go(4,2); }
+function renderPassengerPanel(bookingId){
+  const b = M.bookings.find(x=>x.id===bookingId); if(!b) return '';
+  const v = voyByCode(b.voyageCode);
+  const list = b.passengers||[];
+  const rows = list.length ? list.map((ps,i)=>'<tr><td>'+esc(ps.name)+'</td><td class="m">'+(ps.dob||'-')+'</td><td>'+(ps.gender==='F'?'여':'남')+'</td>'+
+    '<td>'+esc(ps.nationality||'-')+'</td><td class="m">'+esc(ps.passportNo||'-')+'</td><td class="m">'+(ps.passportExp||'-')+'</td>'+
+    '<td><button class="lv-btn sm danger" onclick="deletePassenger(\''+b.id+'\','+i+')">삭제</button></td></tr>').join('')
+    : '<tr><td colspan="7" class="lv-empty">등록된 승객이 없습니다.</td></tr>';
+  return '<div class="block" style="border-top:3px solid var(--blue)"><div class="blk-h"><span class="bl">Passenger</span><span class="bd">'+b.id+' · '+(v?v.name:'')+' · 명단 '+list.length+'/'+b.pax+'</span></div>'+
+  '<div class="blk-b"><div class="lv-toolbar"><button class="lv-btn" onclick="UI.focusBookingId=null;go(4,2)">← 목록으로</button><button class="lv-btn pri" onclick="toggleForm(\'pax-form\')">+ 승객 추가</button></div>'+
+  '<div class="lv-form" id="pax-form">'+
+  '<div><label>영문 성명</label><input type="text" id="px-name" placeholder="HONG GILDONG"></div>'+
+  '<div><label>생년월일</label><input type="date" id="px-dob"></div>'+
+  '<div><label>성별</label><select id="px-gender"><option value="M">남</option><option value="F">여</option></select></div>'+
+  '<div><label>국적</label><input type="text" id="px-nation" value="KR"></div>'+
+  '<div><label>여권번호</label><input type="text" id="px-passport"></div>'+
+  '<div><label>여권 만료일</label><input type="date" id="px-passexp"></div>'+
+  '<div class="actions"><button type="button" class="lv-btn" onclick="toggleForm(\'pax-form\',false)">취소</button><button type="button" class="lv-btn pri" onclick="addPassenger(\''+b.id+'\')">추가</button></div></div>'+
+  '<div class="tbl"><table><thead><tr><th>영문 성명</th><th>생년월일</th><th>성별</th><th>국적</th><th>여권번호</th><th>여권만료일</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+  '</div></div>';
+}
+function addPassenger(bookingId){
+  const b = M.bookings.find(x=>x.id===bookingId); if(!b) return;
+  const name = document.getElementById('px-name').value.trim();
+  if(!name){ alert('영문 성명을 입력하세요.'); return; }
+  b.passengers = b.passengers || [];
+  b.passengers.push({name, dob:document.getElementById('px-dob').value, gender:document.getElementById('px-gender').value,
+    nationality:document.getElementById('px-nation').value.trim(), passportNo:document.getElementById('px-passport').value.trim(), passportExp:document.getElementById('px-passexp').value});
+  persistMaster(); go(4,2);
+}
+function deletePassenger(bookingId, idx){
+  const b = M.bookings.find(x=>x.id===bookingId); if(!b) return;
+  b.passengers.splice(idx,1); persistMaster(); go(4,2);
+}
+
+/* ---- 4.4 부가서비스 신청 ---- */
+function renderLiveService(){
+  const bkOpts = M.bookings.map(b=>{ const v=voyByCode(b.voyageCode); return '<option value="'+b.id+'">'+b.id+' · '+(v?v.name:'')+'</option>'; }).join('');
+  const rows = M.services.length ? M.services.map(s=>'<tr><td class="m">'+s.bookingId+'</td><td>'+esc(s.code)+'</td><td class="num">'+s.qty+'</td><td>'+esc(s.request||'-')+'</td><td class="m">'+(s.deadline||'-')+'</td>'+
+    '<td><button class="lv-btn sm danger" onclick="deleteService(\''+s.id+'\')">삭제</button></td></tr>').join('') : '<tr><td colspan="6" class="lv-empty">등록된 부가서비스 신청이 없습니다.</td></tr>';
+  return '<div class="crumb"><b>STAGE 4</b> · 파트너 관리 · 부가서비스 신청</div>'+
+  '<div class="page-h"><div class="ph-top"><h1>부가서비스 신청</h1><span class="badge live">실동작</span></div>'+
+  '<div class="ph-purpose">선택 관광·식음·특별 요청을 예약 건에 연결해 접수합니다.</div></div>'+
+  '<div class="lv-toolbar"><button class="lv-btn pri" onclick="toggleForm(\'service-form\')">+ 신청 등록</button></div>'+
+  '<div class="lv-form" id="service-form">'+
+  '<div><label>예약 선택</label><select id="sv-bk">'+(bkOpts||'<option value="">등록된 예약 없음</option>')+'</select></div>'+
+  '<div><label>서비스 코드</label><input type="text" id="sv-code" placeholder="예: 선택관광-A코스"></div>'+
+  '<div><label>수량</label><input type="number" id="sv-qty" min="1" value="1"></div>'+
+  '<div><label>마감일</label><input type="date" id="sv-deadline"></div>'+
+  '<div class="full"><label>특별 요청</label><input type="text" id="sv-request" placeholder="예: 알러지, 휠체어 등"></div>'+
+  '<div class="actions"><button type="button" class="lv-btn" onclick="toggleForm(\'service-form\',false)">취소</button><button type="button" class="lv-btn pri" onclick="saveService()">저장</button></div></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Service</span><span class="bd">'+M.services.length+'건</span></div>'+
+  '<div class="blk-b"><div class="tbl"><table><thead><tr><th>예약번호</th><th>서비스 코드</th><th class="num">수량</th><th>특별 요청</th><th>마감일</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div></div></div>';
+}
+function saveService(){
+  const bookingId = document.getElementById('sv-bk').value;
+  const code = document.getElementById('sv-code').value.trim();
+  if(!bookingId||!code){ alert('예약과 서비스 코드를 입력하세요.'); return; }
+  M.services.push({id:uid('SV-'), bookingId, code, qty:Math.max(1,parseInt(document.getElementById('sv-qty').value)||1),
+    request:document.getElementById('sv-request').value.trim(), deadline:document.getElementById('sv-deadline').value});
+  persistMaster(); toggleForm('service-form',false); go(4,3);
+}
+function deleteService(id){ M.services = M.services.filter(s=>s.id!==id); persistMaster(); go(4,3); }
+
+/* ---- 4.5 정산 기초자료 ---- */
+function renderLiveSettlement(){
+  syncPartnerTotals();
+  const rows = M.partners.map(p=>{
+    const bks = activeBookings().filter(b=>b.partnerId===p.id);
+    const pax = bks.reduce((s,b)=>s+b.pax,0);
+    const paid = bks.filter(b=>b.payStatus==='완납').length, partial = bks.filter(b=>b.payStatus==='부분입금').length, unpaid = bks.filter(b=>b.payStatus==='미입금').length;
+    const revenueKnown = bks.filter(b=>b.unitPrice).reduce((s,b)=>s+b.unitPrice*b.pax,0);
+    const noPriceCount = bks.filter(b=>!b.unitPrice).length;
+    const cancelCnt = M.bookings.filter(b=>b.partnerId===p.id&&b.status==='취소').length;
+    return '<tr><td class="k">'+esc(p.name)+'</td><td class="num">'+bks.length+'</td><td class="num">'+pax+'</td>'+
+      '<td class="num">'+paid+'</td><td class="num">'+partial+'</td><td class="num">'+unpaid+'</td>'+
+      '<td class="num">'+(revenueKnown?fmtN(revenueKnown)+'원':'-')+(noPriceCount?' <span style="color:var(--ink-3)">(단가미입력 '+noPriceCount+'건)</span>':'')+'</td>'+
+      '<td class="num">'+cancelCnt+'</td></tr>';
+  }).join('');
+  return '<div class="crumb"><b>STAGE 4</b> · 파트너 관리 · 정산 기초자료</div>'+
+  '<div class="page-h"><div class="ph-top"><h1>정산 기초자료</h1><span class="badge live">실동작</span></div>'+
+  '<div class="ph-purpose">예약 데이터에서 파생된 집계이며 별도 입력이 없습니다. 단가가 입력되지 않은 예약은 매출 합계에서 제외되고 건수로 별도 표시됩니다.</div></div>'+
+  '<div class="lv-toolbar"><button class="lv-btn" onclick="exportSettlementCSV2()">⬇ CSV 내보내기</button></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Settlement</span></div>'+
+  '<div class="blk-b"><div class="tbl"><table><thead><tr><th>파트너</th><th class="num">건수</th><th class="num">인원</th><th class="num">완납</th><th class="num">부분입금</th><th class="num">미입금</th><th class="num">매출(단가입력분)</th><th class="num">취소</th></tr></thead><tbody>'+
+  (rows||'<tr><td colspan="8" class="lv-empty">데이터 없음</td></tr>')+'</tbody></table></div></div></div>';
+}
+function exportSettlementCSV2(){
+  const header = ['파트너','건수','인원','완납','부분입금','미입금','매출(단가입력분,원)','취소'];
+  const lines = [header.join(',')];
+  M.partners.forEach(p=>{
+    const bks = activeBookings().filter(b=>b.partnerId===p.id);
+    const revenueKnown = bks.filter(b=>b.unitPrice).reduce((s,b)=>s+b.unitPrice*b.pax,0);
+    lines.push([p.name, bks.length, bks.reduce((s,b)=>s+b.pax,0), bks.filter(b=>b.payStatus==='완납').length, bks.filter(b=>b.payStatus==='부분입금').length,
+      bks.filter(b=>b.payStatus==='미입금').length, revenueKnown, M.bookings.filter(b=>b.partnerId===p.id&&b.status==='취소').length].join(','));
+  });
+  const blob = new Blob(['﻿'+lines.join('\n')], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='partner-settlement-'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ---- 4.6 파트너 콘솔 ---- */
+function renderLiveConsole(){
+  const pid = UI.consolePartner || (M.partners[0]&&M.partners[0].id);
+  const p = partnerById(pid);
+  if(!p) return '<div class="crumb"><b>STAGE 4</b> · 파트너 콘솔</div><div class="tip">등록된 파트너가 없습니다. 먼저 "파트너 목록"에서 등록하세요.</div>';
+  const opts = M.partners.map(x=>'<option value="'+x.id+'" '+(x.id===pid?'selected':'')+'>'+esc(x.name)+'</option>').join('');
+  const alloc = partnerAllocTotal(p.id), sold = partnerSoldTotal(p.id);
+  const bks = M.bookings.filter(b=>b.partnerId===p.id);
+  const svcCount = M.services.filter(s=>{ const b=M.bookings.find(x=>x.id===s.bookingId); return b&&b.partnerId===p.id; }).length;
+  const bkRows = bks.length ? bks.map(b=>{
+    const v=voyByCode(b.voyageCode), c=catByCode(b.catCode);
+    return '<tr><td class="m">'+b.id+'</td><td>'+(v?v.name:b.voyageCode)+'</td><td>'+(c?c.kr:b.catCode)+'</td><td class="num">'+b.pax+'</td><td>'+b.payStatus+'</td><td>'+b.status+'</td></tr>';
+  }).join('') : '<tr><td colspan="6" class="lv-empty">등록된 예약이 없습니다.</td></tr>';
+  return '<div class="crumb"><b>STAGE 4</b> · 파트너 관리 · 파트너 콘솔</div>'+
+  '<div class="page-h"><div class="ph-top"><h1>파트너 콘솔 — '+esc(p.name)+'</h1><span class="badge live">실동작</span></div>'+
+  '<div class="ph-purpose">하드블럭사가 직접 볼 화면의 관리자 미리보기입니다. 잔여 확인을 위해 전화하지 않아도 되는 상태가 목표입니다.</div></div>'+
+  '<div class="lv-toolbar">파트너 선택 <select class="lv-select" onchange="UI.consolePartner=this.value; go(4,5)">'+opts+'</select></div>'+
+  '<div style="display:flex;gap:10px;margin:14px 0;flex-wrap:wrap">'+
+  '<div class="block" style="flex:1;min-width:140px;padding:14px"><div style="font-size:11px;color:var(--ink-3)">배정</div><div style="font-size:22px;font-weight:800">'+fmtN(alloc)+'</div></div>'+
+  '<div class="block" style="flex:1;min-width:140px;padding:14px"><div style="font-size:11px;color:var(--ink-3)">판매</div><div style="font-size:22px;font-weight:800">'+fmtN(sold)+'</div></div>'+
+  '<div class="block" style="flex:1;min-width:140px;padding:14px"><div style="font-size:11px;color:var(--ink-3)">잔여</div><div style="font-size:22px;font-weight:800">'+fmtN(alloc-sold)+'</div></div>'+
+  '<div class="block" style="flex:1;min-width:140px;padding:14px"><div style="font-size:11px;color:var(--ink-3)">부가서비스 신청</div><div style="font-size:22px;font-weight:800">'+fmtN(svcCount)+'</div></div>'+
+  '</div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">My Bookings</span></div><div class="blk-b"><div class="tbl"><table><thead><tr><th>예약번호</th><th>항차</th><th>카테고리</th><th class="num">인원</th><th>결제</th><th>상태</th></tr></thead><tbody>'+bkRows+'</tbody></table></div></div></div>';
+}
+
+const LIVE_PAGES = {
+  1: [renderLiveVoyages, renderLiveCabin, renderLiveAlloc, renderLiveCabinAssign],
+  4: [renderLivePartners, renderLiveAllocByPartner, renderLiveBooking, renderLiveService, renderLiveSettlement, renderLiveConsole]
+};
+
+let cur={s:0,p:-1};
+function renderStages(){
+  document.getElementById('stages').innerHTML =
+    '<button class="stage led '+(cur.s==='L'?'on':'')+'" onclick="go(\'L\',-1)">◈ 데이터 원장</button>' +
+    S.map(s=>'<button class="stage '+(s.id===cur.s?'on':'')+'" onclick="go('+s.id+',-1)">'+
+      '<span class="num">'+s.id+'</span>'+s.name+(s.now?'<span class="dot"></span>':'')+(s.pri?'<span class="dot p"></span>':'')+(s.live?'<span class="dot l"></span>':'')+'</button>').join('');
+}
+function renderSide(){
+  if(cur.s==='L'){
+    document.getElementById('shn').textContent='LEDGER';
+    document.getElementById('sht').textContent='데이터 원장';
+    document.getElementById('shd').textContent='실제 데이터는 여기 한 번만 입력하고, 모든 화면이 참조한다';
+    document.getElementById('submenu').innerHTML =
+      '<div class="grp">원장</div>' +
+      ['원장 원칙','마스터 데이터','엔티티 정의','참조 관계'].map((t,i)=>
+        '<a href="#" class="'+(cur.p===i?'on':'')+'" onclick="go(\'L\','+i+');return false"><span class="ix">L.'+(i+1)+'</span>'+t+'</a>').join('');
+    return;
+  }
+  const st=S[cur.s];
+  document.getElementById('shn').textContent='STAGE '+st.id;
+  document.getElementById('sht').textContent=st.name;
+  document.getElementById('shd').textContent=st.desc;
+  document.getElementById('submenu').innerHTML =
+    '<div class="grp">화면 목록</div>' +
+    '<a href="#" class="'+(cur.p===-1?'on':'')+'" onclick="go('+cur.s+',-1);return false"><span class="ix">◆</span>단계 개요</a>' +
+    st.pages.map((p,i)=>'<a href="#" class="'+(cur.p===i?'on':'')+'" onclick="go('+cur.s+','+i+');return false"><span class="ix">'+cur.s+'.'+(i+1)+'</span>'+p.t+'</a>').join('');
+}
+function entChip(id,isW){
+  const e=ENT[id]; if(!e) return '';
+  return '<span class="ent '+(isW?'w':'')+'" title="'+esc(e.fields)+'">'+e.name+'<span class="ec">'+e.ko+'</span></span>';
+}
+
+/* ===== 원장 화면 ===== */
+function ledger(){
+  if(cur.p===-1||cur.p===0){
+    return '<div class="crumb"><b>LEDGER</b> · 데이터 원장 · 원칙</div>'+
+    '<div class="hero"><h2>데이터는 <b>한 번만</b> 입력한다</h2>'+
+    '<p>같은 사실을 여러 화면에서 각각 관리하면 반드시 충돌한다. 이 시스템은 마스터 데이터를 한 곳에 두고, 모든 화면은 그것을 읽거나 정해진 한 곳에서만 쓴다. 기획이 끝난 뒤 실제 데이터를 한 번에 입력하고, 이후에는 원장만 갱신한다.</p>'+
+    '<div class="flow"><span class="fi">한 번 입력</span><span class="fa">▶</span><span class="fi">원장 저장</span><span class="fa">▶</span><span class="fi">화면은 참조만</span><span class="fa">▶</span><span class="fi">변경은 원장에서</span></div></div>'+
+    '<div class="block"><div class="blk-h"><span class="bl">Rules</span><span class="bd">원장 운용 규칙</span></div><div class="blk-b"><ul class="svc">'+
+    ['엔티티마다 생성 화면은 단 하나 — 나머지 화면은 읽기만 한다',
+     '계산으로 얻을 수 있는 값은 저장하지 않는다 — 잔여 = 배정 − 판매',
+     '항차 코드와 객실 카테고리 코드는 아도라 계약서 표기를 그대로 쓴다',
+     '조건이 충돌하면 계약 조항이 이긴다 — 조항이 최종 근거',
+     '실제 데이터 입력은 기획 확정 후 한 번에 — 화면을 만들면서 조금씩 넣지 않는다',
+     '표준 폼 외의 형식으로는 데이터를 받지 않는다 — 변환 작업 자체를 없앤다',
+     '원본은 수정하지 않고 버전으로 남긴다'].map(x=>'<li>'+x+'</li>').join('')+
+    '</ul></div></div>';
+  }
+  if(cur.p===1){
+    const cat=M.categories, tp=cat.reduce((a,c)=>a+c.plan,0), te=cat.reduce((a,c)=>a+c.excluded,0), ts=cat.reduce((a,c)=>a+c.sellable,0);
+    return '<div class="crumb"><b>LEDGER</b> · 마스터 데이터</div>'+
+    '<div class="page-h"><div class="ph-top"><h1>마스터 데이터</h1><span class="badge pri">한 번 입력</span></div>'+
+    '<div class="ph-purpose">아래 값이 원장의 실제 내용이다. 프로토타입에는 예시 값이 들어 있으며, 기획 확정 후 실제 값으로 한 번에 교체한다. 화면에 보이는 모든 숫자는 이 표에서 나온다.</div></div>'+
+    '<div class="block"><div class="blk-h"><span class="bl">Business</span></div><div class="blk-b"><div class="tbl"><table><tbody>'+
+    '<tr><td class="k">선사 · 선박</td><td>'+M.biz.line+' · '+M.biz.ship+'</td></tr>'+
+    '<tr><td class="k">총 항차</td><td>'+M.biz.total+'항차 (봄 '+M.biz.spring+' · 가을 '+M.biz.autumn+')</td></tr>'+
+    '<tr><td class="k">컨소시엄</td><td>'+M.biz.consortium.join(' · ')+'</td></tr>'+
+    '<tr><td class="k">포트 에이전시</td><td>'+M.biz.agent+'</td></tr>'+
+    '</tbody></table></div></div></div>'+
+    '<div class="block"><div class="blk-h"><span class="bl">Voyage</span><span class="bd">항차 '+M.voyages.length+'개</span></div><div class="blk-b"><div class="tbl"><table>'+
+    '<thead><tr><th>코드</th><th>항차</th><th>출항일</th><th>박</th><th>정원</th><th>담당</th></tr></thead><tbody>'+
+    M.voyages.map(v=>'<tr><td class="m">'+v.code+'</td><td class="k">'+v.name+'</td><td class="m">'+v.dep+'</td><td class="num">'+v.nights+'</td><td class="num">'+v.pax.toLocaleString()+'</td><td>'+v.charter+'</td></tr>').join('')+
+    '</tbody></table></div></div></div>'+
+    '<div class="block"><div class="blk-h"><span class="bl">Cabin</span><span class="bd">덱플랜 '+tp.toLocaleString()+'실 → 실사 제외 '+te+' → 판매 가능 '+ts.toLocaleString()+'실</span></div><div class="blk-b"><div class="tbl"><table>'+
+    '<thead><tr><th>코드</th><th>카테고리</th><th>데크</th><th>도면</th><th>제외</th><th>판매 가능</th></tr></thead><tbody>'+
+    cat.map(c=>'<tr><td class="m">'+c.code+'</td><td class="k">'+c.name+' <span style="color:var(--ink-3);font-weight:400">'+c.kr+'</span></td><td class="m">'+c.deck+'</td><td class="num">'+c.plan+'</td><td class="num">'+c.excluded+'</td><td class="num">'+c.sellable+'</td></tr>').join('')+
+    '<tr><td></td><td class="k">합계</td><td></td><td class="num">'+tp.toLocaleString()+'</td><td class="num">'+te+'</td><td class="num">'+ts.toLocaleString()+'</td></tr>'+
+    '</tbody></table></div>'+
+    '<div class="tip">제외 사유 — '+M.exclusions.map(x=>x.reason+' '+x.n+'실').join(' · ')+'. <b>도면상 객실과 판매 가능 객실은 다르다.</b> 실사로 확정된 판매 가능 수량만 재고가 된다.</div>'+
+    '</div></div>'+
+    '<div class="block"><div class="blk-h"><span class="bl">Partner</span><span class="bd">하드블럭 '+M.partners.length+'개사</span></div><div class="blk-b"><div class="tbl"><table>'+
+    '<thead><tr><th>상호</th><th>유형</th><th>배정</th><th>판매</th><th>잔여</th><th>판매율</th><th>상태</th></tr></thead><tbody>'+
+    M.partners.map(p=>'<tr><td class="k">'+p.name+'</td><td class="m">'+p.type+'</td><td class="num">'+p.alloc+'</td><td class="num">'+p.sold+'</td><td class="num">'+(p.alloc-p.sold)+'</td><td class="num">'+(p.alloc?Math.round(p.sold/p.alloc*100):0)+'%</td><td>'+p.status+'</td></tr>').join('')+
+    '<tr><td class="k">합계</td><td></td><td class="num">'+M.partners.reduce((a,p)=>a+p.alloc,0)+'</td><td class="num">'+M.partners.reduce((a,p)=>a+p.sold,0)+'</td><td class="num">'+M.partners.reduce((a,p)=>a+p.alloc-p.sold,0)+'</td><td></td><td></td></tr>'+
+    '</tbody></table></div>'+
+    '<div class="tip"><b>잔여와 판매율은 저장하지 않는다.</b> 배정과 판매만 입력하고 나머지는 계산으로 얻는다. 저장된 값이 둘이면 반드시 어긋난다.</div>'+
+    '</div></div>';
+  }
+  if(cur.p===2){
+    return '<div class="crumb"><b>LEDGER</b> · 엔티티 정의</div>'+
+    '<div class="page-h"><div class="ph-top"><h1>엔티티 정의</h1><span class="badge">'+E.length+'개</span></div>'+
+    '<div class="ph-purpose">시스템이 다루는 데이터 단위와 각각의 생성 화면이다. 생성 화면은 엔티티마다 하나뿐이며, 다른 화면은 읽기만 한다.</div></div>'+
+    '<div class="block"><div class="blk-h"><span class="bl">Entities</span></div><div class="blk-b"><div class="tbl"><table>'+
+    '<thead><tr><th>엔티티</th><th>생성 화면</th><th>주요 필드</th></tr></thead><tbody>'+
+    E.map(e=>'<tr><td class="k">'+e.name+'<div style="font-family:IBM Plex Mono,monospace;font-size:10px;color:var(--ink-3);font-weight:400">'+e.ko+'</div></td>'+
+      '<td class="m">'+e.owner+'</td><td>'+e.fields+'<div style="color:var(--ink-3);font-size:11.5px;margin-top:3px">'+e.note+'</div></td></tr>').join('')+
+    '</tbody></table></div></div></div>';
+  }
+  // 참조 관계
+  const rows = E.map(e=>{
+    const readers=[];
+    S.forEach(s=>s.pages.forEach(p=>{ if((p.r||[]).includes(e.id)) readers.push(s.id+'.'+p.t); }));
+    return {e, readers};
+  });
+  return '<div class="crumb"><b>LEDGER</b> · 참조 관계</div>'+
+  '<div class="page-h"><div class="ph-top"><h1>참조 관계</h1></div>'+
+  '<div class="ph-purpose">각 엔티티를 어느 화면이 읽는지 보여준다. 읽는 화면이 많을수록 그 데이터의 정확도가 전체에 영향을 준다.</div></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Read Map</span></div><div class="blk-b"><div class="tbl"><table>'+
+  '<thead><tr><th>엔티티</th><th>생성</th><th>참조 화면</th></tr></thead><tbody>'+
+  rows.map(r=>'<tr><td class="k">'+r.e.name+'</td><td class="m">'+r.e.owner+'</td>'+
+    '<td class="m">'+(r.readers.length?r.readers.join(' · '):'—')+' <span style="color:var(--ink-3)">('+r.readers.length+')</span></td></tr>').join('')+
+  '</tbody></table></div></div></div>';
+}
+
+function overview(){
+  const st=S[cur.s];
+  let h='<div class="crumb"><b>STAGE '+st.id+'</b> · '+st.name+' · 단계 개요</div>'+
+  '<div class="hero"><h2>'+st.id+'단계 <b>'+st.name+'</b></h2>'+
+  '<p>'+st.desc+'. 아래 '+st.pages.length+'개 화면으로 구성된다.</p>'+
+  '<div class="flow">'+st.pages.map((p,i)=>'<span class="fi">'+p.t+'</span>'+(i<st.pages.length-1?'<span class="fa">▶</span>':'')).join('')+'</div></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Screens</span><span class="bd">클릭하면 화면 정의로 이동</span></div><div class="blk-b"><div class="ov-grid">'+
+  st.pages.map((p,i)=>'<button class="ov '+(p.st==='now'?'now':'')+(p.st==='pri'?'pri':'')+'" onclick="go('+cur.s+','+i+')">'+
+    '<div class="ov-n">'+cur.s+'.'+(i+1)+' · '+p.u+'</div><div class="ov-t">'+p.t+'</div><div class="ov-d">'+p.p+'</div>'+
+    '<div class="ov-c">서비스 '+p.s.length+' · 생성 '+(p.w||[]).length+' · 참조 '+(p.r||[]).length+'</div></button>').join('')+
+  '</div></div></div>';
+  if(cur.s===0) h+='<div class="tip"><b>단계 번호와 실행 순서는 다르다</b> — 번호는 데이터가 흐르는 순서이고, 착수 순서는 업무 시급성이 정한다. 현 시점 최우선은 <b>3단계 판매자료 제작</b>이며, 0단계 계약 관리는 계약서 최종본이 나오는 대로 병행한다.</div>';
+  if(cur.s===1) h+='<div class="tip"><b>재고는 3단으로 완성된다</b> — ① 덱플랜 기준 분류 → ② 실사로 판매 가능 객실 확정 → ③ 배분과 덱플랜 시각화, 최종적으로 예약과 연동해 도면 위 배치 현황까지. 도면상 객실과 판매 가능 객실은 다르다.</div>';
+  if(cur.s===3) h+='<div class="tip"><b>현 시점 최우선 단계</b> — 하드블럭 후보사가 자기 고객 반응을 확인해야 계약 의지가 생긴다. 자료를 다 모은 뒤 제작하는 것이 아니라, 제안에 필요한 항목을 먼저 정하고 그 항목만 아도라에 역으로 요청한다. 계약 데드라인은 9월 중순~10월.</div>';
+  return h;
+}
+
+function page(){
+  if(LIVE_PAGES[cur.s] && LIVE_PAGES[cur.s][cur.p]) return LIVE_PAGES[cur.s][cur.p]();
+  const st=S[cur.s], p=st.pages[cur.p];
+  const b = p.st==='now'?'<span class="badge now">현재 개발</span>' : p.st==='pri'?'<span class="badge pri">우선 착수</span>' : '<span class="badge later">'+st.id+'단계 예정</span>';
+  const ub = p.u==='공개'?'<span class="badge pub">공개 · 소비자</span>':'<span class="badge">'+p.u+'</span>';
+  return '<div class="crumb"><b>STAGE '+st.id+'</b> · '+st.name+' · '+p.t+'</div>'+
+  '<div class="page-h"><div class="ph-top"><h1>'+p.t+'</h1>'+b+ub+'</div><div class="ph-purpose">'+p.p+'</div></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Layout</span><span class="bd">화면 구성</span></div><div class="blk-b">'+sketch(p.sk)+'</div></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Services</span><span class="bd">제공 서비스 '+p.s.length+'개</span></div><div class="blk-b"><ul class="svc">'+p.s.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div></div>'+
+  '<div class="block"><div class="blk-h"><span class="bl">Data</span><span class="bd">원장 연결</span></div><div class="blk-b"><div class="io">'+
+  '<div class="io-c w"><div class="iol">이 화면이 생성 · 수정</div>'+((p.w||[]).length?p.w.map(id=>entChip(id,1)).join(''):'<span class="io-none">없음 — 읽기 전용 화면</span>')+'</div>'+
+  '<div class="io-c r"><div class="iol">참조만 함</div>'+((p.r||[]).length?p.r.map(id=>entChip(id,0)).join(''):'<span class="io-none">없음</span>')+'</div>'+
+  '</div></div></div>';
+}
+
+function go(s,p){
+  cur={s:s,p:p};
+  let tag='관리자 뷰';
+  if(s==='L') tag='데이터 원장';
+  else if(p>=0){ const u=S[s].pages[p].u; tag = u==='공개'?'소비자 뷰':u+' 뷰'; }
+  document.getElementById('viewtag').textContent=tag;
+  renderStages(); renderSide();
+  document.getElementById('main').innerHTML = s==='L' ? ledger() : (p===-1?overview():page());
+  window.scrollTo({top:0,behavior:'instant'});
+}
+go('L',0);
+</script>
+</body>
+</html>
