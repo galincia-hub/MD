@@ -18,13 +18,23 @@ const voiceMap = {
 const sampleTurns = [
   {
     speaker: "Hyun",
-    text: "Emma, can we align on the suite benefits?",
+    text: "Emma, today I'd like to align on the suite benefits before we finalize the package.",
     output: "english_codex/audio/suite-drinks/hyun-1.mp3"
   },
   {
     speaker: "Emma",
-    text: "Yes. Let us set a clear boundary.",
+    text: "That makes sense. Our current suite benefits are strong, but the drinks package may need a clearer boundary.",
     output: "english_codex/audio/suite-drinks/emma-1.mp3"
+  },
+  {
+    speaker: "Hyun",
+    text: "I agree. We can position it as a welcome benefit, not an unlimited inclusion.",
+    output: "english_codex/audio/suite-drinks/hyun-2.mp3"
+  },
+  {
+    speaker: "Emma",
+    text: "If we present it that way, I think the internal approval will be easier.",
+    output: "english_codex/audio/suite-drinks/emma-2.mp3"
   }
 ];
 
@@ -39,8 +49,7 @@ function endpoint(connectionId) {
 }
 
 function endpointPath(connectionId) {
-  const url = new URL(endpoint(connectionId));
-  return url.pathname + url.search;
+  return new URL(endpoint(connectionId)).pathname + new URL(endpoint(connectionId)).search;
 }
 
 function generateSecMsGec() {

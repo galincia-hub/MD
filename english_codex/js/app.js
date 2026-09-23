@@ -15,6 +15,7 @@
     playing: false,
     paused: false,
     parsedDraft: null,
+    currentAudio: null,
     voices: [],
     voiceMap: JSON.parse(localStorage.getItem(VOICE_KEY) || "{}")
   };
@@ -72,9 +73,10 @@
   }
 
   async function seedSamples() {
-    if (localStorage.getItem(SEEDED_KEY)) return;
+    const existing = await getAllScripts();
     for (const sample of window.BIZ_ENGLISH_SAMPLES || []) {
-      await saveScript({ ...sample, id: crypto.randomUUID() });
+      const current = existing.find((script) => script.sample && script.title === sample.title);
+      await saveScript({ ...sample, id: current?.id || crypto.randomUUID() });
     }
     localStorage.setItem(SEEDED_KEY, "true");
   }
@@ -267,6 +269,7 @@
 
   function startPlayback(queue, queueIndex = 0, turnIndex = 0) {
     if (!queue.length) return;
+    stopCurrentAudio();
     speechSynthesis.cancel();
     state.queue = queue;
     state.queueIndex = queueIndex;
@@ -297,7 +300,7 @@
     }
     const utterance = new SpeechSynthesisUtterance(turn.english);
     utterance.lang = "en-US";
-    utterance.rate = 0.92;
+    utterance.rate = 1.0;
     utterance.pitch = 1;
     const voice = getVoiceForSpeaker(turn.speaker);
     if (voice) utterance.voice = voice;
@@ -307,10 +310,19 @@
   }
 
   function playAudioUrl(url, done) {
+    stopCurrentAudio();
     const audio = new Audio(url);
+    state.currentAudio = audio;
     audio.onended = done;
     audio.onerror = done;
     audio.play().catch(done);
+  }
+
+  function stopCurrentAudio() {
+    if (!state.currentAudio) return;
+    state.currentAudio.pause();
+    state.currentAudio.currentTime = 0;
+    state.currentAudio = null;
   }
 
   function advanceTurn() {
@@ -323,17 +335,21 @@
     state.playing = false;
     state.paused = false;
     state.turnIndex = 0;
+    stopCurrentAudio();
+    speechSynthesis.cancel();
     $("playPauseButton").textContent = "▶";
   }
 
   function togglePlayback() {
     if (state.playing && !state.paused) {
+      if (state.currentAudio) state.currentAudio.pause();
       speechSynthesis.pause();
       state.paused = true;
       $("playPauseButton").textContent = "▶";
       return;
     }
     if (state.playing && state.paused) {
+      if (state.currentAudio) state.currentAudio.play().catch(() => {});
       speechSynthesis.resume();
       state.paused = false;
       $("playPauseButton").textContent = "Ⅱ";
@@ -371,11 +387,13 @@
     $("playQueueButton").addEventListener("click", () => startPlayback(filteredScripts(), 0, 0));
     $("playPauseButton").addEventListener("click", togglePlayback);
     $("nextButton").addEventListener("click", () => {
+      stopCurrentAudio();
       speechSynthesis.cancel();
       state.turnIndex += 1;
       if (state.playing) playCurrentTurn();
     });
     $("prevButton").addEventListener("click", () => {
+      stopCurrentAudio();
       speechSynthesis.cancel();
       state.turnIndex = Math.max(0, state.turnIndex - 1);
       if (state.playing) playCurrentTurn();
