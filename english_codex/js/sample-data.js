@@ -3,40 +3,24 @@ window.BIZ_ENGLISH_SAMPLES = [
     title: "Negotiation - Suite Drinks Package",
     partner: "Emma Zhu",
     topic: "Drinks Package",
-    notes: "Keep the tone cooperative. The concession line is to include a limited welcome package first, then discuss a paid extension only if the partner asks for more.",
+    notes: "Keep the tone cooperative. The concession line is to define suite drinks as a clear welcome benefit, not an unlimited inclusion.",
     speakers: ["Hyun", "Emma"],
     turns: [
       {
         id: "sample-1-turn-1",
         speaker: "Hyun",
         turn: 1,
-        english: "Emma, today I'd like to align on the suite benefits before we finalize the package.",
-        korean: "Emma, 패키지를 확정하기 전에 스위트 특전에 대해 먼저 조율하고 싶습니다.",
-        audioUrl: ""
+        english: "Emma, can we align on the suite benefits?",
+        korean: "Emma, 스위트 특전에 대해 조율할 수 있을까요?",
+        audioUrl: "./audio/suite-drinks/hyun-1.mp3"
       },
       {
         id: "sample-1-turn-2",
         speaker: "Emma",
         turn: 1,
-        english: "That makes sense. Our current suite benefits are strong, but the drinks package may need a clearer boundary.",
-        korean: "좋습니다. 현재 스위트 특전은 괜찮지만, 드링크 패키지는 더 명확한 기준이 필요할 수 있습니다.",
-        audioUrl: ""
-      },
-      {
-        id: "sample-1-turn-3",
-        speaker: "Hyun",
-        turn: 2,
-        english: "I agree. We can position it as a welcome benefit, not an unlimited inclusion.",
-        korean: "동의합니다. 무제한 포함이 아니라 웰컴 특전으로 포지셔닝할 수 있습니다.",
-        audioUrl: ""
-      },
-      {
-        id: "sample-1-turn-4",
-        speaker: "Emma",
-        turn: 2,
-        english: "If we present it that way, I think the internal approval will be easier.",
-        korean: "그렇게 제안하면 내부 승인도 더 쉬울 것 같습니다.",
-        audioUrl: ""
+        english: "Yes. Let us set a clear boundary.",
+        korean: "네. 명확한 기준을 정하겠습니다.",
+        audioUrl: "./audio/suite-drinks/emma-1.mp3"
       }
     ],
     importedAt: "2026-09-23T00:00:00.000Z",
