@@ -1,4 +1,4 @@
-const CACHE_NAME = "business-english-listening-v1";
+const CACHE_NAME = "business-english-listening-v2";
 const ASSETS = [
   "./",
   "./index.html",
@@ -7,7 +7,9 @@ const ASSETS = [
   "./js/parser.js",
   "./js/sample-data.js",
   "./js/app.js",
-  "./icons/icon.svg"
+  "./icons/icon.svg",
+  "./audio/suite-drinks/hyun-1.mp3",
+  "./audio/suite-drinks/emma-1.mp3"
 ];
 
 self.addEventListener("install", (event) => {
