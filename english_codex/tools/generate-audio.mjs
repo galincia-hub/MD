@@ -35,6 +35,26 @@ const sampleTurns = [
     speaker: "Emma",
     text: "If we present it that way, I think the internal approval will be easier.",
     output: "english_codex/audio/suite-drinks/emma-2.mp3"
+  },
+  {
+    speaker: "Ashlee",
+    text: "Hyun, the cabin inventory is getting tight for the requested dates.",
+    output: "english_codex/audio/cabin-inventory/ashlee-1.mp3"
+  },
+  {
+    speaker: "Hyun",
+    text: "Understood. Could you confirm which dates are under the most pressure?",
+    output: "english_codex/audio/cabin-inventory/hyun-1.mp3"
+  },
+  {
+    speaker: "Ashlee",
+    text: "The weekend departure is the main issue, especially for balcony cabins.",
+    output: "english_codex/audio/cabin-inventory/ashlee-2.mp3"
+  },
+  {
+    speaker: "Hyun",
+    text: "Then I will review an alternative cabin mix and come back with a more flexible proposal.",
+    output: "english_codex/audio/cabin-inventory/hyun-2.mp3"
   }
 ];
 
@@ -293,7 +313,10 @@ async function listEnglishVoices() {
 if (process.argv.includes("--list-voices")) {
   await listEnglishVoices();
 } else {
-  for (const turn of sampleTurns) {
+  const selectedTurns = process.argv.includes("--cabin-inventory")
+    ? sampleTurns.filter((turn) => turn.output.includes("/cabin-inventory/"))
+    : sampleTurns;
+  for (const turn of selectedTurns) {
     await synthesize(turn);
   }
 }

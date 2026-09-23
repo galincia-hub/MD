@@ -55,7 +55,7 @@ window.BIZ_ENGLISH_SAMPLES = [
         turn: 1,
         english: "Hyun, the cabin inventory is getting tight for the requested dates.",
         korean: "Hyun, 요청하신 날짜의 객실 재고가 점점 타이트해지고 있습니다.",
-        audioUrl: ""
+        audioUrl: "./audio/cabin-inventory/ashlee-1.mp3"
       },
       {
         id: "sample-2-turn-2",
@@ -63,7 +63,7 @@ window.BIZ_ENGLISH_SAMPLES = [
         turn: 1,
         english: "Understood. Could you confirm which dates are under the most pressure?",
         korean: "이해했습니다. 어느 날짜가 가장 압박이 큰지 확인해 주실 수 있을까요?",
-        audioUrl: ""
+        audioUrl: "./audio/cabin-inventory/hyun-1.mp3"
       },
       {
         id: "sample-2-turn-3",
@@ -71,7 +71,7 @@ window.BIZ_ENGLISH_SAMPLES = [
         turn: 2,
         english: "The weekend departure is the main issue, especially for balcony cabins.",
         korean: "주말 출발이 가장 큰 이슈이고, 특히 발코니 객실이 그렇습니다.",
-        audioUrl: ""
+        audioUrl: "./audio/cabin-inventory/ashlee-2.mp3"
       },
       {
         id: "sample-2-turn-4",
@@ -79,7 +79,7 @@ window.BIZ_ENGLISH_SAMPLES = [
         turn: 2,
         english: "Then I will review an alternative cabin mix and come back with a more flexible proposal.",
         korean: "그러면 대체 객실 구성을 검토해서 더 유연한 제안으로 다시 말씀드리겠습니다.",
-        audioUrl: ""
+        audioUrl: "./audio/cabin-inventory/hyun-2.mp3"
       }
     ],
     importedAt: "2026-09-23T00:00:00.000Z",
