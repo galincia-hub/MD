@@ -1,0 +1,23 @@
+# Business English Listening PWA
+
+Static mobile-first PWA for a personal business English listening library.
+
+## MVP
+
+- Paste Markdown/Text dialogue resources.
+- Parse title, speaker turns, English dialogue, Korean meaning, and operation notes.
+- Preview warnings without blocking import.
+- Store scripts in IndexedDB.
+- Play English turns continuously with browser/device TTS.
+- Keep `audioUrl` on each turn for future pre-generated audio.
+- Work under GitHub Pages subdirectory paths such as `/MD/english_codex/`.
+
+## Public Repository Rule
+
+Do not commit raw KakaoTalk exports, real emails, contacts, internal prices, contracts, or private negotiation material. Put private source references under:
+
+```text
+english_codex/private-references/
+```
+
+That folder is ignored by `english_codex/.gitignore`.

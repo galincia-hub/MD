@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Biz English" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Business English Listening</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Business English Library</p>
+          <h1>Listening</h1>
+        </div>
+        <button class="icon-button" id="addScriptButton" type="button" aria-label="새 스크립트 추가" title="새 스크립트 추가">＋</button>
+      </header>
+
+      <main>
+        <section id="libraryView" class="view active" aria-labelledby="libraryTitle">
+          <div class="toolbar">
+            <label class="search-field">
+              <span>검색</span>
+              <input id="searchInput" type="search" placeholder="Partner, Topic, Title" autocomplete="off" />
+            </label>
+            <div class="filters">
+              <select id="partnerFilter" aria-label="Partner filter"></select>
+              <select id="topicFilter" aria-label="Topic filter"></select>
+            </div>
+          </div>
+
+          <div class="section-heading">
+            <h2 id="libraryTitle">Library</h2>
+            <button id="playQueueButton" class="compact-button" type="button">전체 재생</button>
+          </div>
+          <div id="libraryList" class="script-list"></div>
+        </section>
+
+        <section id="importView" class="view" aria-labelledby="importTitle">
+          <div class="section-heading">
+            <h2 id="importTitle">새 스크립트</h2>
+            <button class="compact-button ghost" id="cancelImportButton" type="button">닫기</button>
+          </div>
+          <textarea id="scriptInput" class="script-input" spellcheck="false" placeholder="ChatGPT/Claude에서 만든 Markdown/Text 전체를 붙여넣기"></textarea>
+          <button id="parseButton" class="primary-button" type="button">내용 분석</button>
+          <div id="previewPanel" class="preview-panel hidden"></div>
+        </section>
+
+        <section id="detailView" class="view" aria-labelledby="detailTitle">
+          <div class="section-heading">
+            <button id="backToLibraryButton" class="compact-button ghost" type="button">Library</button>
+            <button id="deleteScriptButton" class="compact-button danger" type="button">삭제</button>
+          </div>
+          <article id="scriptDetail" class="script-detail"></article>
+        </section>
+      </main>
+
+      <nav class="bottom-player" aria-label="Playback controls">
+        <div class="now-playing">
+          <span id="nowSpeaker">Ready</span>
+          <strong id="nowTitle">스크립트를 선택하세요</strong>
+        </div>
+        <div class="player-buttons">
+          <button class="icon-button small" id="prevButton" type="button" aria-label="이전" title="이전">‹</button>
+          <button class="icon-button play" id="playPauseButton" type="button" aria-label="재생" title="재생">▶</button>
+          <button class="icon-button small" id="nextButton" type="button" aria-label="다음" title="다음">›</button>
+        </div>
+      </nav>
+    </div>
+
+    <template id="previewTemplate">
+      <div class="preview-summary"></div>
+      <div class="form-grid">
+        <label>Partner <input id="previewPartner" type="text" /></label>
+        <label>Topic <input id="previewTopic" type="text" /></label>
+      </div>
+      <div class="warnings"></div>
+      <button id="savePreviewButton" class="primary-button" type="button">Library 저장</button>
+    </template>
+
+    <script src="./js/parser.js"></script>
+    <script src="./js/sample-data.js"></script>
+    <script src="./js/app.js"></script>
+  </body>
+</html>
