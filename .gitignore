@@ -34,3 +34,8 @@ build/
 
 # === Claude Code 로컬 설정 ===
 .claude/settings.local.json
+
+# === Private Script Review seed and resource packs ===
+english_codex/review-web/seed/*
+!english_codex/review-web/seed/README.md
+english_codex/**/*.zip

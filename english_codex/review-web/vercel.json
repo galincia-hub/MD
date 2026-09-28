@@ -1,0 +1,40 @@
+{
+  "functions": {
+    "api/action.js": {
+      "maxDuration": 300
+    },
+    "api/admin/job.js": {
+      "maxDuration": 300
+    },
+    "api/cron/sweep.js": {
+      "maxDuration": 300
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        }
+      ]
+    }
+  ],
+  "buildCommand": "node tools/build.mjs",
+  "outputDirectory": "public",
+  "crons": [
+    {
+      "path": "/api/cron/sweep",
+      "schedule": "0 15 * * *"
+    }
+  ]
+}

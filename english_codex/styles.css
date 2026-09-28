@@ -414,3 +414,20 @@ textarea {
     max-width: 42vw;
   }
 }
+
+.pack-import {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.15);
+}
+
+.pack-import label {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.pack-status {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
