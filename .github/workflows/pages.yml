@@ -33,3 +33,20 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Verify published page
+        shell: bash
+        run: |
+          URL="https://galincia-hub.github.io/MD/adora-ship-visit-0929/?v=${GITHUB_SHA}"
+          for i in {1..12}; do
+            HTML="$(curl -fsSL "$URL" || true)"
+            if echo "$HTML" | grep -Fq 'text-decoration:none;color:#344054' \
+              && echo "$HTML" | grep -Fq '.overview-value{font-size:18px' \
+              && echo "$HTML" | grep -Fq '.overview-compare{font-size:12.5px'; then
+              echo "Published page verified: $URL"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Published page did not match expected CSS: $URL"
+          exit 1
