@@ -1,0 +1,10 @@
+{
+  "name": "ci-script-review",
+  "private": true,
+  "type": "module",
+  "engines": { "node": "22.x" },
+  "dependencies": {
+    "@vercel/blob": "2.8.0",
+    "@vercel/functions": "3.9.9"
+  }
+}

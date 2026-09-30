@@ -1,7 +1,10 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { realpathSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import tls from "node:tls";
 import { createHash, randomBytes, randomUUID } from "node:crypto";
+import { validateMp3 } from "../review-web/lib/mp3.js";
 
 const TRUSTED_CLIENT_TOKEN = "6A5AA1D4EAFF4E9FB37E23D68491D6F4";
 const CHROMIUM_FULL_VERSION = "143.0.3650.75";
@@ -12,8 +15,20 @@ const OUTPUT_FORMAT = "audio-24khz-48kbitrate-mono-mp3";
 const voiceMap = {
   Hyun: "en-US-BrianNeural",
   Emma: "en-US-EmmaNeural",
-  Ashlee: "en-US-AvaNeural"
+  Ashlee: "en-US-AvaNeural",
+  Lydia: "en-US-JennyNeural",
+  Joyce: "en-US-AriaNeural"
 };
+
+const MAX_AUDIO_ATTEMPTS = 5;
+
+// Same pack naming as review-web: T01_<speaker>_<hash8>.mp3
+// hash = sha256("<voice>|<trimmed english>"). Sample outputs stay on their stable paths.
+export function turnAudioFileName(index, speaker, text, voice) {
+  const hash = createHash("sha256").update(`${voice}|${String(text || "").trim()}`).digest("hex").slice(0, 8);
+  const slug = String(speaker || "speaker").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  return `T${String(index).padStart(2, "0")}_${slug}_${hash}.mp3`;
+}
 
 const sampleTurns = [
   {
@@ -234,10 +249,49 @@ async function synthesize({ speaker, text, output }) {
   });
 
   if (!chunks.length) throw new Error(`No audio returned for ${output}`);
-  const file = join(process.cwd(), output);
-  await mkdir(dirname(file), { recursive: true });
-  await writeFile(file, Buffer.concat(chunks));
-  console.log(`${output} (${voice})`);
+  return Buffer.concat(chunks);
+}
+
+async function readIfValid(output, text) {
+  try {
+    const check = validateMp3(await readFile(join(process.cwd(), output)), text);
+    return check.ok ? check : null;
+  } catch {
+    return null;
+  }
+}
+
+async function writeValidatedTurn(turn) {
+  const voice = voiceMap[turn.speaker];
+  if (!voice) throw new Error(`No voice configured for ${turn.speaker}`);
+  const output = turn.output || `english_codex/audio/generated/${turnAudioFileName(turn.index || 1, turn.speaker, turn.text, voice)}`;
+  const existing = await readIfValid(output, turn.text);
+  if (existing) {
+    console.log(`${output} (${voice}, kept existing ${existing.durationSec}s)`);
+    return;
+  }
+  let last = "no audio";
+  for (let attempt = 1; attempt <= MAX_AUDIO_ATTEMPTS; attempt += 1) {
+    try {
+      const buf = await synthesize({ speaker: turn.speaker, text: turn.text, output });
+      const check = validateMp3(buf, turn.text);
+      if (!check.ok) {
+        last = check.errors.join("; ");
+        console.warn(`${output} attempt ${attempt}/${MAX_AUDIO_ATTEMPTS} rejected: ${last}`);
+      } else {
+        const file = join(process.cwd(), output);
+        await mkdir(dirname(file), { recursive: true });
+        await writeFile(file, buf);
+        console.log(`${output} (${voice}, ${check.durationSec}s, ${check.frames} frames, attempt ${attempt})`);
+        return;
+      }
+    } catch (error) {
+      last = error.message || String(error);
+      console.warn(`${output} attempt ${attempt}/${MAX_AUDIO_ATTEMPTS} failed: ${last}`);
+    }
+    if (attempt < MAX_AUDIO_ATTEMPTS) await new Promise((resolve) => setTimeout(resolve, 400 * attempt));
+  }
+  throw new Error(`MP3 validation failed for ${output} after ${MAX_AUDIO_ATTEMPTS} attempts: ${last}`);
 }
 
 function encodeClientFrame(message) {
@@ -310,13 +364,40 @@ async function listEnglishVoices() {
   }
 }
 
-if (process.argv.includes("--list-voices")) {
-  await listEnglishVoices();
-} else {
+function invokedDirectly() {
+  try {
+    return realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1]);
+  } catch {
+    return false;
+  }
+}
+
+async function main() {
+  if (process.argv.includes("--list-voices")) {
+    await listEnglishVoices();
+    return;
+  }
+  if (process.argv.includes("--check")) {
+    let failed = 0;
+    for (const turn of sampleTurns) {
+      const check = await readIfValid(turn.output, turn.text);
+      if (check) console.log(`ok ${turn.output} ${check.durationSec}s ${check.frames} frames`);
+      else {
+        failed += 1;
+        console.log(`reject ${turn.output}`);
+      }
+    }
+    if (failed) process.exitCode = 1;
+    return;
+  }
   const selectedTurns = process.argv.includes("--cabin-inventory")
     ? sampleTurns.filter((turn) => turn.output.includes("/cabin-inventory/"))
     : sampleTurns;
-  for (const turn of selectedTurns) {
-    await synthesize(turn);
+  for (const [index, turn] of selectedTurns.entries()) {
+    await writeValidatedTurn({ ...turn, index: index + 1 });
   }
+}
+
+if (invokedDirectly()) {
+  await main();
 }

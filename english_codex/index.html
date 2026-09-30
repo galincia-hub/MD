@@ -48,6 +48,11 @@
           </div>
           <textarea id="scriptInput" class="script-input" spellcheck="false" placeholder="ChatGPT/Claude에서 만든 Markdown/Text 전체를 붙여넣기"></textarea>
           <button id="parseButton" class="primary-button" type="button">내용 분석</button>
+          <div class="pack-import">
+            <label class="compact-button" for="packInput">Private Resource Pack (.zip) 불러오기</label>
+            <input id="packInput" type="file" accept=".zip,application/zip" hidden />
+            <p id="packStatus" class="pack-status" aria-live="polite"></p>
+          </div>
           <div id="previewPanel" class="preview-panel hidden"></div>
         </section>
 
@@ -85,6 +90,7 @@
 
     <script src="./js/parser.js"></script>
     <script src="./js/sample-data.js"></script>
+    <script src="./js/pack-import.js"></script>
     <script src="./js/app.js"></script>
   </body>
 </html>

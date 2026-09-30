@@ -1,7 +1,8 @@
 (function () {
   const DB_NAME = "business-english-library";
-  const DB_VERSION = 1;
+  const DB_VERSION = 2;
   const STORE = "scripts";
+  const AUDIO_STORE = "audio";
   const VOICE_KEY = "businessEnglishVoiceMap";
   const SEEDED_KEY = "businessEnglishSeededV1";
 
@@ -14,8 +15,10 @@
     turnIndex: 0,
     playing: false,
     paused: false,
+    playToken: 0,
     parsedDraft: null,
     currentAudio: null,
+    currentAudioRevoke: null,
     voices: [],
     voiceMap: JSON.parse(localStorage.getItem(VOICE_KEY) || "{}")
   };
@@ -37,6 +40,9 @@
           const store = db.createObjectStore(STORE, { keyPath: "id" });
           store.createIndex("partner", "partner", { unique: false });
           store.createIndex("topic", "topic", { unique: false });
+        }
+        if (!db.objectStoreNames.contains(AUDIO_STORE)) {
+          db.createObjectStore(AUDIO_STORE);
         }
       };
       request.onsuccess = () => resolve(request.result);
@@ -66,10 +72,44 @@
 
   function deleteScript(id) {
     return new Promise((resolve, reject) => {
-      const request = transaction("readwrite").delete(id);
-      request.onsuccess = () => resolve();
+      const tx = state.db.transaction([STORE, AUDIO_STORE], "readwrite");
+      tx.objectStore(STORE).delete(id);
+      if (String(id).startsWith("pack:")) {
+        tx.objectStore(AUDIO_STORE).delete(IDBKeyRange.bound(`${id}/`, `${id}/\uffff`));
+      }
+      tx.oncomplete = () => resolve();
+      tx.onerror = (event) => {
+        event.preventDefault();
+        reject(tx.error || new Error("삭제에 실패했습니다."));
+      };
+    });
+  }
+
+  function getAudioBlob(key) {
+    return new Promise((resolve, reject) => {
+      const request = state.db.transaction(AUDIO_STORE, "readonly").objectStore(AUDIO_STORE).get(key);
+      request.onsuccess = () => resolve(request.result || null);
       request.onerror = () => reject(request.error);
     });
+  }
+
+  // Private Resource Pack import: script -> IndexedDB "scripts", MP3 -> IndexedDB "audio" (Blob).
+  // Re-importing the same pack replaces it; audio for unchanged turns keeps the same key.
+  async function importResourcePack(file) {
+    const { script, audio, missing } = await window.ResourcePackImporter.importPack(file);
+    await new Promise((resolve, reject) => {
+      const tx = state.db.transaction([STORE, AUDIO_STORE], "readwrite");
+      const audioStore = tx.objectStore(AUDIO_STORE);
+      audioStore.delete(IDBKeyRange.bound(`${script.id}/`, `${script.id}/\uffff`));
+      for (const [key, blob] of audio) audioStore.put(blob, key);
+      tx.objectStore(STORE).put(normalizeScript(script));
+      tx.oncomplete = () => resolve();
+      tx.onerror = (event) => {
+        event.preventDefault();
+        reject(tx.error || new Error("패키지 저장에 실패했습니다."));
+      };
+    });
+    return { script, audioCount: audio.size, missing };
   }
 
   async function seedSamples() {
@@ -267,8 +307,13 @@
     return englishVoices[hash % englishVoices.length];
   }
 
+  function invalidatePlayback() {
+    state.playToken += 1;
+  }
+
   function startPlayback(queue, queueIndex = 0, turnIndex = 0) {
     if (!queue.length) return;
+    invalidatePlayback();
     stopCurrentAudio();
     speechSynthesis.cancel();
     state.queue = queue;
@@ -280,7 +325,9 @@
     playCurrentTurn();
   }
 
-  function playCurrentTurn() {
+  // Playback order: pack audioKey Blob, then audioUrl, then SpeechSynthesis.
+  async function playCurrentTurn() {
+    const token = ++state.playToken;
     const script = state.queue[state.queueIndex];
     if (!script) {
       stopPlayback();
@@ -294,35 +341,81 @@
       return;
     }
     updateNowPlaying(script, turn);
+    if (turn.audioKey) {
+      try {
+        const blob = await getAudioBlob(turn.audioKey);
+        if (token !== state.playToken) return;
+        if (blob) {
+          playAudioUrl(URL.createObjectURL(blob), () => advanceTurn(), true, token);
+          return;
+        }
+      } catch (error) {
+        if (token !== state.playToken) return;
+      }
+    }
+    if (token !== state.playToken) return;
     if (turn.audioUrl) {
-      playAudioUrl(turn.audioUrl, () => advanceTurn());
+      playAudioUrl(turn.audioUrl, () => advanceTurn(), false, token);
       return;
     }
+    speakTurn(turn, token);
+  }
+
+  function speakTurn(turn, token) {
+    if (token !== state.playToken) return;
     const utterance = new SpeechSynthesisUtterance(turn.english);
     utterance.lang = "en-US";
     utterance.rate = 1.0;
     utterance.pitch = 1;
     const voice = getVoiceForSpeaker(turn.speaker);
     if (voice) utterance.voice = voice;
-    utterance.onend = () => advanceTurn();
-    utterance.onerror = () => advanceTurn();
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      if (token !== state.playToken) return;
+      advanceTurn();
+    };
+    utterance.onend = finish;
+    utterance.onerror = finish;
     speechSynthesis.speak(utterance);
   }
 
-  function playAudioUrl(url, done) {
+  function playAudioUrl(url, done, revoke = false, token = state.playToken) {
     stopCurrentAudio();
     const audio = new Audio(url);
     state.currentAudio = audio;
-    audio.onended = done;
-    audio.onerror = done;
-    audio.play().catch(done);
+    state.currentAudioRevoke = revoke ? url : null;
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      if (revoke && state.currentAudioRevoke === url) {
+        URL.revokeObjectURL(url);
+        state.currentAudioRevoke = null;
+      }
+      if (state.currentAudio === audio) state.currentAudio = null;
+      if (token !== state.playToken) return;
+      done();
+    };
+    audio.onended = finish;
+    audio.onerror = finish;
+    if (state.paused) return;
+    const started = audio.play();
+    if (started && typeof started.catch === "function") started.catch(finish);
   }
 
   function stopCurrentAudio() {
-    if (!state.currentAudio) return;
-    state.currentAudio.pause();
-    state.currentAudio.currentTime = 0;
+    const audio = state.currentAudio;
+    const url = state.currentAudioRevoke;
     state.currentAudio = null;
+    state.currentAudioRevoke = null;
+    if (url) URL.revokeObjectURL(url);
+    if (!audio) return;
+    audio.onended = null;
+    audio.onerror = null;
+    audio.pause();
+    audio.currentTime = 0;
   }
 
   function advanceTurn() {
@@ -332,6 +425,7 @@
   }
 
   function stopPlayback() {
+    invalidatePlayback();
     state.playing = false;
     state.paused = false;
     state.turnIndex = 0;
@@ -381,18 +475,36 @@
       state.parsedDraft = window.BusinessScriptParser.parseBusinessScript($("scriptInput").value);
       renderPreview(state.parsedDraft);
     });
+    $("packInput").addEventListener("change", async (event) => {
+      const file = event.target.files && event.target.files[0];
+      event.target.value = "";
+      if (!file) return;
+      const status = $("packStatus");
+      status.textContent = "패키지 불러오는 중…";
+      try {
+        const result = await importResourcePack(file);
+        status.textContent = `불러오기 완료: ${result.script.title} · ${result.script.turns.length}턴 · 음성 ${result.audioCount}개` +
+          (result.missing.length ? ` (음성 없음: ${result.missing.join(", ")})` : "");
+        await refreshScripts();
+        openScript(result.script.id);
+      } catch (error) {
+        status.textContent = `불러오기 실패: ${error.message}`;
+      }
+    });
     $("searchInput").addEventListener("input", renderLibrary);
     $("partnerFilter").addEventListener("change", renderLibrary);
     $("topicFilter").addEventListener("change", renderLibrary);
     $("playQueueButton").addEventListener("click", () => startPlayback(filteredScripts(), 0, 0));
     $("playPauseButton").addEventListener("click", togglePlayback);
     $("nextButton").addEventListener("click", () => {
+      invalidatePlayback();
       stopCurrentAudio();
       speechSynthesis.cancel();
       state.turnIndex += 1;
       if (state.playing) playCurrentTurn();
     });
     $("prevButton").addEventListener("click", () => {
+      invalidatePlayback();
       stopCurrentAudio();
       speechSynthesis.cancel();
       state.turnIndex = Math.max(0, state.turnIndex - 1);

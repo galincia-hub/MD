@@ -1,4 +1,4 @@
-const CACHE_NAME = "business-english-listening-v2";
+const CACHE_NAME = "business-english-listening-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -6,6 +6,7 @@ const ASSETS = [
   "./manifest.webmanifest",
   "./js/parser.js",
   "./js/sample-data.js",
+  "./js/pack-import.js",
   "./js/app.js",
   "./icons/icon.svg",
   "./audio/suite-drinks/hyun-1.mp3",
