@@ -7,6 +7,7 @@ let bank, questions;
 let page = "intro";
 const answers = {};
 let affiliation = "";
+const TEXT_MAX = 1000;
 
 const affiliationOptions = [
   "모두투어",
@@ -121,7 +122,9 @@ function renderQuestion(q){
       <button type="button" class="baseline-btn" onclick="selectScore('${q.id}', 10)">10점 선택</button>
     </div>`;
   } else {
-    body=`<textarea name="${q.id}" rows="${q.rows||4}" placeholder="자유롭게 적어주세요.">${esc(answers[q.id]||"")}</textarea>`;
+    const savedText = String(answers[q.id] || "").slice(0, TEXT_MAX);
+    body=`<textarea name="${q.id}" rows="${q.rows||4}" maxlength="${TEXT_MAX}" placeholder="자유롭게 적어주세요." oninput="updateTextCount('${q.id}', this)">${esc(savedText)}</textarea>
+      <div class="char-count" id="count_${q.id}">최대 ${TEXT_MAX.toLocaleString()}자 · 현재 ${savedText.length.toLocaleString()}/${TEXT_MAX.toLocaleString()}</div>`;
   }
 
   return `<div class="field question-card" data-qid="${q.id}">
@@ -130,6 +133,14 @@ function renderQuestion(q){
     ${body}
     <div class="error" id="err_${q.id}"></div>
   </div>`;
+}
+
+function updateTextCount(id, el){
+  const count = document.getElementById(`count_${id}`);
+  if(!count) return;
+  const len = el.value.length;
+  count.textContent = `최대 ${TEXT_MAX.toLocaleString()}자 · 현재 ${len.toLocaleString()}/${TEXT_MAX.toLocaleString()}`;
+  count.classList.toggle("near-limit", len >= TEXT_MAX * 0.9);
 }
 
 function selectScore(id, value){
@@ -156,6 +167,7 @@ function collectSurvey(showErrors=true){
       if(val!=="") val=Number(val);
     } else {
       val=document.querySelector(`[name="${q.id}"]`)?.value.trim() || "";
+      if(val.length > TEXT_MAX) val = val.slice(0, TEXT_MAX);
     }
 
     answers[q.id]=val;
