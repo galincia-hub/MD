@@ -1,0 +1,7 @@
+window.SURVEY_CONFIG = {
+  SURVEY_TYPE: "C", // Expert comparison survey: COSTA SERENA = 10 / 20 points
+  APPS_SCRIPT_URL: "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE",
+  DEADLINE: "2026-10-06",
+  EVENT_DATE: "2026-09-29",
+  TITLE: "ADORA MEDITERRANEA 방선투어 전문가 비교평가"
+};
