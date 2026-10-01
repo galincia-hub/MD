@@ -144,7 +144,7 @@ function dashboard_() {
     surveyType,
     scoreMax:20,scoreBaseline:10,
     groupRates: rates_(roster,responses,'group'),
-    affiliationRates: rates_(roster,responses,'expected_affiliation','affiliation'),
+    affiliationRates: affiliationRates_(roster,responses),
     areaAverages,
     affiliationScores: groupedScores_(responses,qBank[surveyType]||qBank.C,areas,'affiliation'),
     companyScores: groupedScores_(responses,qBank[surveyType]||qBank.C,areas,'company'),
@@ -185,6 +185,27 @@ function rates_(roster,responses,rosterKey,responseKey) {
   });
 }
 
+function expectedAffiliation_(r){
+  const company=String(r.company||'').toLowerCase();
+  const group=String(r.group||r.roster_group||'').toUpperCase();
+  if(company.includes('modetour')) return '모두투어';
+  if(company.includes('panstar')) return '팬스타';
+  if(company.includes('lotte jtb')) return '롯데제이티비';
+  if(group==='G3') return '기항지 및 운영관련';
+  if(group==='G2') return '판매여행사';
+  return '기타';
+}
+
+function affiliationRates_(roster,responses){
+  const labels=['모두투어','팬스타','롯데제이티비','판매여행사','기항지 및 운영관련','기타'];
+  return labels.map(label=>{
+    const target=roster.filter(r=>expectedAffiliation_(r)===label);
+    const refs=new Set(target.map(r=>r.ref));
+    const responded=responses.filter(r=>refs.has(r.ref)).length;
+    return {label,responded,total:target.length,rate:pct_(responded,target.length)};
+  });
+}
+
 function calcAreaAverages_(responses,qs,areas){
   const out={};
   Object.keys(areas).forEach(a=>{
@@ -215,7 +236,8 @@ function collectComments_(responses,qs,areas){
   const out={}; Object.keys(areas).forEach(a=>out[areas[a].title]=[]);
   const textQs=qs.filter(q=>q.type==='text');
   responses.forEach(r=>textQs.forEach(q=>{
-    const t=String(r.answers[q.id]||'').trim(); if(t) out[areas[q.area].title].push({ref:r.ref,company:r.roster.company||'',text:t});
+    const t=String(r.answers[q.id]||'').trim();
+    if(t) out[areas[q.area].title].push({ref:r.ref,company:r.roster.company||'',text:t});
   }));
   return out;
 }
@@ -226,22 +248,27 @@ function questionBank_(){
       overall:{title:'선박 전반',en:'Overall Ship Condition'},
       facilities:{title:'공용시설',en:'Public Facilities'},
       fnb:{title:'음식·서비스',en:'Food & Service'},
-      venue:{title:'바·라운지·행사공간',en:'Bars, Lounges & Event Spaces'},
       summary:{title:'종합평가·개선의견',en:'Overall Assessment & Improvements'}
     }},
     C:[
-      {id:'C01',area:'overall',type:'score20'},
-      {id:'C03',area:'facilities',type:'score20'},
-      {id:'C04',area:'facilities',type:'text'},
-      {id:'C05',area:'fnb',type:'score20'},
-      {id:'C06',area:'fnb',type:'score20'},
-      {id:'C07',area:'fnb',type:'text'},
-      {id:'C08',area:'venue',type:'score20'},
-      {id:'C09',area:'venue',type:'text'},
-      {id:'C10',area:'summary',type:'score20'},
-      {id:'C11',area:'summary',type:'text'},
-      {id:'C12',area:'summary',type:'text'},
-      {id:'C13',area:'summary',type:'text'}
+      {id:'O01',area:'overall',type:'score20'},
+      {id:'O02',area:'overall',type:'score20'},
+      {id:'O03',area:'overall',type:'score20'},
+      {id:'F01',area:'facilities',type:'score20'},
+      {id:'F02',area:'facilities',type:'score20'},
+      {id:'F03',area:'facilities',type:'score20'},
+      {id:'F04',area:'facilities',type:'score20'},
+      {id:'F05',area:'facilities',type:'score20'},
+      {id:'F06',area:'facilities',type:'score20'},
+      {id:'F07',area:'facilities',type:'text'},
+      {id:'S01',area:'fnb',type:'score20'},
+      {id:'S02',area:'fnb',type:'score20'},
+      {id:'S03',area:'fnb',type:'score20'},
+      {id:'S04',area:'fnb',type:'text'},
+      {id:'R01',area:'summary',type:'score20'},
+      {id:'R02',area:'summary',type:'text'},
+      {id:'R03',area:'summary',type:'text'},
+      {id:'R04',area:'summary',type:'text'}
     ]
   };
 }
