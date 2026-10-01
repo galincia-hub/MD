@@ -40,8 +40,8 @@ function dashboard(d){
  </div>
  <section class="panel"><h2>영역별 비교점수</h2><p class="small">20점 만점 · COSTA SERENA = 10점 기준</p>${bars(d.areaAverages)}</section>
  <section class="panel"><h2>조별 응답률</h2>${rateTable(d.groupRates)}</section>
- <section class="panel"><h2>소속 유형별 응답률</h2>${rateTable(d.affiliationRates)}</section>
- <section class="panel"><h2>소속 유형별 영역 점수</h2>${scoreTable(d.affiliationScores)}</section>
+ <section class="panel"><h2>참여 구분별 응답률</h2>${rateTable(d.affiliationRates)}</section>
+ <section class="panel"><h2>참여 구분별 영역 점수</h2>${scoreTable(d.affiliationScores)}</section>
  <section class="panel"><h2>미응답자</h2>${nonTable(d.nonresponders)}</section>
  <section class="panel"><h2>주관식 응답</h2>${comments(d.comments)}</section>`;
 }
@@ -49,7 +49,7 @@ const kpi=(t,v,s)=>`<div class="kpi"><span>${esc(t)}</span><b>${esc(v)}</b><span
 function bars(obj){return Object.entries(obj||{}).map(([k,v])=>`<div class="barrow"><span>${esc(k)}</span><div class="bar"><i style="width:${Math.max(0,Math.min(100,(Number(v)||0)/20*100))}%"></i></div><b>${v??"-"} / 20</b></div>`).join("")||"<p>점수형 응답이 없습니다.</p>"}
 function rateTable(rows){return `<table><thead><tr><th>구분</th><th>응답</th><th>대상</th><th>응답률</th></tr></thead><tbody>${(rows||[]).map(r=>`<tr><td>${esc(r.label)}</td><td>${r.responded}</td><td>${r.total}</td><td>${r.rate}%</td></tr>`).join("")}</tbody></table>`}
 function nonTable(rows){return `<table><thead><tr><th>코드</th><th>회사</th><th>이름</th><th>조</th></tr></thead><tbody>${(rows||[]).map(r=>`<tr><td>${esc(r.ref)}</td><td>${esc(r.company)}</td><td>${esc(r.name)}</td><td>${esc(r.group)}</td></tr>`).join("")}</tbody></table>`}
-function scoreTable(obj){const cats=Object.keys(obj||{}); const areas=[...new Set(cats.flatMap(c=>Object.keys(obj[c]||{})))]; return `<table><thead><tr><th>소속</th>${areas.map(a=>`<th>${esc(a)}</th>`).join("")}</tr></thead><tbody>${cats.map(c=>`<tr><td>${esc(c)}</td>${areas.map(a=>`<td>${obj[c][a]??"-"}</td>`).join("")}</tr>`).join("")}</tbody></table>`}
+function scoreTable(obj){const cats=Object.keys(obj||{}); const areas=[...new Set(cats.flatMap(c=>Object.keys(obj[c]||{})))]; return `<table><thead><tr><th>구분</th>${areas.map(a=>`<th>${esc(a)}</th>`).join("")}</tr></thead><tbody>${cats.map(c=>`<tr><td>${esc(c)}</td>${areas.map(a=>`<td>${obj[c][a]??"-"}</td>`).join("")}</tr>`).join("")}</tbody></table>`}
 function comments(obj){return Object.entries(obj||{}).map(([a,arr])=>`<h3>${esc(a)}</h3>${arr.length?arr.map(x=>`<div class="comment"><b>${esc(x.ref)} · ${esc(x.company)}</b><br>${esc(x.text)}</div>`).join(""):"<p class='small'>응답 없음</p>"}`).join("")}
 function internalReport(d){
  return `<section class="panel"><div class="eyebrow">INTERNAL SUMMARY · 2026.09.29</div><h1>아도라 메디테라니아 방선투어 피드백</h1>
