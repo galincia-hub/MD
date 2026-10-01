@@ -8,6 +8,7 @@ let page = "intro";
 const answers = {};
 let affiliation = "";
 const TEXT_MAX = 1000;
+const NOT_EVALUATED = "NA";
 
 const affiliationOptions = [
   "모두투어",
@@ -92,7 +93,7 @@ function renderSurvey(){
   app.innerHTML = `
     <div class="eyebrow">ADORA MEDITERRANEA · EXPERT FEEDBACK</div>
     <h1>방선투어 전문가 비교평가</h1>
-    <p class="lead">아래 모든 점수 항목은 동일한 기준으로 평가해 주세요. 세부 설명을 반복하지 않고 한 번의 기준으로 통일했습니다.</p>
+    <p class="lead">아래 모든 점수 항목은 동일한 기준으로 평가해 주세요. 직접 경험하거나 확인하지 못한 항목은 ‘평가하기 어려움’을 선택하시면 평균점수 계산에서 제외됩니다.</p>
 
     <div class="score-guide score-guide-main">
       <b>${esc(guide.baselineLabel)}</b>
@@ -113,13 +114,18 @@ function renderQuestion(q){
 
   if(q.type==="score20"){
     const saved = answers[q.id];
-    const hasSaved = saved !== undefined && saved !== "";
-    const current = hasSaved ? Number(saved) : Number(q.baseline ?? 10);
+    const isNA = saved === NOT_EVALUATED;
+    const hasNumeric = saved !== undefined && saved !== "" && !isNA && Number.isFinite(Number(saved));
+    const current = hasNumeric ? Number(saved) : Number(q.baseline ?? 10);
+    const readout = isNA ? "N/A" : (hasNumeric ? current : "-");
     body=`<div class="score20 compact-score" data-score-wrap="${q.id}">
-      <div class="score-readout"><span>선택 점수</span><strong id="score_${q.id}">${hasSaved?current:"-"}</strong><em>/ 20</em></div>
-      <input class="score-slider" type="range" min="${q.min??0}" max="${q.max??20}" step="1" value="${current}" data-qid="${q.id}" data-selected="${hasSaved?current:""}" oninput="selectScore('${q.id}', this.value)">
+      <div class="score-readout"><span>선택 점수</span><strong id="score_${q.id}" class="${isNA?"na-readout":""}">${readout}</strong><em>/ 20</em></div>
+      <input class="score-slider" type="range" min="${q.min??0}" max="${q.max??20}" step="1" value="${current}" data-qid="${q.id}" data-selected="${isNA?NOT_EVALUATED:(hasNumeric?current:"")}" oninput="selectScore('${q.id}', this.value)">
       <div class="score-axis"><span>0</span><span class="baseline">10<small>COSTA</small></span><span>20</span></div>
-      <button type="button" class="baseline-btn" onclick="selectScore('${q.id}', 10)">10점 선택</button>
+      <div class="score-choice-row">
+        <button type="button" id="baseline_${q.id}" class="baseline-btn ${hasNumeric && current===10?"selected":""}" onclick="selectScore('${q.id}', 10)">10점 선택</button>
+        <button type="button" id="na_${q.id}" class="unable-btn ${isNA?"selected":""}" onclick="selectUnable('${q.id}')">평가하기 어려움 <span>(경험하지 못함)</span></button>
+      </div>
     </div>`;
   } else {
     const savedText = String(answers[q.id] || "").slice(0, TEXT_MAX);
@@ -146,11 +152,33 @@ function updateTextCount(id, el){
 function selectScore(id, value){
   const el=document.querySelector(`.score-slider[data-qid="${id}"]`);
   if(!el) return;
-  el.dataset.selected=String(value);
-  el.value=String(value);
+  const n=Number(value);
+  el.dataset.selected=String(n);
+  el.value=String(n);
   const out=document.getElementById(`score_${id}`);
-  if(out) out.textContent=value;
-  answers[id]=Number(value);
+  if(out){
+    out.textContent=String(n);
+    out.classList.remove("na-readout");
+  }
+  answers[id]=n;
+  document.getElementById(`baseline_${id}`)?.classList.toggle("selected", n===10);
+  document.getElementById(`na_${id}`)?.classList.remove("selected");
+  const err=document.getElementById(`err_${id}`);
+  if(err) err.textContent="";
+}
+
+function selectUnable(id){
+  const el=document.querySelector(`.score-slider[data-qid="${id}"]`);
+  if(!el) return;
+  el.dataset.selected=NOT_EVALUATED;
+  answers[id]=NOT_EVALUATED;
+  const out=document.getElementById(`score_${id}`);
+  if(out){
+    out.textContent="N/A";
+    out.classList.add("na-readout");
+  }
+  document.getElementById(`baseline_${id}`)?.classList.remove("selected");
+  document.getElementById(`na_${id}`)?.classList.add("selected");
   const err=document.getElementById(`err_${id}`);
   if(err) err.textContent="";
 }
@@ -164,7 +192,7 @@ function collectSurvey(showErrors=true){
     if(q.type==="score20"){
       const el=document.querySelector(`.score-slider[data-qid="${q.id}"]`);
       val=el?.dataset.selected ?? "";
-      if(val!=="") val=Number(val);
+      if(val!=="" && val!==NOT_EVALUATED) val=Number(val);
     } else {
       val=document.querySelector(`[name="${q.id}"]`)?.value.trim() || "";
       if(val.length > TEXT_MAX) val = val.slice(0, TEXT_MAX);
