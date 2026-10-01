@@ -9,6 +9,13 @@
       if (title) {
         title.textContent = '참여 구분을 선택해주세요. (본인의 소속회사에 해당하는 카테고리를 골라주세요.)';
       }
+
+      const introParagraphs = document.querySelectorAll('.intro-copy p');
+      const charterParagraph = introParagraphs[introParagraphs.length - 1];
+      if (charterParagraph) {
+        charterParagraph.classList.add('charter-emphasis');
+        charterParagraph.innerHTML = '아도라 메디테라니아는 코스타 세레나호 철수 이후 한국 출발 차터사업을 이어갈 수 있는 중요한 대체 선박입니다. 이날 참석하신 모든 분들이 향후 <span class="charter-key">한국출발 차터사업과 직접 연결된 만큼</span>, 애정을 가지고 적극적인 의견을 부탁드립니다.';
+      }
     };
   }
 
