@@ -41,28 +41,47 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .done h2{font-size:25px}
 .small{font-size:12px;color:var(--muted)}
 
-.score-guide{margin:18px 0;padding:15px 16px;border:1px solid var(--line);border-radius:14px;background:#fafafa;display:grid;gap:5px}
-.score-guide b{font-size:15px}
-.score-guide span{font-size:12px;line-height:1.5;color:var(--muted)}
-.score-guide-main{position:sticky;top:8px;z-index:5;box-shadow:0 5px 18px rgba(0,0,0,.06);background:rgba(250,250,250,.97);backdrop-filter:blur(8px)}
+.score-guide{margin:18px 0;padding:15px 16px;border:1px solid #d9dee3;border-radius:14px;background:#f4f7f8;display:grid;gap:5px}
+.score-guide b{font-size:15px;color:#33434c}
+.score-guide span{font-size:12px;line-height:1.5;color:#68757c}
+.score-guide-main{position:sticky;top:8px;z-index:5;box-shadow:0 5px 18px rgba(0,0,0,.05);background:rgba(244,247,248,.97);backdrop-filter:blur(8px)}
 
-.survey-section{margin:30px 0 0;padding-top:4px}
-.section-head{padding:0 0 12px;border-bottom:2px solid #111;margin-bottom:16px}
-.section-head p{font-size:12px;line-height:1.55;color:var(--muted);margin:5px 0 0}
-.question-card{padding:16px 0 20px;border-bottom:1px solid #ecece8;margin:0}
+.survey-section{margin:34px 0 0;padding-top:0}
+.section-head{padding:15px 17px 14px;border:1px solid transparent;border-radius:16px;margin-bottom:14px}
+.section-head h2{font-size:24px;line-height:1.25;font-weight:800;letter-spacing:-.035em}
+.section-head p{font-size:12.5px;line-height:1.55;margin:6px 0 0;font-weight:500}
+
+#area_overall .section-head{background:#eef5f2;border-color:#dceae4}
+#area_overall .section-head h2{color:#345f55}
+#area_overall .section-head p{color:#60776f}
+
+#area_facilities .section-head{background:#eef3f8;border-color:#dbe5ef}
+#area_facilities .section-head h2{color:#3f607d}
+#area_facilities .section-head p{color:#667c91}
+
+#area_fnb .section-head{background:#faf3e9;border-color:#efe2cf}
+#area_fnb .section-head h2{color:#765b3d}
+#area_fnb .section-head p{color:#8b765d}
+
+#area_summary .section-head{background:#f3eff7;border-color:#e5dced}
+#area_summary .section-head h2{color:#655275}
+#area_summary .section-head p{color:#7d6d8a}
+
+.question-card{padding:18px 12px 21px;border-bottom:1px solid #ecece8;margin:0;background:#fff}
 .question-card:last-child{border-bottom:0}
+.question-card .q{font-size:15.5px;color:#1e1e1c}
 
 .score20{padding:5px 0 0}
 .score-readout{display:flex;align-items:baseline;justify-content:flex-start;gap:6px;margin-bottom:8px}
 .score-readout span{font-size:11px;color:var(--muted);margin-right:4px}
 .score-readout strong{font-size:28px;line-height:1;font-weight:780;min-width:32px;text-align:center}
 .score-readout em{font-size:12px;color:var(--muted);font-style:normal}
-.score-slider{width:100%;accent-color:#111;cursor:pointer}
+.score-slider{width:100%;accent-color:#4d5a61;cursor:pointer}
 .score-axis{display:flex;justify-content:space-between;align-items:flex-start;margin-top:5px;font-weight:650;font-size:11px;text-align:center}
 .score-axis span{width:60px}
 .score-axis .baseline{display:grid;gap:1px}
-.score-axis small{font-size:9px;font-weight:700;color:#111;white-space:nowrap}
-.baseline-btn{display:block;margin:7px 0 0 auto;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:10px;font-weight:650;cursor:pointer}
+.score-axis small{font-size:9px;font-weight:700;color:#33434c;white-space:nowrap}
+.baseline-btn{display:block;margin:7px 0 0 auto;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:10px;font-weight:650;cursor:pointer;color:#303b41}
 .baseline-btn:active{transform:translateY(1px)}
 .survey-actions{margin-top:34px;padding-top:20px;border-top:1px solid var(--line)}
 
@@ -70,15 +89,21 @@ button:disabled{opacity:.45;cursor:not-allowed}
   .card{padding:34px 32px}
   .shell{padding-top:28px}
   .affiliation-grid{grid-template-columns:repeat(3,1fr)}
+  .section-head{padding:17px 20px 16px}
+  .section-head h2{font-size:25px}
 }
 @media(max-width:480px){
   .affiliation-grid{grid-template-columns:1fr}
   .score-guide-main{top:4px}
   h1{font-size:25px}
+  .survey-section{margin-top:30px}
+  .section-head h2{font-size:22px}
+  .question-card{padding-left:6px;padding-right:6px}
 }
 @media print{
   .top,.actions,.baseline-btn{display:none}
   .shell{max-width:none;padding:0}
   .card{border:0;box-shadow:none}
   .score-guide-main{position:static;box-shadow:none}
+  .section-head{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
