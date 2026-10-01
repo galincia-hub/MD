@@ -6,23 +6,18 @@
     "areas": {
       "overall": {
         "title": "선박 전반",
-        "subtitle": "코스타 세레나를 공통 기준으로 선박의 현재 상태를 비교해 주세요.",
+        "subtitle": "선박의 현재 컨디션을 항목별로 평가해 주세요.",
         "en": "Overall Ship Condition"
       },
       "facilities": {
         "title": "공용시설",
-        "subtitle": "아트리움, 극장, 수영장, 야외데크 등 주요 공용공간을 비교해 주세요.",
+        "subtitle": "방선 중 확인한 주요 공용시설을 각각 평가해 주세요.",
         "en": "Public Facilities"
       },
       "fnb": {
         "title": "음식·서비스",
         "subtitle": "이번 방선에서 직접 경험하거나 확인한 범위에서 평가해 주세요.",
         "en": "Food & Service"
-      },
-      "venue": {
-        "title": "바·라운지·행사공간",
-        "subtitle": "한국 전세선 운영 시 활용성을 포함해 공간의 완성도를 비교해 주세요.",
-        "en": "Bars, Lounges & Event Spaces"
       },
       "summary": {
         "title": "종합평가·개선의견",
@@ -35,66 +30,154 @@
       "max": 20,
       "baseline": 10,
       "baselineLabel": "COSTA SERENA = 10점",
-      "lowLabel": "코스타 세레나보다 낮음",
-      "sameLabel": "코스타 세레나와 비슷함",
-      "highLabel": "코스타 세레나보다 우수함"
+      "lowLabel": "0~9점: 상대적으로 아쉬움",
+      "sameLabel": "10점: 비슷함",
+      "highLabel": "11~20점: 상대적으로 우수함"
     }
   },
   "C": [
     {
-      "id": "C01",
+      "id": "O01",
       "area": "overall",
-      "prompt": "코스타 세레나를 10점으로 볼 때, 아도라 메디테라니아의 현재 선박 컨디션은 몇 점입니까?",
+      "prompt": "선박 관리상태",
       "required": true,
       "type": "score20",
       "min": 0,
       "max": 20,
       "baseline": 10,
-      "help": "관리상태, 청결도, 시설 유지상태와 전체적인 완성도를 종합해 평가해 주세요."
+      "help": "선박 전체의 관리 수준과 정돈 상태를 평가해 주세요."
     },
     {
-      "id": "C03",
-      "area": "facilities",
-      "prompt": "코스타 세레나를 10점으로 볼 때, 아도라 메디테라니아의 공용시설은 몇 점입니까?",
+      "id": "O02",
+      "area": "overall",
+      "prompt": "청결도",
       "required": true,
       "type": "score20",
       "min": 0,
       "max": 20,
       "baseline": 10,
-      "help": "아트리움, 극장, 수영장, 야외데크 및 주요 공용공간을 종합해 평가해 주세요."
+      "help": "공용공간과 주요 시설에서 느낀 전반적인 청결 상태를 평가해 주세요."
     },
     {
-      "id": "C04",
+      "id": "O03",
+      "area": "overall",
+      "prompt": "시설 유지상태",
+      "required": true,
+      "type": "score20",
+      "min": 0,
+      "max": 20,
+      "baseline": 10,
+      "help": "노후감, 시설 보수 상태, 설비 유지 수준을 종합해 평가해 주세요."
+    },
+    {
+      "id": "F01",
       "area": "facilities",
-      "prompt": "공용시설 중 코스타 세레나와 비교해 특히 좋았던 점 또는 개선이 필요하다고 느낀 부분을 말씀해 주세요.",
+      "prompt": "공연 관련 시설",
+      "required": true,
+      "type": "score20",
+      "min": 0,
+      "max": 20,
+      "baseline": 10,
+      "help": "극장, 공연장, 무대 및 전세선 행사 활용성을 중심으로 평가해 주세요."
+    },
+    {
+      "id": "F02",
+      "area": "facilities",
+      "prompt": "바(Bar)·라운지·휴게시설",
+      "required": true,
+      "type": "score20",
+      "min": 0,
+      "max": 20,
+      "baseline": 10,
+      "help": "바, 라운지, 휴식공간의 분위기와 활용성을 평가해 주세요."
+    },
+    {
+      "id": "F03",
+      "area": "facilities",
+      "prompt": "수영장",
+      "required": true,
+      "type": "score20",
+      "min": 0,
+      "max": 20,
+      "baseline": 10,
+      "help": "수영장 시설과 주변 공간의 상품성을 평가해 주세요."
+    },
+    {
+      "id": "F04",
+      "area": "facilities",
+      "prompt": "야외데크",
+      "required": true,
+      "type": "score20",
+      "min": 0,
+      "max": 20,
+      "baseline": 10,
+      "help": "야외공간의 규모, 쾌적성, 활용성을 평가해 주세요."
+    },
+    {
+      "id": "F05",
+      "area": "facilities",
+      "prompt": "식당",
+      "required": true,
+      "type": "score20",
+      "min": 0,
+      "max": 20,
+      "baseline": 10,
+      "help": "메인 레스토랑과 뷔페 등 일반 식당 시설을 평가해 주세요."
+    },
+    {
+      "id": "F06",
+      "area": "facilities",
+      "prompt": "유료식당",
+      "required": true,
+      "type": "score20",
+      "min": 0,
+      "max": 20,
+      "baseline": 10,
+      "help": "확인한 유료 레스토랑의 공간과 상품성을 평가해 주세요."
+    },
+    {
+      "id": "F07",
+      "area": "facilities",
+      "prompt": "공용시설에서 특히 좋았던 점 또는 개선이 필요하다고 느낀 부분을 말씀해 주세요.",
       "type": "text",
       "required": true,
       "rows": 4
     },
     {
-      "id": "C05",
+      "id": "S01",
       "area": "fnb",
-      "prompt": "코스타 세레나를 10점으로 볼 때, 이번에 경험한 아도라 메디테라니아의 음식은 몇 점입니까?",
+      "prompt": "음식의 맛·품질·구성",
       "required": true,
       "type": "score20",
       "min": 0,
       "max": 20,
       "baseline": 10,
-      "help": "음식의 맛, 구성, 품질과 제공 상태를 경험하신 범위에서 평가해 주세요."
+      "help": "이번 방선에서 제공된 식사의 맛, 품질, 메뉴 구성을 종합해 평가해 주세요."
     },
     {
-      "id": "C06",
+      "id": "S02",
       "area": "fnb",
-      "prompt": "코스타 세레나를 10점으로 볼 때, 이번 방선에서 확인한 아도라 메디테라니아의 서비스 수준은 몇 점입니까?",
+      "prompt": "식음 서비스",
       "required": true,
       "type": "score20",
       "min": 0,
       "max": 20,
       "baseline": 10,
-      "help": "승무원 응대, 안내와 식음 서비스 등 직접 확인하신 범위에서 평가해 주세요."
+      "help": "레스토랑 서비스의 응대, 진행, 제공 상태를 평가해 주세요."
     },
     {
-      "id": "C07",
+      "id": "S03",
+      "area": "fnb",
+      "prompt": "승무원 응대·안내",
+      "required": true,
+      "type": "score20",
+      "min": 0,
+      "max": 20,
+      "baseline": 10,
+      "help": "짧은 방문 중 직접 확인한 범위에서 승무원의 친절도와 안내 수준을 평가해 주세요."
+    },
+    {
+      "id": "S04",
       "area": "fnb",
       "prompt": "음식과 서비스에서 특히 좋았던 점과 개선이 필요하다고 느낀 점을 말씀해 주세요.",
       "type": "text",
@@ -102,28 +185,9 @@
       "rows": 4
     },
     {
-      "id": "C08",
-      "area": "venue",
-      "prompt": "코스타 세레나를 10점으로 볼 때, 아도라 메디테라니아의 바·라운지·공연 및 행사공간은 몇 점입니까?",
-      "required": true,
-      "type": "score20",
-      "min": 0,
-      "max": 20,
-      "baseline": 10,
-      "help": "공간의 분위기뿐 아니라 한국 전세선의 공연, 이벤트, 단체행사 활용성도 함께 고려해 주세요."
-    },
-    {
-      "id": "C09",
-      "area": "venue",
-      "prompt": "바·라운지·공연 및 행사공간 중 활용도가 높아 보이는 곳과 보완이 필요하다고 느낀 부분을 말씀해 주세요.",
-      "type": "text",
-      "required": true,
-      "rows": 4
-    },
-    {
-      "id": "C10",
+      "id": "R01",
       "area": "summary",
-      "prompt": "전세선 운영 관점에서 코스타 세레나를 10점으로 볼 때, 현재 아도라 메디테라니아에 종합적으로 몇 점을 주시겠습니까?",
+      "prompt": "전세선 운영 관점에서 본 아도라 메디테라니아의 종합평가",
       "required": true,
       "type": "score20",
       "min": 0,
@@ -132,7 +196,7 @@
       "help": "선박 상태, 공용시설, 음식·서비스와 전세선 운영 적합성을 종합해 평가해 주세요."
     },
     {
-      "id": "C11",
+      "id": "R02",
       "area": "summary",
       "prompt": "코스타 세레나와 비교했을 때, 아도라 메디테라니아에서 가장 좋았던 점은 무엇입니까?",
       "type": "text",
@@ -140,7 +204,7 @@
       "rows": 4
     },
     {
-      "id": "C12",
+      "id": "R03",
       "area": "summary",
       "prompt": "2027년 한국 전세선 운영을 위해 아도라가 가장 우선적으로 개선해야 할 부분은 무엇이라고 생각하십니까?",
       "type": "text",
@@ -148,7 +212,7 @@
       "rows": 4
     },
     {
-      "id": "C13",
+      "id": "R04",
       "area": "summary",
       "prompt": "그 밖에 10월 20일 인스펙션에서 아도라 측에 전달하거나 다시 확인했으면 하는 사항이 있다면 자유롭게 말씀해 주세요.",
       "type": "text",
