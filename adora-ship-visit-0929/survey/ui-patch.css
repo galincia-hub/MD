@@ -1,3 +1,5 @@
 .score-move-hint{display:flex;align-items:center;justify-content:center;min-height:38px;padding:8px 12px;font-size:11px;line-height:1.45;color:#7a6a58;background:#faf7f2;border:1px solid #eee4d8;border-radius:999px;text-align:center}
 .text-required-note{margin:7px 0 0;font-size:11px;line-height:1.45;color:#a14f49;font-weight:650}
+.charter-emphasis{font-weight:750!important;color:#343b40!important}
+.charter-key{display:inline;padding:1px 5px;border-radius:5px;background:#eef3f8;color:#506a80;font-weight:800}
 @media(max-width:480px){.score-move-hint{width:100%;border-radius:11px}.unable-btn{width:100%}}
